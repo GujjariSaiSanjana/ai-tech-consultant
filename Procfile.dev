@@ -1,0 +1,5 @@
+# Used by `make dev` (honcho). If one process dies, all stop. Ctrl-C stops everything.
+brain: cd brain && uv run python -m brain.api
+scheduler: cd brain && uv run python -m brain.scheduler
+inbox: cd inbox && npm run dev
+scope: cd scope && uv run python -m scope.web
