@@ -3,6 +3,8 @@
 API constraints this module encodes (Messages API version 2026-10-21, 5.5-generation models):
 no temperature/top_p/top_k, no thinking budget_tokens, no forced tool_choice; JSON comes from
 structured outputs (`messages.parse`), depth from `output_config.effort`.
+
+Retryable Claude failures (and a missing ANTHROPIC_API_KEY) fall back to `llm.fallback`; batches do not.
 """
 
 from __future__ import annotations
@@ -12,7 +14,7 @@ import logging
 import time
 from collections.abc import Awaitable, Callable, Iterable, Sequence
 from dataclasses import dataclass
-from typing import Literal, Protocol
+from typing import TYPE_CHECKING, Literal, Protocol
 
 import anthropic
 from anthropic.types import Message, MessageParam, OutputConfigParam, ParsedMessage, TextBlockParam
@@ -21,6 +23,9 @@ from anthropic.types.messages.batch_create_params import Request
 from pydantic import BaseModel
 
 from brain.config import Settings
+
+if TYPE_CHECKING:
+    from brain.llm.fallback import FallbackChain
 
 log = logging.getLogger(__name__)
 
@@ -123,13 +128,32 @@ def cost_usd(model: str, message: Message) -> float:
 
 
 class LLMClient:
-    def __init__(self, client: anthropic.AsyncAnthropic, settings: Settings, recorder: CallRecorder) -> None:
+    """Claude first; `fallback` serves retryable Claude failures, or everything when `client` is None."""
+
+    def __init__(
+        self,
+        client: anthropic.AsyncAnthropic | None,
+        settings: Settings,
+        recorder: CallRecorder,
+        fallback: FallbackChain | None = None,
+    ) -> None:
         self._client = client
         self._routes = routes(settings)
         self._recorder = recorder
+        self._fallback = fallback
 
     def model_for(self, purpose: Purpose) -> str:
+        if self._client is None and self._fallback is not None and (model := self._fallback.model_for(purpose)):
+            return model
         return self._routes[purpose].model
+
+    def can_serve(self, purpose: Purpose) -> bool:
+        return self._client is not None or (self._fallback is not None and bool(self._fallback.serving(purpose)))
+
+    def _keyless_fallback(self) -> FallbackChain:
+        if self._fallback is None:
+            raise LLMError("no ANTHROPIC_API_KEY and no fallback provider configured", retryable=False)
+        return self._fallback
 
     async def create(
         self,
@@ -139,6 +163,11 @@ class LLMClient:
         system: str | list[TextBlockParam] | None = None,
     ) -> tuple[Message, Usage]:
         route = self._routes[purpose]
+        messages = list(messages)
+        if self._client is None:
+            return await self._keyless_fallback().create(
+                purpose, route, messages=messages, system=system, original=None
+            )
         started = time.perf_counter()
         try:
             message = await self._client.messages.create(
@@ -150,7 +179,10 @@ class LLMClient:
             )
         except anthropic.APIError as exc:
             await self._record_failure(purpose, route.model, started, exc)
-            raise _translate(exc) from exc
+            error = _translate(exc)
+            if self._fallback is None or not error.retryable:  # never on a bad request or schema problem
+                raise error from exc
+            return await self._fallback.create(purpose, route, messages=messages, system=system, original=error)
         return await self._finish(purpose, route.model, started, message)
 
     async def parse[T: BaseModel](
@@ -162,6 +194,11 @@ class LLMClient:
         system: str | None = None,
     ) -> tuple[T, Usage]:
         route = self._routes[purpose]
+        messages = list(messages)
+        if self._client is None:
+            return await self._keyless_fallback().parse(
+                purpose, route, output_format, messages=messages, system=system, original=None
+            )
         started = time.perf_counter()
         try:
             parsed: ParsedMessage[T] = await self._client.messages.parse(
@@ -174,17 +211,23 @@ class LLMClient:
             )
         except anthropic.APIError as exc:
             await self._record_failure(purpose, route.model, started, exc)
-            raise _translate(exc) from exc
+            error = _translate(exc)
+            if self._fallback is None or not error.retryable:
+                raise error from exc
+            return await self._fallback.parse(
+                purpose, route, output_format, messages=messages, system=system, original=error
+            )
         _, usage = await self._finish(purpose, route.model, started, parsed)
         if parsed.parsed_output is None:
             raise LLMError(f"no structured output (stop_reason={parsed.stop_reason})", retryable=False)
         return parsed.parsed_output, usage
 
     async def submit_batch(self, purpose: Purpose, requests: Sequence[tuple[str, list[MessageParam]]]) -> str:
-        """Queue many same-purpose requests as one Message Batch; returns the batch id."""
+        """Queue many same-purpose requests as one Message Batch; returns the batch id. Claude only."""
         route = self._routes[purpose]
+        client = self._batch_client()
         try:
-            batch = await self._client.messages.batches.create(
+            batch = await client.messages.batches.create(
                 requests=[
                     Request(
                         custom_id=custom_id,
@@ -212,11 +255,12 @@ class LLMClient:
     ) -> dict[str, Message]:
         """Wait for a batch to end; succeeded, non-refused messages by custom_id. Each result is logged."""
         model = self._routes[purpose].model
+        client = self._batch_client()
         try:
-            while (await self._client.messages.batches.retrieve(batch_id)).processing_status != "ended":
+            while (await client.messages.batches.retrieve(batch_id)).processing_status != "ended":
                 await sleep(poll_s)
             out: dict[str, Message] = {}
-            async for item in await self._client.messages.batches.results(batch_id):
+            async for item in await client.messages.batches.results(batch_id):
                 if item.result.type != "succeeded":
                     await self._recorder.record_llm_call(
                         CallRecord(
@@ -246,6 +290,11 @@ class LLMClient:
         except anthropic.APIError as exc:
             raise _translate(exc) from exc
         return out
+
+    def _batch_client(self) -> anthropic.AsyncAnthropic:
+        if self._client is None:
+            raise LLMError("Message Batches need ANTHROPIC_API_KEY (no fallback for batches)", retryable=False)
+        return self._client
 
     async def _finish(self, purpose: Purpose, model: str, started: float, message: Message) -> tuple[Message, Usage]:
         latency_ms = int((time.perf_counter() - started) * 1000)

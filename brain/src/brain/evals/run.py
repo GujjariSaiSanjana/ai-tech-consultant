@@ -39,7 +39,8 @@ def new_run_id() -> str:
 async def run_cases(
     settings: Settings, cases: list[EvalCase], *, run_id: str, reps: int, force_mock: bool
 ) -> list[dict[str, Any]]:
-    effective = settings.model_copy(update={"anthropic_api_key": None}) if force_mock else settings
+    offline = {"anthropic_api_key": None, "gemini_api_key": None, "nvidia_api_key": None}
+    effective = settings.model_copy(update=offline) if force_mock else settings
     rows: list[dict[str, Any]] = []
     async with build_container(effective) as c:
         mocked = not c.llm_live

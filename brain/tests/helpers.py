@@ -44,6 +44,8 @@ def make_settings(**overrides: Any) -> Settings:
         "BRAIN_API_KEY": "test-key",
         "ANTHROPIC_API_KEY": None,
         "VOYAGE_API_KEY": None,
+        "GEMINI_API_KEY": None,  # tests never reach a paid fallback model either
+        "NVIDIA_API_KEY": None,
         "BRAIN_URL": "http://brain.test",
     }
     values.update(overrides)
