@@ -32,7 +32,7 @@ async function main(): Promise<void> {
   const dbPath = env.INBOX_DATABASE_PATH;
   for (const suffix of ["", "-wal", "-shm"]) rmSync(`${dbPath}${suffix}`, { force: true });
 
-  const clock = simulatedClock("2026-08-03T08:00:00Z", 45);
+  const clock = simulatedClock("2026-08-31T08:00:00Z", 45);
   const services = createServices({
     dbPath,
     llm: live ? "real" : "mock",
@@ -45,7 +45,7 @@ async function main(): Promise<void> {
 
   const dataset = loadDataset();
   for (const email of dataset) agent.ingest({ ...email, simulated: false });
-  const simulated = simulatedHowToEmails(SIMULATED_HOW_TO + AUTO_SENDS_BEFORE_BREAKER + RECOVERY_EMAILS, "2026-08-03T09:00:00Z", 7);
+  const simulated = simulatedHowToEmails(SIMULATED_HOW_TO + AUTO_SENDS_BEFORE_BREAKER + RECOVERY_EMAILS, "2026-08-31T09:00:00Z", 24);
   for (const email of simulated) agent.ingest(email);
 
   const dev = dataset.filter((e) => e.split === "dev");
