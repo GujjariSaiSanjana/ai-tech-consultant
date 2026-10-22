@@ -5,7 +5,7 @@ import { THRESHOLDS } from "../src/config/thresholds";
 import type { NewEmail } from "../src/db/emails-repo";
 import type { GoldLabels } from "../src/domain/schemas";
 import { HashingEmbedder } from "../src/embeddings/embedder";
-import { NULL_SINK } from "../src/llm/client";
+import { NULL_SINK, type LlmClient } from "../src/llm/client";
 import { FakeLlmClient, type FakeHandlers } from "../src/llm/fake-client";
 import { heuristicHandlers } from "../src/llm/heuristics";
 import { DEFAULT_ROUTES } from "../src/llm/models";
@@ -19,11 +19,14 @@ export function testClock(): () => string {
   };
 }
 
-export function makeServices(options: { handlers?: FakeHandlers; brain?: BrainClient } = {}): Services {
+export function makeServices(
+  options: { handlers?: FakeHandlers; brain?: BrainClient; wrapLlm?: (llm: LlmClient) => LlmClient } = {},
+): Services {
   const handlers = { ...heuristicHandlers(THRESHOLDS.reflectorMaxRules), ...options.handlers };
+  const fake = new FakeLlmClient(handlers, DEFAULT_ROUTES, NULL_SINK);
   return createServices({
     dbPath: ":memory:",
-    llm: new FakeLlmClient(handlers, DEFAULT_ROUTES, NULL_SINK),
+    llm: options.wrapLlm ? options.wrapLlm(fake) : fake,
     brain: options.brain ?? new FakeBrainClient(),
     embedder: new HashingEmbedder(),
     clock: testClock(),
