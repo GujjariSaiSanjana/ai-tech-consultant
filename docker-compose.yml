@@ -1,0 +1,106 @@
+# Whole project in one command: `make up` (or `docker compose up --build`).
+# Every app service reads .env; values under `environment:` override it so
+# containers talk to each other by service name instead of localhost.
+
+x-env-file: &env-file
+  env_file:
+    - path: .env
+      required: false
+
+x-brain: &brain
+  <<: *env-file
+  build: ./brain
+  image: ai-tech-consultant/brain:local
+  environment:
+    BRAIN_DATABASE_URL: postgresql://postgres:postgres@db:5432/brain
+    BRAIN_HOST: 0.0.0.0 # brain.config defaults to 127.0.0.1, unreachable from other containers
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.7-pg17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: brain
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d brain"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # Not published to the host on purpose: avoids clashing with a local
+    # Postgres used by `make dev`. Uncomment to inspect with psql.
+    # ports: ["5433:5432"]
+
+  # One-shot: creates tables and the pgvector extension, then exits.
+  brain-migrate:
+    <<: *brain
+    command: ["python", "-m", "brain.migrate"]
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  brain:
+    <<: *brain
+    command: ["python", "-m", "brain.api"]
+    ports: ["8000:8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+      brain-migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import os, urllib.request as u; u.urlopen(u.Request('http://localhost:8000/health', headers={'X-API-Key': os.environ.get('BRAIN_API_KEY', '')}), timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  # Nightly incremental sync of the help center (Task 1).
+  brain-scheduler:
+    <<: *brain
+    command: ["python", "-m", "brain.scheduler"]
+    depends_on:
+      db:
+        condition: service_healthy
+      brain-migrate:
+        condition: service_completed_successfully
+
+  inbox:
+    <<: *env-file
+    build: ./inbox
+    image: ai-tech-consultant/inbox:local
+    ports: ["3000:3000"]
+    environment:
+      BRAIN_URL: http://brain:8000
+      INBOX_DATABASE_PATH: /data/inbox.db
+    volumes:
+      - inbox-data:/data
+    depends_on:
+      brain:
+        condition: service_healthy
+
+  scope:
+    <<: *env-file
+    build: ./scope
+    image: ai-tech-consultant/scope:local
+    ports: ["8100:8100"]
+    environment:
+      BRAIN_URL: http://brain:8000
+      SCOPE_DATABASE_URL: sqlite+aiosqlite:////data/scope.db
+    volumes:
+      - scope-data:/data
+    depends_on:
+      brain:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  inbox-data:
+  scope-data:

@@ -1,0 +1,6 @@
+# Used by `make dev` (honcho). If one process dies, all stop. Ctrl-C stops everything.
+# honcho injects PORT=5000+ into every process; pin each port so the apps match BRAIN_URL and the docs.
+brain: cd brain && PORT=8000 BRAIN_PORT=8000 uv run python -m brain.api
+scheduler: cd brain && uv run python -m brain.scheduler
+inbox: cd inbox && PORT=3000 npm run dev
+scope: cd scope && PORT=8100 uv run python -m scope.web
