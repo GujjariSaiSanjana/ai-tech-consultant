@@ -55,6 +55,11 @@ async def test_follow_up_is_blocked_while_scope_is_draft(svc: ScopeService) -> N
     await svc.add_meeting(pid, read("meeting-03-follow-up.txt"))
     with pytest.raises(GateError, match="draft"):
         await svc.start_run(pid)
+    with pytest.raises(GateError, match="draft"):
+        await svc.check_can_process(pid)
+    m, created = await svc.add_meeting(pid, read("meeting-03-follow-up.txt"))
+    assert not created
+    assert m.meeting_key == "m2"  # adding the same text again is idempotent
     with pytest.raises(GateError, match="no new meeting"):
         await svc.start_run((await svc.repo.create_project("x", "y")).id)
 

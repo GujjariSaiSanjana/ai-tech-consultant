@@ -26,10 +26,11 @@ async def _run(
         project = await svc.repo.create_project(name=title, client=client or "Client")
         project_id = project.id
         print(f"Created project {project_id}: {title}")
-    for p in paths:
-        m = await svc.add_meeting(project_id, p.read_text(encoding="utf-8"))
-        print(f"Added meeting {m.meeting_key}: {m.title}")
     try:
+        await svc.check_can_process(project_id)
+        for p in paths:
+            m, created = await svc.add_meeting(project_id, p.read_text(encoding="utf-8"))
+            print(f"{'Added' if created else 'Already added:'} meeting {m.meeting_key}: {m.title}")
         run = await svc.start_run(project_id)
     except GateError as exc:
         print(f"Blocked: {exc}", file=sys.stderr)

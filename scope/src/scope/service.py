@@ -73,11 +73,25 @@ class ScopeService:
     # meetings and runs -------------------------------------------------------------------
     async def add_meeting(
         self, project_id: int, raw_text: str, title: str | None = None
-    ) -> Meeting:
+    ) -> tuple[Meeting, bool]:
+        """Add a transcript. Idempotent: the same text twice returns the existing meeting."""
         meetings = await self.repo.list_meetings(project_id)
+        for m in meetings:
+            if m.raw_text == raw_text:
+                return m, False
         key = f"m{len(meetings) + 1}"
         parsed_title = parse(raw_text, key).title if raw_text.strip() else key
-        return await self.repo.add_meeting(project_id, title or parsed_title, raw_text)
+        return await self.repo.add_meeting(project_id, title or parsed_title, raw_text), True
+
+    async def check_can_process(self, project_id: int) -> None:
+        """The gate for new meetings: a follow-up is reconciled against an approved scope, so the
+        latest scope version must be approved first."""
+        versions = await self.repo.list_scope_versions(project_id)
+        if versions and versions[-1].status != "approved":
+            raise GateError(
+                f"scope v{versions[-1].version} is still a draft; approve it before "
+                "processing a follow-up meeting"
+            )
 
     @staticmethod
     def transcripts(meetings: Sequence[Meeting]) -> list[Transcript]:
@@ -86,16 +100,12 @@ class ScopeService:
     async def start_run(self, project_id: int) -> Run:
         """Decide initial vs follow-up and enforce the gate: a follow-up meeting is reconciled
         against the latest approved scope, so a draft scope must be approved first."""
+        await self.check_can_process(project_id)
         meetings = await self.repo.list_meetings(project_id)
         pending = [m for m in meetings if m.run_id is None]
         if not pending:
             raise GateError("no new meeting to process; add a transcript first")
         versions = await self.repo.list_scope_versions(project_id)
-        if versions and versions[-1].status != "approved":
-            raise GateError(
-                f"scope v{versions[-1].version} is still a draft; approve it before "
-                "processing a follow-up meeting"
-            )
         approved = [v for v in versions if v.status == "approved"]
         kind = "follow_up" if approved else "initial"
         run = await self.repo.create_run(

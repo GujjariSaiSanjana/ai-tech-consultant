@@ -151,8 +151,13 @@ def create_app(settings: Settings | None = None, deps: Deps | None = None) -> Fa
             raw = (await file.read()).decode("utf-8", errors="replace")
         if not raw.strip():
             return back(f"/projects/{project_id}?tab=transcripts", "The transcript is empty.")
-        m = await svc_of(request).add_meeting(project_id, raw)
-        return back(f"/projects/{project_id}?tab=transcripts", f"Added meeting {m.meeting_key}.")
+        m, created = await svc_of(request).add_meeting(project_id, raw)
+        msg = (
+            f"Added meeting {m.meeting_key}."
+            if created
+            else (f"This transcript was already added as {m.meeting_key}.")
+        )
+        return back(f"/projects/{project_id}?tab=transcripts", msg)
 
     @app.post("/projects/{project_id}/runs")
     async def start_run(request: Request, project_id: int) -> Response:
