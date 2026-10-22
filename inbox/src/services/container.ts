@@ -12,7 +12,8 @@ import { EvalRunsRepo, LlmCallsRepo, SettingsRepo } from "../db/ops-repo";
 import { PlaybookRepo } from "../db/playbook-repo";
 import { TrustRepo } from "../db/trust-repo";
 import { HashingEmbedder, VoyageEmbedder, type Embedder } from "../embeddings/embedder";
-import { createAnthropicClient, type LlmCallSink, type LlmClient } from "../llm/client";
+import type { LlmCallSink, LlmClient } from "../llm/client";
+import { createLlmClient } from "../llm/factory";
 import { FakeLlmClient } from "../llm/fake-client";
 import { heuristicHandlers } from "../llm/heuristics";
 import { DEFAULT_ROUTES, type RoutingTable } from "../llm/models";
@@ -49,10 +50,10 @@ export function defaultOptions(env: Env = readEnv()): ServiceOptions {
   };
 }
 
-function buildLlm(option: ServiceOptions["llm"], routes: RoutingTable, sink: LlmCallSink): LlmClient {
+function buildLlm(option: ServiceOptions["llm"], routes: RoutingTable, sink: LlmCallSink, env: Env): LlmClient {
   if (typeof option !== "string") return option;
   return option === "real"
-    ? createAnthropicClient(routes, sink)
+    ? createLlmClient(routes, sink, env)
     : new FakeLlmClient(heuristicHandlers(THRESHOLDS.reflectorMaxRules), routes, sink);
 }
 
@@ -91,7 +92,7 @@ export function createServices(options: ServiceOptions): Services {
     settings: new SettingsRepo(db),
     evalRuns: new EvalRunsRepo(db),
   };
-  const llm = buildLlm(options.llm, options.routes ?? DEFAULT_ROUTES, llmCalls);
+  const llm = buildLlm(options.llm, options.routes ?? DEFAULT_ROUTES, llmCalls, env);
   const brain = buildBrain(options.brain, env);
   const embedder = buildEmbedder(options.embedder, env);
   const pipeline = { llm, brain, memory: new DbExampleMemory(repos.actions, embedder) };

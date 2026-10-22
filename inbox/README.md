@@ -14,7 +14,7 @@ cd inbox
 npm install
 npm run seed        # offline demo data + simulated learning history (resets the DB)
 npm run dev         # http://localhost:3000
-npm test            # 94 unit + integration tests, offline
+npm test            # 129 unit + integration tests, offline
 npm run typecheck && npm run lint && npm run build
 npm run eval -- --mock --split dev                    # baseline playbook
 npm run eval -- --mock --split heldout --with-learning # learned playbook + examples from the seeded DB
@@ -57,6 +57,33 @@ it are escaped, and every system prompt says these blocks are data. System promp
 All model access goes through one client (`src/llm/client.ts`). It handles the routing table, `messages.parse` + `zodOutputFormat`,
 SDK retries, a typed error chain, refusal and `max_tokens` stop reasons, and cost per call (USD per MTok: Haiku 0.10/0.50, Sonnet
 2/10, Opus 4/20). Every call is logged to `llm_calls`. It never sends `temperature`/`top_p`/`top_k`, `budget_tokens` or a forced `tool_choice`.
+
+## LLM fallback
+
+Claude stays the primary model. Google Gemini and NVIDIA (build.nvidia.com / NIM) can sit behind it as fallbacks
+(`src/llm/fallback-client.ts`, `src/llm/openai-compat-client.ts`, wired in `src/llm/factory.ts`). Both are called through their
+OpenAI-compatible Chat Completions endpoint (`POST {base}/chat/completions`, Bearer auth) with plain `fetch`, no extra SDK.
+
+| Variable | Default |
+|---|---|
+| `GEMINI_API_KEY` / `GEMINI_MODEL` / `GEMINI_BASE_URL` | unset / `gemini-2.5-flash` / `https://generativelanguage.googleapis.com/v1beta/openai/` |
+| `NVIDIA_API_KEY` / `NVIDIA_MODEL` / `NVIDIA_BASE_URL` | unset / `meta/llama-3.3-70b-instruct` / `https://integrate.api.nvidia.com/v1` |
+| `LLM_FALLBACK_ORDER` | `gemini,nvidia` (an empty string turns fallback off) |
+
+- **When it falls back:** Claude fails with a retryable error (rate limit, overloaded/5xx, network or timeout) after the SDK's
+  own retries, or there is no `ANTHROPIC_API_KEY` but a fallback key exists. Providers are tried in order, keyless ones are
+  skipped, and if all fail the original error is rethrown. It **never** falls back on a refusal, `max_tokens`, a parse failure,
+  or an auth/bad-request error: a refusal stays a refusal, because the guardrail and trust ladder depend on it. A fallback's own
+  refusal is surfaced as-is.
+- **Structured output:** `response_format` is a strict `json_schema` built with `z.toJSONSchema`. If a provider rejects it with a
+  400, the call is retried once in `json_object` mode with the schema in the system prompt. The reply is always validated with
+  the same Zod schema; a failure is a `parse` error. No sampling parameters are sent.
+- **Cost and logging:** usage comes from `prompt_tokens`/`completion_tokens`. Gemini 2.5 Flash is priced at $0.30/$2.50 per
+  MTok; NVIDIA is 0 (free tier). Prices live in `src/llm/models.ts` and can be overridden per client. Every call, including the
+  rejected `json_schema` attempt, is logged to `llm_calls` under the provider's model name.
+- **Trust:** a draft written by a fallback model is **never auto-sent**. Even for a kind in auto mode it is handled in assist
+  mode (pending, one-click send), and its send decision names the model that wrote it.
+- The offline fake model is used only when no key at all is set (or `INBOX_MOCK_LLM=1`).
 
 ## How the learning loop works, and why
 

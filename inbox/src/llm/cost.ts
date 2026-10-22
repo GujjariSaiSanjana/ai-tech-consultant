@@ -1,4 +1,4 @@
-import { MODEL_IDS, PRICING, type ModelId } from "./models";
+import { MODEL_IDS, PRICING, PROVIDER_MODEL_PRICING, type ModelId, type ModelPricing } from "./models";
 
 export interface TokenUsage {
   inputTokens: number;
@@ -14,10 +14,17 @@ export function pricedModel(reported: string): ModelId | null {
   return MODEL_IDS.find((id) => reported === id || reported.startsWith(`${id}-`)) ?? null;
 }
 
-export function costUsd(model: string, usage: TokenUsage): number {
+/** Pricing for a reported model name: Claude ids (with suffixes) first, then known fallback-provider models. */
+export function pricingFor(model: string): ModelPricing | null {
   const id = pricedModel(model);
-  if (!id) return 0;
-  const p = PRICING[id];
+  if (id) return PRICING[id];
+  return PROVIDER_MODEL_PRICING[model] ?? null;
+}
+
+/** Cost of one call. Pass `pricing` to price a model outside the built-in tables; unpriced models cost 0. */
+export function costUsd(model: string, usage: TokenUsage, pricing?: ModelPricing | null): number {
+  const p = pricing ?? pricingFor(model);
+  if (!p) return 0;
   const perToken = p.inputPerMTok / 1_000_000;
   return (
     usage.inputTokens * perToken +

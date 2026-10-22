@@ -1,6 +1,7 @@
 import { THRESHOLDS } from "../config/thresholds";
 import { riskAllowsAuto } from "../domain/kind";
 import type { Outcome, RiskClass, TrustMode } from "../domain/schemas";
+import { isClaudeModel } from "../llm/models";
 import { isMaterial } from "./compare";
 import { wilsonLowerBound } from "./stats";
 
@@ -127,6 +128,19 @@ export interface SendDecisionInput {
   killSwitch: boolean;
   /** Draft-level safety: screen flags, guardrail flags, missing facts, low confidence. */
   draftNeedsReview: boolean;
+  /** Model that wrote the draft (null when none was written). Trust was earned by Claude drafts only. */
+  draftModel: string | null;
+}
+
+/** Trust was earned on Claude drafts, so a draft from any other (fallback) model must be reviewed by a person. */
+export function draftFromFallbackModel(draftModel: string | null): boolean {
+  return draftModel !== null && !isClaudeModel(draftModel);
+}
+
+/** Mode a draft is actually handled in: an auto kind drops to assist when a fallback model wrote the draft. */
+export function effectiveMode(state: TrustState | null, draftModel: string | null): TrustMode {
+  const mode = state?.mode ?? "shadow";
+  return mode === "auto" && draftFromFallbackModel(draftModel) ? "assist" : mode;
 }
 
 /** Final per-draft decision. Auto only when the kind earned it AND this draft is clean AND the kill switch is off. */
@@ -135,6 +149,10 @@ export function decideSend(input: SendDecisionInput): { auto: boolean; reason: s
   if (input.state.mode !== "auto") return { auto: false, reason: `Kind is in ${input.state.mode} mode.` };
   if (input.killSwitch) return { auto: false, reason: "Auto-send is switched off for everyone (kill switch)." };
   if (!riskAllowsAuto(input.state.riskClass)) return { auto: false, reason: "Risk class never auto-sends." };
+  if (draftFromFallbackModel(input.draftModel)) {
+    return { auto: false, reason: `Written by fallback model ${input.draftModel}, not Claude: a person must review it.` };
+  }
   if (input.draftNeedsReview) return { auto: false, reason: "This draft has flags that need a person." };
+  if (input.draftModel === null) return { auto: false, reason: "No draft was written." };
   return { auto: true, reason: "Kind earned auto-send and this draft has no flags." };
 }

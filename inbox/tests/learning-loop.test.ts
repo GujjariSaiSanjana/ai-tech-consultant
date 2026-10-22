@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { FakeBrainClient } from "../src/brain/fake-client";
 import { THRESHOLDS } from "../src/config/thresholds";
+import type { LlmClient } from "../src/llm/client";
 import { heuristicDraft } from "../src/llm/heuristics";
 import { readDataBlock } from "../src/pipeline/prompts";
 import { simulatedHowToEmails } from "../src/services/simulation";
@@ -202,6 +203,35 @@ describe("trust ladder through the agent", () => {
     expect(blocked.autoSent).toBe(false);
     expect(s.repos.drafts.get(blocked.draftId)?.send_decision).toContain("kill switch");
     s.agent.setKillSwitch(false);
+    expect((await s.agent.processEmail(emails[26]?.id ?? "")).autoSent).toBe(true);
+  });
+
+  it("a draft written by a fallback model is never auto-sent, even for an auto kind", async () => {
+    let fallback = false;
+    const s = makeServices({
+      wrapLlm: (inner): LlmClient => ({
+        mocked: inner.mocked,
+        parse: async (request) => {
+          const result = await inner.parse(request);
+          return fallback && request.purpose === "draft" ? { ...result, model: "gemini-2.5-flash" } : result;
+        },
+      }),
+    });
+    const emails = simulatedHowToEmails(27, "2026-09-01T00:00:00Z", 1);
+    for (const e of emails) s.agent.ingest(e);
+    for (const e of emails.slice(0, 25)) await sendUnchanged(s, e.id);
+    expect(s.repos.trust.get("how_to:existing:none")?.mode).toBe("auto");
+
+    fallback = true;
+    const blocked = await s.agent.processEmail(emails[25]?.id ?? "");
+    expect(blocked.autoSent).toBe(false);
+    const draft = s.repos.drafts.get(blocked.draftId);
+    expect(draft).toMatchObject({ status: "pending", trust_mode: "assist", model: "gemini-2.5-flash" });
+    expect(draft?.send_decision).toContain("fallback model");
+    expect(s.repos.emails.get(emails[25]?.id ?? "")?.status).toBe("drafted");
+    expect(s.repos.trust.get("how_to:existing:none")?.mode).toBe("auto");
+
+    fallback = false;
     expect((await s.agent.processEmail(emails[26]?.id ?? "")).autoSent).toBe(true);
   });
 

@@ -3,8 +3,9 @@
  *
  * Runs the full pipeline on labelled emails and writes one row per case to
  * ../evals/results/inbox/<run_id>.jsonl (docs/contracts/eval-results.md).
- * Without ANTHROPIC_API_KEY (or with --mock) it runs the offline fake model and
- * every row says mocked: true. Baseline = empty playbook and no examples;
+ * Without any model key (or with --mock) it runs the offline fake model and
+ * every row says mocked: true. With fallback keys set, a case Claude could not
+ * serve is drafted by Gemini/NVIDIA and its row carries that model name. Baseline = empty playbook and no examples;
  * --with-learning uses the active playbook and stored examples from
  * INBOX_DATABASE_PATH, so the two runs show whether learning helps or hurts.
  */
@@ -20,7 +21,7 @@ import { THRESHOLDS } from "../src/config/thresholds";
 import { SplitSchema } from "../src/domain/schemas";
 import { bySplit, loadDataset } from "../src/evals/dataset";
 import { CaseUsageSink, runEval, summarize, type EvalCaseDetail } from "../src/evals/runner";
-import { createAnthropicClient } from "../src/llm/client";
+import { createLlmClient } from "../src/llm/factory";
 import { FakeLlmClient } from "../src/llm/fake-client";
 import { heuristicHandlers } from "../src/llm/heuristics";
 import { DEFAULT_ROUTES, isModelId, withDraftModel, type ModelId } from "../src/llm/models";
@@ -79,7 +80,7 @@ async function main(): Promise<void> {
   for (const model of models as ModelId[]) {
     const sink = new CaseUsageSink();
     const routes = withDraftModel(DEFAULT_ROUTES, model);
-    const llm = mocked ? new FakeLlmClient(heuristicHandlers(THRESHOLDS.reflectorMaxRules), routes, sink) : createAnthropicClient(routes, sink);
+    const llm = mocked ? new FakeLlmClient(heuristicHandlers(THRESHOLDS.reflectorMaxRules), routes, sink) : createLlmClient(routes, sink, env);
     details.push(...(await runEval({ runId, cases, reps, llm, sink, routeModel: model, brain: brainFor(env, mocked), memory, playbook })));
   }
 
