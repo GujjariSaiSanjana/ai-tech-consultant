@@ -1,0 +1,20 @@
+{% if not snap or not snap.estimate %}<div class="card muted">No estimate yet.</div>{% else %}{% set e = snap.estimate %}
+<div class="card">
+  <h2>Estimate: {{ '%.1f'|format(e.expected_hours) }} hours, ${{ '{:,.0f}'.format(e.price_usd) }}</h2>
+  <p class="muted">{{ (e.confidence_level * 100)|int }}% range: {{ '%.0f'|format(e.low_hours) }}-{{ '%.0f'|format(e.high_hours) }} hours, ${{ '{:,.0f}'.format(e.price_low_usd) }}-${{ '{:,.0f}'.format(e.price_high_usd) }}.
+  Each task has optimistic (O), most likely (M) and pessimistic (P) hours; expected = (O + 4M + P) / 6, computed in code.</p>
+  <p class="small">{% for k, h in e.hours_by_kind.items() %}<span class="pill {{ k }}">{{ kind_labels[k] }}: {{ '%.1f'|format(h) }} h</span> {% endfor %}</p>
+</div>
+{% for item in snap.items %}
+<div class="card">
+  <h3>{{ item.title }} <span class="pill {{ item.kind }}">{{ kind_labels[item.kind] }}</span>
+  {% for rid in item.requirement_ids %}{% if snap.changelog and rid in (snap.changelog.out_of_scope|map(attribute='id')|list) %}<span class="pill">change request</span>{% endif %}{% endfor %}</h3>
+  <div class="small muted">{{ item.description }}</div>
+  <table><tr><th>Task</th><th>Role</th><th class="num">O</th><th class="num">M</th><th class="num">P</th><th class="num">Expected</th><th class="num">Cost</th></tr>
+  {% for t in item.tasks %}<tr><td>{{ t.title }}{% for fl in t.flags %} <span class="pill flag">{{ fl.replace('_', ' ') }}</span>{% endfor %}</td><td>{{ t.role.replace('_', ' ') }}</td>
+  <td class="num">{{ t.optimistic_hours }}</td><td class="num">{{ t.likely_hours }}</td><td class="num">{{ t.pessimistic_hours }}</td>
+  <td class="num">{{ '%.1f'|format(t.expected_hours) }}</td><td class="num">${{ '{:,.0f}'.format(t.cost_usd) }}</td></tr>{% endfor %}
+  <tr><td colspan="5"><strong>Item total</strong></td><td class="num"><strong>{{ '%.1f'|format(item.expected_hours) }}</strong></td><td class="num"><strong>${{ '{:,.0f}'.format(item.cost_usd) }}</strong></td></tr>
+  </table>
+</div>{% endfor %}
+{% endif %}

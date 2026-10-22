@@ -1,0 +1,49 @@
+{
+  "client": "Fernway Digital (agency)",
+  "product": "PetalPath, a Brilliant Directories directory of wedding florists and event designers",
+  "roster": {
+    "CONSULTANT": ["Sam Patel (lead consultant)"],
+    "CLIENT": ["Leah Okafor (founder, Fernway Digital)", "Tom Reyes (developer at Fernway, part-time)"]
+  },
+  "meetings": {
+    "m1": {"file": "petalpath/meeting-01-discovery.txt", "date": "2026-09-22", "purpose": "discovery"}
+  },
+  "requirements": [
+    {"gold_id": "P01", "meeting": "m1", "kind": "setting", "trap": "vague",
+     "statement": "Couples can filter florists by wedding style, budget range and city.",
+     "script": "Leah first says 'the browsing experience needs to feel more premium'; when probed, couples want to filter by style (boho, classic, modern), budget range and city.",
+     "keywords": [["filter", "search", "browse"], ["style", "budget", "city"]]},
+    {"gold_id": "P02", "meeting": "m1", "kind": "setting", "trap": "existing_setting",
+     "statement": "Florists cannot publish their listing until an admin approves it.",
+     "script": "Leah asks Tom whether he can 'write something' so new florists stay hidden until she approves them. This is a standard BD member approval setting.",
+     "keywords": [["approv", "moderat", "review"], ["listing", "member", "florist", "profile", "publish"]]},
+    {"gold_id": "P03", "meeting": "m1", "kind": "custom_dev", "trap": null,
+     "statement": "Couples can request a quote with wedding date, guest count and budget, and florists reply inside the site.",
+     "script": "Leah: quote request with date, guest count and budget; the florist answers inside PetalPath, not by email.",
+     "keywords": [["quote"]]},
+    {"gold_id": "P04", "meeting": "m1", "kind": "custom_dev", "trap": null,
+     "statement": "Florist availability is synced from their Google Calendar so booked dates are blocked.",
+     "script": "Tom: most florists live in Google Calendar; booked wedding dates should show as unavailable.",
+     "keywords": [["google calendar", "calendar", "availability"]]},
+    {"gold_id": "P05", "meeting": "m1", "kind": "setting", "trap": "reversed_decision",
+     "statement": "Two paid plans: Basic at $19 per month and Featured at $49 per month.",
+     "script": "Leah starts with three plans including a $99 Premium, then: 'no, scratch that, three is confusing, just Basic 19 and Featured 49'.",
+     "keywords": [["plan", "pricing", "tier", "membership"], ["basic", "featured", "19", "49"]]},
+    {"gold_id": "P06", "meeting": "m1", "kind": "addon", "trap": "non_functional",
+     "statement": "The site meets WCAG 2.1 AA accessibility.",
+     "script": "Leah mentions a lawsuit scare at another client; the site has to be accessible, 'the AA thing'.",
+     "keywords": [["accessib", "wcag", "ada"]]},
+    {"gold_id": "P07", "meeting": "m1", "kind": "setting", "trap": "offhand",
+     "statement": "Florists' Instagram feeds appear on their profile.",
+     "script": "Mentioned as an aside while talking about photos: 'oh and their Instagram should just show up on the profile, everyone asks'.",
+     "keywords": [["instagram"]]},
+    {"gold_id": "P08", "meeting": "m1", "kind": "custom_dev", "trap": null,
+     "statement": "Featured florists get a monthly analytics email with profile views and quote requests.",
+     "script": "Leah: featured members pay more, so they should get a monthly email with views and quote counts.",
+     "keywords": [["analytic", "stats", "views", "monthly email", "report"]]}
+  ],
+  "not_requirements": [
+    {"statement": "A $99 Premium plan.", "reason": "reversed_decision, replaced by P05", "keywords": [["premium"], ["99"]]}
+  ],
+  "expected_question_categories": ["integrations", "data_migration", "timeline", "budget", "acceptance_criteria", "support"]
+}

@@ -1,0 +1,56 @@
+[project]
+name = "scope"
+version = "0.1.0"
+description = "Meeting-to-Scope-of-Work agent team: transcripts to scope, estimate and client-ready proposal"
+authors = [
+    { name = "Sai Sanjana G", email = "141707420+GujjariSaiSanjana@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "aiosqlite>=0.22.1",
+    "anthropic>=2.1.0",
+    "fastapi>=0.159.1",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.6",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.1",
+    "python-multipart>=0.0.32",
+    "sqlalchemy[asyncio]>=2.1.6",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.5,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.17.1",
+]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "ASYNC", "PT"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PT018"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]

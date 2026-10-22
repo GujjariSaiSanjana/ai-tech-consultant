@@ -1,0 +1,34 @@
+{% if not diff %}<div class="card muted">Changes appear here after a follow-up meeting updates an approved scope.</div>{% else %}{% set log = snap.changelog %}
+<div class="card">
+  <h2>What changed: v{{ log.from_version }} to v{{ log.to_version }}</h2>
+  <p class="legend small"><span class="pill setting">added {{ log.added|length }}</span><span class="pill addon">modified {{ log.modified|length }}</span>
+  <span class="pill custom_dev">removed {{ log.removed|length }}</span><span class="pill">outside agreed scope {{ log.out_of_scope|length }}</span>
+  <span class="muted">unchanged {{ log.unchanged_ids|length }}</span></p>
+  {% if log.change_requests %}
+  <h3>Change requests to quote separately</h3>
+  <table><tr><th>Request</th><th class="num">Extra hours</th><th class="num">Price</th></tr>
+  {% for cr in log.change_requests %}<tr><td>{{ cr.rationale }}</td><td class="num">{{ '%.1f'|format(cr.delta_hours) }}</td><td class="num">${{ '{:,.0f}'.format(cr.price_usd) }}</td></tr>{% endfor %}
+  </table>{% endif %}
+  {% for w in log.warnings %}<p class="small muted">Note: {{ w }}</p>{% endfor %}
+</div>
+<div class="card">
+  <div class="diff-row"><h3>Before (v{{ log.from_version }})</h3><h3>After (v{{ log.to_version }})</h3></div>
+  {% for row in diff %}{% if row.status != 'unchanged' %}
+  <div class="diff-row">
+    <div class="diff-cell {{ row.status if row.before and row.status in ('modified', 'removed') else 'empty' }}">
+      {% if row.before %}<strong>{{ row.before.title }}</strong><div class="small">{{ row.before.statement }}</div>{% endif %}</div>
+    <div class="diff-cell {{ row.status if row.after else 'empty' }}">
+      {% if row.after %}<strong>{{ row.after.title }}</strong> <span class="small muted">{{ row.status.replace('_', ' ') }}</span>
+        <div class="small">{{ row.after.statement }}</div>
+        {% if row.rationale %}<div class="quote">{{ row.rationale }}</div>{% endif %}
+        {% if row.after.evidence and row.status != 'unchanged' %}{% set e = row.after.evidence|last %}<div class="quote">[{{ e.meeting_id }} {{ e.timestamp }}] {{ e.speaker }}: "{{ e.quote }}"</div>{% endif %}
+      {% else %}<span class="small muted">removed</span>{% endif %}
+      {% if row.delta_hours is not none %}<div class="small">Hours: {{ '%+.1f'|format(row.delta_hours) }}</div>{% endif %}
+      {% if row.change_request %}<div class="small"><strong>Change request: {{ '%.1f'|format(row.change_request.delta_hours) }} h, ${{ '{:,.0f}'.format(row.change_request.price_usd) }}</strong></div>{% endif %}
+    </div>
+  </div>{% endif %}{% endfor %}
+  <details><summary>Unchanged ({{ log.unchanged_ids|length }})</summary>
+  {% for row in diff if row.status == 'unchanged' %}<div class="diff-row"><div class="diff-cell">{{ row.before.title }}</div><div class="diff-cell">{{ row.after.title }}</div></div>{% endfor %}
+  </details>
+</div>
+{% endif %}

@@ -1,0 +1,312 @@
+# Meeting: GuideFinder technical deep dive
+# Date: 2026-09-15
+# Participants: Sam Patel (CONSULTANT, lead consultant); Rina Cho (CONSULTANT, solutions engineer); Marcus Bell (CLIENT, owner, Trailhead Media); Dana Ortiz (CLIENT, operations lead)
+
+[00:00:06] CONSULTANT (Sam Patel): Hey, morning Marcus. Can you hear me okay?
+[00:00:11] CLIENT (Marcus Bell): Yep, loud and clear. Dana's dialing in from her place, she should pop in any second.
+[00:00:20] CONSULTANT (Sam Patel): Great. And Rina's here with me, she's our solutions engineer, she's going to be the one asking all the annoying technical questions today.
+[00:00:30] CONSULTANT (Rina Cho): Hi Marcus, nice to meet you. I promise they're only mildly annoying.
+[00:00:35] CLIENT (Marcus Bell): Ha, nice to meet you too. Annoying is fine, that's what we're paying for, right?
+[00:00:44] CLIENT (Dana Ortiz): Hi, hi, sorry, I'm here. The link opened in the wrong browser and then it wanted me to update something.
+[00:00:52] CONSULTANT (Sam Patel): Classic. No worries, we just started. Dana, this is Rina, our solutions engineer.
+[00:00:59] CLIENT (Dana Ortiz): Hi Rina. Oh, I like your background, is that real?
+[00:01:05] CONSULTANT (Rina Cho): It's real, yeah, that's the view from my apartment. It's way less nice when it's raining, which is most of the time lately.
+[00:01:15] CLIENT (Marcus Bell): We had our first snow up on the pass this weekend. Like an inch, but still. Dana's already in panic mode about spring bookings.
+[00:01:25] CLIENT (Dana Ortiz): I'm not in panic mode. I'm in, um, healthy planning mode.
+[00:01:31] CONSULTANT (Sam Patel): Healthy planning mode, I like that. Okay, so, um, plan for today. I want to spend two minutes recapping last week so Rina's got the same picture and so you two can tell me if I got anything wrong. Then the bulk of the time is Rina going through the integrations and the data, the import, that kind of stuff. And we'll leave some time at the end for timeline and, you know, the money conversation.
+[00:02:02] CLIENT (Marcus Bell): Sounds good.
+[00:02:05] CONSULTANT (Sam Patel): Alright. So, recap. Stop me anywhere. Search: customers want to filter guides by activity type, so kayaking, fly fishing, climbing and so on, by region, and by certification level. And there's the radius piece, someone types their ZIP and sees guides within, you said, about fifty miles.
+[00:02:31] CLIENT (Dana Ortiz): Yep. That's right.
+[00:02:34] CONSULTANT (Sam Patel): Guide profiles show live availability pulled from FareHarbor and Peek, so a customer can see open dates. New paying guides get synced into HubSpot with plan and region, and we said we'd go into the fields today. Guides whose card fails get suspended automatically after a grace period, Marcus you said maybe a week.
+[00:03:03] CLIENT (Marcus Bell): About a week, yeah. I'm not married to seven days exactly.
+[00:03:08] CONSULTANT (Sam Patel): Understood. Then the import, roughly twelve hundred guides from the old WordPress directory, Dana exports a spreadsheet. Reviews: customers leave star reviews and Dana approves each one before it goes live. Elite members show up first in search results. Profile pages under three seconds on a phone. The homepage hero, the big search box, redesigned to match the new brand mockup. A verified certification badge that Dana grants after she checks the documents.
+[00:03:48] CLIENT (Dana Ortiz): Mm-hm.
+[00:03:51] CONSULTANT (Sam Patel): One inquiry form that goes out to up to three matching guides. The weekly email for Dana, Monday mornings, signups and revenue. Plans are Free, Pro at twenty-nine a month, Elite at seventy-nine a month, and each one can be paid monthly or annually. And a cookie consent banner for the European visitors. Did I miss anything?
+[00:04:18] CLIENT (Marcus Bell): No, that's, wow, that's it. Hearing it all at once it sounds like a lot.
+[00:04:25] CONSULTANT (Sam Patel): It's a healthy list. Nothing crazy on there. Okay, Dana, you sent me a note on Friday saying you had a couple more things that came up over the weekend?
+[00:04:37] CLIENT (Dana Ortiz): Yeah, so, um, two things. The first one is photos. Honestly, photos sell trips. Like, I can tell you from the old site, the guides with good pictures get way more inquiries than the ones with, you know, one blurry shot of a truck.
+[00:04:59] CLIENT (Marcus Bell): There's a guy in Montana whose only photo was literally his truck. With the boat on it. But still.
+[00:05:06] CLIENT (Dana Ortiz): It was a nice boat.
+[00:05:09] CONSULTANT (Sam Patel): So what are you picturing, like a gallery on the profile?
+[00:05:14] CLIENT (Dana Ortiz): Right, a photo gallery on each guide's profile. Trip photos. The fish, the river, the clients smiling, whatever. And I was thinking it's a good thing to tie to the plans. Elite guides get up to twenty photos.
+[00:05:34] CONSULTANT (Sam Patel): Up to twenty on Elite. And for Pro and Free, did you have numbers in mind?
+[00:05:41] CLIENT (Dana Ortiz): Um, I hadn't gotten that far. Less than twenty. Marcus, did we talk about that?
+[00:05:48] CLIENT (Marcus Bell): We didn't. I'd say just, Elite gets the twenty, that's the selling point. We can figure out the others.
+[00:05:57] CONSULTANT (Sam Patel): Okay. I'll note Elite at twenty and the lower tiers as something we'll confirm. Rina, anything on that?
+[00:06:05] CONSULTANT (Rina Cho): Just that the photos coming over from the old site would land in the same place, so I'll want to understand what's in that export. We'll get to it.
+[00:06:15] CONSULTANT (Sam Patel): Cool. And the second thing?
+[00:06:18] CLIENT (Dana Ortiz): That's Marcus's, actually.
+[00:06:21] CLIENT (Marcus Bell): Yeah, so, um, I was on one of those hotel sites with my wife planning our anniversary trip, and you can heart the places you like, and then you come back and they're all there. I want that. Customers can heart a guide and come back later and find them.
+[00:06:42] CONSULTANT (Sam Patel): So saving favorite guides to their account.
+[00:06:46] CLIENT (Marcus Bell): Exactly. Because nobody books a fishing trip in one sitting. They look on their lunch break, they show their buddy, they come back on the weekend.
+[00:06:58] CONSULTANT (Sam Patel): That means the customer has to be logged in, right? There's an account on their side.
+[00:07:03] CLIENT (Marcus Bell): I guess so, yeah. I mean, I don't want to force anyone to sign up just to browse. But if they want to save stuff, sure, they log in.
+[00:07:15] CONSULTANT (Sam Patel): Got it. Browsing stays open, saving needs a login.
+[00:07:19] CLIENT (Dana Ortiz): And then I'd know who they are, which, honestly, is a nice side effect.
+[00:07:26] CONSULTANT (Sam Patel): Yeah, it helps you, too. Okay. Those are the two adds. Anything else new before I hand over to Rina?
+[00:07:33] CLIENT (Marcus Bell): No, I think that's it. I promised Dana I wouldn't add anything else this week.
+[00:07:39] CLIENT (Dana Ortiz): He did promise. I have it in writing.
+[00:07:43] CONSULTANT (Rina Cho): Okay, great. So I want to start with HubSpot, because that one's pretty concrete. Dana, last week you said every new paying guide should land in HubSpot with plan and region so sales can follow up. Who's actually in HubSpot day to day?
+[00:08:03] CLIENT (Dana Ortiz): Me, and we have a part-time sales guy, Tyler. He's the one who calls the guides when they sign up, or, like, when they're about to renew.
+[00:08:15] CONSULTANT (Rina Cho): Okay. And when a record lands in HubSpot, what does Tyler need to see on it? Like, if you picture the contact card.
+[00:08:25] CLIENT (Dana Ortiz): So, name and email, obviously. Then the plan. Then the region. Then, um, the signup date, so he knows how new they are. And the renewal date. The renewal date is the big one for him.
+[00:08:44] CONSULTANT (Rina Cho): Plan, region, signup date, renewal date. Plus name and email.
+[00:08:49] CLIENT (Dana Ortiz): Yes. That's the core.
+[00:08:52] CONSULTANT (Rina Cho): And region, is that a fixed list on your side, or free text?
+[00:08:58] CLIENT (Dana Ortiz): Um. Good question. On the old site it was free text, which is a disaster. People wrote "Montana," "MT," "Big Sky country," one guy wrote "the good part of Idaho."
+[00:09:13] CLIENT (Marcus Bell): That guy's great, by the way.
+[00:09:16] CLIENT (Dana Ortiz): He's great, but it's not a region.
+[00:09:19] CONSULTANT (Rina Cho): So for HubSpot it'd be really helpful if region is a fixed list, the same list that drives the search filter. Do you have a property in HubSpot for region already?
+[00:09:32] CLIENT (Dana Ortiz): I think Tyler made one. Like a dropdown. I'd have to check what's in it.
+[00:09:39] CONSULTANT (Rina Cho): Okay, can you send me a screenshot of the HubSpot contact properties? Just the list, no data. That way I can map our fields to yours instead of guessing.
+[00:09:52] CLIENT (Dana Ortiz): Yeah, I can do that today.
+[00:09:54] CONSULTANT (Rina Cho): And plan, would that be a property on the contact too? Free, Pro, Elite?
+[00:10:02] CLIENT (Dana Ortiz): Well, it says new paid members, so Free people don't go in at all, right Marcus?
+[00:10:09] CLIENT (Marcus Bell): Right, I don't want Tyler wasting time on Free people. Well, hmm. I mean, eventually maybe, to upsell them. But not now.
+[00:10:20] CONSULTANT (Sam Patel): So for now it's paid members only. Pro and Elite.
+[00:10:24] CLIENT (Marcus Bell): For now, yeah.
+[00:10:27] CONSULTANT (Rina Cho): And if someone upgrades from Pro to Elite, should HubSpot update the plan on the existing contact?
+[00:10:36] CLIENT (Dana Ortiz): Oh, yes. Definitely. Otherwise Tyler's calling an Elite guide trying to sell them Elite.
+[00:10:44] CONSULTANT (Rina Cho): Which has happened, I'm guessing.
+[00:10:47] CLIENT (Dana Ortiz): Which has happened. Twice.
+[00:10:51] CONSULTANT (Rina Cho): Okay. And renewal date, I want to make sure we mean the same thing. For a monthly guide that's next month, for an annual guide that's a year out.
+[00:11:02] CLIENT (Dana Ortiz): Yeah, the next time they get charged.
+[00:11:07] CONSULTANT (Rina Cho): Next charge date. Got it. And then for the suspended guides, the failed card people, does Tyler need to know about those in HubSpot?
+[00:11:18] CLIENT (Dana Ortiz): Um.
+[00:11:21] CLIENT (Marcus Bell): Probably? I don't know. Dana?
+[00:11:24] CLIENT (Dana Ortiz): I don't know either, honestly. Let me ask Tyler.
+[00:11:28] CONSULTANT (Sam Patel): That's fine, put it on the list of things to check with Tyler. Not urgent.
+[00:11:35] CONSULTANT (Rina Cho): Okay, sorry, one more and then I'll leave HubSpot alone. Does HubSpot need to push anything back? Like, if Tyler changes something in HubSpot, should that come back to the directory?
+[00:11:49] CLIENT (Dana Ortiz): No. No no. HubSpot is just Tyler's thing. The directory is the source of truth.
+[00:11:56] CONSULTANT (Rina Cho): Perfect, one direction. That makes my life much easier.
+[00:12:02] CONSULTANT (Sam Patel): She's genuinely happy about that, by the way. Two-way syncs are where projects go to die.
+[00:12:09] CLIENT (Marcus Bell): Ha. Noted.
+[00:12:15] CONSULTANT (Rina Cho): Okay, booking systems. FareHarbor and Peek. Last week you said you want live availability on each guide profile. So the first thing I need to know, do you, as Trailhead, have API access to either of them? Or is it each guide that has their own account?
+[00:12:37] CLIENT (Marcus Bell): So, it's each guide's own account. They use FareHarbor or Peek to run their own bookings. We don't run anything.
+[00:12:47] CONSULTANT (Rina Cho): Okay. And has anyone at Trailhead talked to FareHarbor or Peek about a partner or API arrangement?
+[00:12:57] CLIENT (Marcus Bell): FareHarbor, yes, I think so. I talked to a rep at a trade show in, when was that, March? And they said there's a partner thing, and I think we signed up for it. I'd have to dig through my email. I'm pretty sure we have it.
+[00:13:18] CONSULTANT (Rina Cho): Pretty sure is good. Can you find that email?
+[00:13:23] CLIENT (Marcus Bell): Yeah, I'll find it.
+[00:13:25] CONSULTANT (Rina Cho): And Peek?
+[00:13:28] CLIENT (Marcus Bell): Peek, I honestly don't know. I don't think we ever talked to them. Dana?
+[00:13:35] CLIENT (Dana Ortiz): Not that I know of. I know some of our guides use Peek, but we never contacted them.
+[00:13:44] CONSULTANT (Rina Cho): Okay. So FareHarbor, Marcus thinks yes, Peek, unknown. That's important for us, because without API access we can't pull availability, there's no workaround that's, like, reliable. So that's a gating item.
+[00:14:02] CLIENT (Marcus Bell): Understood.
+[00:14:05] CONSULTANT (Sam Patel): Do you have a sense of the split? How many of your guides are on FareHarbor versus Peek versus neither?
+[00:14:13] CLIENT (Dana Ortiz): Um, I'd guess, of the ones who use something, most are FareHarbor. Peek is more, like, the rafting companies, the bigger outfitters. And a lot of the small guys use nothing, they use a paper calendar and their phone.
+[00:14:32] CLIENT (Marcus Bell): A lot of them. Like, honestly, maybe half.
+[00:14:36] CONSULTANT (Rina Cho): So for the half with nothing, the profile just wouldn't have the calendar?
+[00:14:42] CLIENT (Marcus Bell): I guess so. Or a "contact me" or something. That's what the inquiry form is for.
+[00:14:49] CONSULTANT (Sam Patel): Right, the inquiry form covers them. Okay.
+[00:14:53] CONSULTANT (Rina Cho): And then, on the guide side, a guide would need to connect their account somehow, give us their FareHarbor company name or authorize us, whatever the mechanism is. I'm not going to promise how that works until I've seen the partner docs.
+[00:15:12] CLIENT (Marcus Bell): Sure, that makes sense.
+[00:15:14] CONSULTANT (Rina Cho): Cool. I'll write down: FareHarbor partner access, Marcus to confirm; Peek, unknown, someone needs to reach out.
+[00:15:26] CLIENT (Dana Ortiz): I can email Peek. I'll find a contact.
+[00:15:30] CONSULTANT (Rina Cho): That'd be great, thank you.
+[00:15:36] CONSULTANT (Sam Patel): Sorry, can I just, Marcus, you froze for a second there. Can you hear us?
+[00:15:43] CLIENT (Marcus Bell): Can you hear me now? Hello?
+[00:15:47] CONSULTANT (Sam Patel): Yeah, you're back. You were frozen mid-nod.
+[00:15:51] CLIENT (Marcus Bell): Sorry, the office wifi does this when someone starts a video upload. Dana, is Kyle uploading the drone stuff again?
+[00:16:00] CLIENT (Dana Ortiz): Probably. I'll text him.
+[00:16:04] CLIENT (Marcus Bell): Okay, I'm here. What did I miss?
+[00:16:07] CONSULTANT (Rina Cho): Just that Dana's going to reach out to Peek, and you're going to find the FareHarbor email.
+[00:16:14] CLIENT (Marcus Bell): Right, yep, got it.
+[00:16:31] CONSULTANT (Rina Cho): Okay, next, the import. Dana, you said about twelve hundred guides in the old WordPress directory. Did you manage to pull the export? Sam mentioned you might.
+[00:16:45] CLIENT (Dana Ortiz): I did, yeah, I did a test export on Thursday. Let me, um, can I share my screen? Is that okay?
+[00:16:55] CONSULTANT (Sam Patel): Please, go for it.
+[00:17:27] CLIENT (Dana Ortiz): Okay, can you see a spreadsheet? It's green.
+[00:17:33] CONSULTANT (Rina Cho): I see it. Can you zoom in a little? It's tiny on my end.
+[00:17:42] CLIENT (Dana Ortiz): How's that?
+[00:17:44] CONSULTANT (Rina Cho): Perfect. Okay, so walk me through the columns.
+[00:17:50] CLIENT (Dana Ortiz): So, first is the name, then email, then region, which, again, free text, I'm sorry. Then activities, which is, like, comma separated, "fly fishing, float trips," that kind of thing. And then this column here is the photo URL.
+[00:18:13] CONSULTANT (Rina Cho): So the CSV has photo URLs, one per guide? Or can there be more than one in there?
+[00:18:21] CLIENT (Dana Ortiz): Um, let me scroll. It looks like just one. The main profile picture. Some of them are blank.
+[00:18:31] CONSULTANT (Rina Cho): Okay. And those URLs point at the old WordPress site, right? Like, uploads folder?
+[00:18:40] CLIENT (Dana Ortiz): Yeah, they all start with our old domain, slash wp-content, slash uploads.
+[00:18:47] CONSULTANT (Rina Cho): Okay, that's important. That means the old site has to stay up until we've pulled the images over. If someone shuts down the WordPress hosting before the import, all those links die.
+[00:19:02] CLIENT (Marcus Bell): Oh. Okay. I was literally going to cancel that hosting next month, it's like forty bucks a month.
+[00:19:11] CONSULTANT (Sam Patel): Please don't. Keep it for now.
+[00:19:14] CLIENT (Marcus Bell): Okay, okay. I won't touch it.
+[00:19:18] CONSULTANT (Rina Cho): And on the twelve hundred, is that everyone, or just active people? Like, are there guides in there who left years ago?
+[00:19:29] CLIENT (Dana Ortiz): Oh, it's everyone. There's definitely dead ones in there. People who retired, one guy who moved to New Zealand.
+[00:19:39] CLIENT (Marcus Bell): Lucky guy.
+[00:19:42] CONSULTANT (Rina Cho): So should we import all twelve hundred, or do you want to clean the list first?
+[00:19:49] CLIENT (Dana Ortiz): I mean, I'd rather clean it, but I'm not going to get through twelve hundred rows before launch. Probably we just bring them all in.
+[00:19:59] CLIENT (Marcus Bell): Bring them all. A big directory looks good. We can clean up later.
+[00:20:04] CONSULTANT (Sam Patel): Okay, so all twelve hundred come over. And what plan do they land on? Are they all Free to start?
+[00:20:13] CLIENT (Marcus Bell): Hmm. Some of them paid on the old site, like a flat listing fee. But that was a different setup.
+[00:20:21] CLIENT (Dana Ortiz): I think Free for everybody and then we invite them to upgrade. That's what I'd do.
+[00:20:29] CLIENT (Marcus Bell): Yeah, that's probably fine.
+[00:20:31] CONSULTANT (Sam Patel): Let's park that as something you two confirm, since it touches the money side. I don't want to assume it.
+[00:20:40] CLIENT (Marcus Bell): Fair.
+[00:20:43] CONSULTANT (Rina Cho): And the region free text, I'm going to need a mapping. Like, all the spellings of Montana go to Montana. Is that something you could do, Dana, or do you want us to take a first pass?
+[00:20:57] CLIENT (Dana Ortiz): Could you take a first pass? I'll fix whatever's wrong. I know these people, I'll know if someone's in the wrong place.
+[00:21:07] CONSULTANT (Rina Cho): Sure, we can do a first pass and you review it.
+[00:21:11] CONSULTANT (Sam Patel): What about reviews? On the old site, were there reviews?
+[00:21:17] CLIENT (Dana Ortiz): There were, yeah. Not a ton. Some guides have like thirty, most have zero or one.
+[00:21:25] CONSULTANT (Sam Patel): Are those in this export?
+[00:21:28] CLIENT (Dana Ortiz): No. This is just the guide info. The reviews are in a plugin, I think they're separate. I'd have to figure out if I can even get them out.
+[00:21:39] CONSULTANT (Sam Patel): And do you want them to come over?
+[00:21:42] CLIENT (Marcus Bell): I mean, the good ones, yes. The guides with thirty five-star reviews would be furious if they lost them.
+[00:21:51] CLIENT (Dana Ortiz): But some of them are fake, Marcus. That's the whole reason I want to approve every review now. If we bring them all over, we're bringing the fake ones too.
+[00:22:02] CLIENT (Marcus Bell): So we bring the good ones.
+[00:22:05] CLIENT (Dana Ortiz): And who decides which ones are good? Me? For, like, I don't know how many there are.
+[00:22:12] CLIENT (Marcus Bell): I don't know. Yeah. Okay. Let's not decide that right now.
+[00:22:18] CONSULTANT (Sam Patel): That's fine, I'll leave it as an open question. Whether the old reviews come over, and if so which ones. Dana, if you can find out whether the plugin even lets you get them out, that'd help us size it either way.
+[00:22:35] CLIENT (Dana Ortiz): Yeah, I'll look.
+[00:22:37] CONSULTANT (Rina Cho): You can stop sharing whenever, by the way. Thank you, that was super helpful.
+[00:22:44] CLIENT (Dana Ortiz): Oh, right. Okay. Stopped.
+[00:22:56] CONSULTANT (Rina Cho): Okay, going back to the photos for a sec. Dana, the galleries you mentioned at the start, the Elite twenty. Would the guides upload those themselves, from their account?
+[00:23:10] CLIENT (Dana Ortiz): Yes, God, yes. I'm not uploading twelve hundred people's fish pictures.
+[00:23:17] CONSULTANT (Rina Cho): Ha, okay. And the one profile photo from the CSV, that becomes their main profile picture, and the gallery is separate, on top of that.
+[00:23:28] CLIENT (Dana Ortiz): Yeah, that's how I'd picture it.
+[00:23:31] CONSULTANT (Rina Cho): One thing I'll flag. Twenty photos is a lot of weight on a phone, and Marcus, you gave us the three seconds on mobile. So we'll need to be smart about how the gallery loads. It's doable, I'm just saying the two are connected.
+[00:23:50] CLIENT (Marcus Bell): Okay, but the three seconds is the three seconds. I'm not giving that up for pictures.
+[00:23:57] CONSULTANT (Rina Cho): No, understood, I'm not asking you to. It just affects how we build it.
+[00:24:04] CONSULTANT (Sam Patel): Can I ask something on the admin side? Because it came up with the reviews and the badge. Right now Dana approves reviews, Dana grants badges, Dana checks certificates. Is it only ever Dana in the admin? Or will Tyler or anyone else be in there too?
+[00:24:25] CLIENT (Dana Ortiz): Um. Right now it's me. Tyler might need to look at stuff.
+[00:24:32] CLIENT (Marcus Bell): And me. I want to be able to get in there.
+[00:24:36] CONSULTANT (Sam Patel): Sure. So, like, should Tyler be able to approve a review? Or grant a badge?
+[00:24:43] CLIENT (Dana Ortiz): No, not the badge. The badge is mine, that's a, like, there's liability there. Reviews, maybe. I don't know.
+[00:24:53] CLIENT (Marcus Bell): I don't think Tyler should be approving reviews.
+[00:24:57] CLIENT (Dana Ortiz): Well, if I'm on vacation, someone has to.
+[00:25:02] CLIENT (Marcus Bell): Then I'll do it.
+[00:25:05] CLIENT (Dana Ortiz): You won't do it, Marcus.
+[00:25:07] CLIENT (Marcus Bell): I might do it.
+[00:25:10] CONSULTANT (Sam Patel): Okay, I'm hearing that who can do what in the admin isn't settled yet. That's totally normal. Could you two talk about it and maybe write down, like, who are the people and what should each of them be allowed to touch?
+[00:25:27] CLIENT (Dana Ortiz): Yeah. We'll talk.
+[00:25:30] CLIENT (Marcus Bell): We'll talk.
+[00:25:33] CONSULTANT (Sam Patel): No rush on that. It doesn't block anything this week.
+[00:25:41] CONSULTANT (Rina Cho): Okay, so on the suspension piece, the failed payments. I just want to make sure I understand the flow you want. Card fails, there's a grace period of about a week, and then the guide gets suspended. During the grace period, is the profile still visible?
+[00:26:00] CLIENT (Marcus Bell): Yeah, still visible. I don't want to punish someone because their card expired on a Tuesday.
+[00:26:08] CONSULTANT (Rina Cho): And after suspension, the profile goes away from search?
+[00:26:12] CLIENT (Marcus Bell): Right, they're out until they pay.
+[00:26:17] CONSULTANT (Rina Cho): Okay. I'll need to look at how that's best done on the platform, there may be something there already, but I'd want to check before I say anything.
+[00:26:29] CLIENT (Marcus Bell): Sure. Last week I said custom code, but whatever works.
+[00:26:35] CONSULTANT (Rina Cho): Yeah, I'll check. I don't want to promise either way yet.
+
+[00:26:56] CONSULTANT (Rina Cho): Okay, search, quickly, because I think it's mostly clear from last week. Activity, region, certification level, and the ZIP radius. For certification level, what are the actual levels? Is that a standard list?
+[00:27:15] CLIENT (Dana Ortiz): Kind of. It depends on the activity, which is the annoying part. Climbing has AMGA stuff, fishing has, um, the casting instructor certs, paddling has ACA levels. I have a cheat sheet somewhere.
+[00:27:33] CONSULTANT (Rina Cho): Could you send the cheat sheet? Even a photo of it.
+[00:27:37] CLIENT (Dana Ortiz): It's literally a sticky note, but yes.
+[00:27:42] CONSULTANT (Rina Cho): A sticky note is a perfectly valid spec format.
+[00:27:46] CLIENT (Marcus Bell): Ha. Don't encourage her.
+[00:27:50] CONSULTANT (Rina Cho): And for the radius, fifty miles is the default people would see? Or do they pick?
+[00:27:57] CLIENT (Dana Ortiz): I said fifty because that's what people ask for on the phone. "Anyone within fifty miles of Bozeman." I don't have a strong opinion on whether they can change it.
+[00:28:10] CONSULTANT (Rina Cho): Okay, I'll note fifty as the starting point and we'll confirm the rest later.
+[00:28:17] CONSULTANT (Sam Patel): And Elite first in the results, that still applies inside a radius search too, I'm assuming? Like, within fifty miles, the Elite guides are on top.
+[00:28:28] CLIENT (Marcus Bell): Yes. Always on top. Anywhere they show up.
+[00:28:34] CONSULTANT (Sam Patel): Okay. That's consistent with last week, good.
+[00:28:40] CONSULTANT (Rina Cho): Inquiry form, one question. When the three matching guides get the inquiry, how do they get it? Email?
+[00:28:48] CLIENT (Marcus Bell): Email is fine. That's how it works now, kind of. Dana forwards stuff by hand.
+[00:28:55] CLIENT (Dana Ortiz): I forward stuff by hand at eleven at night. So anything is better.
+[00:29:02] CONSULTANT (Rina Cho): Okay, email. And "matching" is, roughly, activity and region, same as the search?
+[00:29:09] CLIENT (Marcus Bell): Yeah, like the Madison in June example. Fly fishing, that region. The three best ones.
+[00:29:18] CONSULTANT (Rina Cho): Best meaning what, though? Elite first again, or closest, or...
+[00:29:25] CLIENT (Marcus Bell): Hmm. Good question. I'd say Elite first, but I don't want the free guys to never get anything either, or they'll never see the point of upgrading. Wait, no, that's backwards.
+[00:29:39] CLIENT (Dana Ortiz): It's not backwards, it's a real tension.
+[00:29:43] CLIENT (Marcus Bell): Let me think about that one.
+[00:29:46] CONSULTANT (Sam Patel): Sure. That's one for you two, I won't guess at it.
+[00:29:58] CONSULTANT (Sam Patel): Okay, um, I want to shift to timeline, because that drives a lot of this. Last week you mentioned spring. What's the actual date in your head?
+[00:30:10] CLIENT (Marcus Bell): Before March first. That's when the spring season really starts for us. People book their May and June trips in March. If we launch in April we've missed it.
+[00:30:24] CONSULTANT (Sam Patel): Before March first. Is that a hard date or a hope?
+[00:30:30] CLIENT (Marcus Bell): It's, uh, it's pretty hard. I mean, nothing's going to explode on March second. But every week after that is money.
+[00:30:41] CLIENT (Dana Ortiz): And I need a couple weeks before that to get the guides in there, check their stuff, do the badges. So really it needs to be ready for me before that.
+[00:30:54] CONSULTANT (Sam Patel): That's a good point. So there's a "ready for Dana" date and a "public launch" date, and the public one is before March first.
+[00:31:05] CLIENT (Dana Ortiz): Yes. Thank you. That's exactly it.
+[00:31:10] CONSULTANT (Rina Cho): The FareHarbor and Peek access is probably the thing that could push that, by the way. If we're waiting on Peek for weeks, that's on the critical path.
+[00:31:21] CLIENT (Marcus Bell): Okay, so Dana, let's get on Peek this week.
+[00:31:25] CLIENT (Dana Ortiz): I said I would, Marcus.
+[00:31:28] CLIENT (Marcus Bell): I know, I know. I'm just saying.
+[00:31:37] CONSULTANT (Sam Patel): Related question, and this is the one people usually haven't thought about yet. How will you decide it's done? Like, when we hand it over, what do you check before you say "great, this is accepted"?
+[00:31:52] CLIENT (Marcus Bell): Um. I'd click around and see if it works?
+[00:31:56] CONSULTANT (Sam Patel): Ha, fair, that's honest. I'm asking because "it works" means different things to different people. For example, the three seconds. Measured how, on which phone, which page.
+[00:32:11] CLIENT (Marcus Bell): On my phone. At the trailhead.
+[00:32:15] CLIENT (Dana Ortiz): Your phone is ancient, though.
+[00:32:18] CLIENT (Marcus Bell): That's the point! Half our customers have ancient phones.
+[00:32:23] CONSULTANT (Sam Patel): Okay, so, I don't want to settle this today, but it'd help if you each wrote down, for the big pieces, what you'd check. Search, the inquiry form, HubSpot, the import. Just a few lines each. We'll turn it into a checklist together later.
+[00:32:42] CLIENT (Dana Ortiz): I can do that. I like checklists.
+[00:32:46] CLIENT (Marcus Bell): She really does.
+[00:32:50] CONSULTANT (Sam Patel): And after launch, have you thought about who looks after the site? Like if something breaks in April, who do you call?
+[00:33:00] CLIENT (Marcus Bell): You?
+[00:33:03] CONSULTANT (Sam Patel): Ha, maybe. That's a real question though. Some clients want a support arrangement, some have someone in-house. What does it look like today with the WordPress site?
+[00:33:16] CLIENT (Dana Ortiz): Today it's a freelancer, Jordan, who we text when it's broken, and he fixes it when he feels like it.
+[00:33:24] CLIENT (Marcus Bell): He's a good guy. Slow, but a good guy.
+[00:33:28] CONSULTANT (Sam Patel): Okay. So nothing formal. I'm not going to push on it today, but it's something we should figure out before launch, what happens after we hand it over.
+[00:33:40] CLIENT (Marcus Bell): Yeah. Let's come back to that one. I honestly haven't thought about it.
+[00:33:45] CONSULTANT (Sam Patel): That's fine, that's why I'm asking now and not in February.
+[00:34:05] CLIENT (Marcus Bell): Sorry, Dana, did you text Kyle? The connection's doing the thing again on my end.
+[00:34:12] CLIENT (Dana Ortiz): I did. He says he's done uploading.
+[00:34:17] CLIENT (Marcus Bell): Okay, good. Sam, you're a little choppy, but I got the support part.
+[00:34:24] CONSULTANT (Sam Patel): Okay, let me know if it gets worse, we can turn off video.
+[00:34:41] CONSULTANT (Rina Cho): Can I go back to one technical thing on the weekly email? Dana, the Monday report with signups and revenue. Where does the revenue number come from in your head? Stripe, or the directory?
+[00:34:56] CLIENT (Dana Ortiz): Um, whatever's easier. I just want to open my email Monday and see who signed up and what we made.
+[00:35:06] CONSULTANT (Rina Cho): Okay. I'll figure out the source and come back. Same content as last week, I'm just thinking about the plumbing.
+[00:35:16] CLIENT (Dana Ortiz): Sure.
+[00:35:26] CONSULTANT (Rina Cho): And the cookie banner, nothing new there, it's for the European visitors, right? The Patagonia and Alps traffic.
+[00:35:36] CLIENT (Dana Ortiz): Right. Our lawyer just said we need one. That's literally all I know.
+[00:35:43] CONSULTANT (Rina Cho): That's enough for now.
+[00:35:46] CONSULTANT (Rina Cho): And the hero redesign, Marcus, you sent the mockup last week, I've got it. The big search box matches that. Any changes since?
+[00:35:57] CLIENT (Marcus Bell): No, same mockup. The designer's happy with it, I'm happy with it.
+[00:36:03] CONSULTANT (Rina Cho): Great.
+[00:37:02] CONSULTANT (Sam Patel): Okay. So, I want to talk about the money side and how you'll make the decision, and then I'll let you go. Marcus, last week you said you're the owner. When we send a proposal, who signs off on it?
+[00:37:19] CLIENT (Marcus Bell): Me, mostly. Um, my business partner Jill will probably want to look at the number.
+[00:37:28] CONSULTANT (Sam Patel): Okay. Is Jill involved day to day?
+[00:37:32] CLIENT (Marcus Bell): Not really. She's more, she put money in early, she's on the financial side. She doesn't care about the radius search, she cares about what it costs.
+[00:37:45] CONSULTANT (Sam Patel): Got it. And if Jill looks at the number and doesn't like it, what happens?
+[00:37:52] CLIENT (Marcus Bell): Then we have a conversation. I mean, it's, it's not like she has a veto. Or, well. It's complicated. We'd talk.
+[00:38:03] CLIENT (Dana Ortiz): She kind of has a veto.
+[00:38:06] CLIENT (Marcus Bell): She doesn't have a veto, Dana.
+[00:38:09] CLIENT (Dana Ortiz): Okay.
+[00:38:12] CONSULTANT (Sam Patel): Ha. Okay. Would it make sense for Jill to join one of these calls at some point, or would she rather just see the document?
+[00:38:21] CLIENT (Marcus Bell): Probably just the document. I'll ask her. She's traveling till the end of the month anyway.
+[00:38:30] CONSULTANT (Sam Patel): Okay, no problem. And on budget. I know it's the awkward part. Do you have a range you're working with? It helps me make sure we're proposing the right shape of thing.
+[00:38:44] CLIENT (Marcus Bell): We have a number in mind. Show us yours first.
+[00:38:50] CONSULTANT (Sam Patel): Ha. Fair enough. I've heard that one before.
+[00:38:54] CLIENT (Marcus Bell): I'm sure you have.
+[00:38:57] CONSULTANT (Sam Patel): The only reason I ask is that a couple of these items swing the cost a lot. The live availability from FareHarbor and Peek is the big one. Depending on what the APIs look like, that's either reasonable or it's a project of its own. So if your number is tight, it'd be good to know early, so we can talk about phasing.
+[00:39:21] CLIENT (Marcus Bell): Understood. I hear you. I'd still rather see your number.
+[00:39:27] CONSULTANT (Sam Patel): Okay, that's fine. We'll put it together and you can react to it.
+[00:39:32] CLIENT (Dana Ortiz): Can I ask, will it be broken out? Like, per piece? Because if Jill sees one big number she's going to ask what each part costs anyway.
+[00:39:44] CONSULTANT (Sam Patel): Yes, we'll break it out by item, so you can see where the money goes.
+[00:39:49] CLIENT (Dana Ortiz): Okay, good. That'll help with Jill.
+[00:39:53] CLIENT (Marcus Bell): Everything helps with Jill.
+[00:40:06] CONSULTANT (Rina Cho): Can I jump back in on one more data question? Sorry, I know we're on money.
+[00:40:12] CONSULTANT (Sam Patel): Go ahead.
+[00:40:15] CONSULTANT (Rina Cho): The emails in the export. Have those guides agreed to be contacted by the new site? Just thinking about when we import and send them an invite to claim their profile.
+[00:40:29] CLIENT (Dana Ortiz): Um, they signed up on the old site, so, I guess? I'd have to ask the lawyer.
+[00:40:37] CONSULTANT (Rina Cho): Okay. Not a blocker for me, just worth asking when you talk to them about the cookie banner anyway.
+[00:40:47] CLIENT (Dana Ortiz): Two birds. Okay.
+[00:41:10] CLIENT (Marcus Bell): Oh, actually, this is a tangent, but Rina, you asked about the trailhead thing before, I have to tell you this. Last summer we had a customer, a dad with two kids, standing at a trailhead in the Bitterroots trying to load a guide's page, and it just would not load. One bar of signal. He called Dana from the parking lot.
+[00:41:37] CLIENT (Dana Ortiz): He called me on a Sunday. I was at my sister's wedding.
+[00:41:41] CLIENT (Marcus Bell): And she talked him through it. From the wedding.
+[00:41:45] CONSULTANT (Rina Cho): Oh no. That's dedication.
+[00:41:49] CLIENT (Dana Ortiz): That's why I care about the three seconds. That's the whole story.
+[00:41:55] CONSULTANT (Rina Cho): That's a really useful story, actually. It tells me the profile page is the one that matters most on a bad connection.
+[00:42:05] CLIENT (Marcus Bell): Exactly. The profile. That's where they are when they're standing there.
+[00:42:21] CONSULTANT (Sam Patel): Okay. Let me play back the open things so we're all on the same page, and then next steps.
+[00:42:29] CLIENT (Marcus Bell): Go for it.
+[00:42:32] CONSULTANT (Sam Patel): New since last week: photo galleries on guide profiles, Elite gets up to twenty photos, the other tiers we'll confirm. And customers can save favorite guides to their account once they're logged in. Browsing stays open.
+[00:42:50] CLIENT (Dana Ortiz): Yep.
+[00:42:53] CONSULTANT (Sam Patel): HubSpot: paid members only, one direction, with plan, region, signup date and renewal date, plus name and email. Plan updates on upgrade. Dana sends a screenshot of the HubSpot properties, and asks Tyler about suspended guides.
+[00:43:13] CLIENT (Dana Ortiz): Got it.
+[00:43:16] CONSULTANT (Sam Patel): FareHarbor: Marcus thinks you have partner access, he'll find the email. Peek: unknown, Dana reaches out this week.
+[00:43:27] CLIENT (Marcus Bell): Yes.
+[00:43:30] CONSULTANT (Sam Patel): Import: all twelve hundred come over, the CSV has name, email, region, activities and one photo URL each. Old WordPress hosting stays up. We take a first pass on the region mapping. What plan the imported guides land on, you two confirm.
+[00:43:51] CLIENT (Marcus Bell): And I'm not canceling the hosting. I heard you.
+[00:43:55] CONSULTANT (Sam Patel): Ha, thank you. Then the open ones. Whether the old reviews migrate, and which ones. Who can do what in the admin, Dana, Marcus, Tyler. How you'll decide something is accepted, the checklist. And what support looks like after launch. Plus the inquiry matching question, what "best three" means.
+[00:44:21] CLIENT (Dana Ortiz): That's a lot of homework for us.
+[00:44:25] CONSULTANT (Sam Patel): It's mostly conversations, not homework. And none of it has to be done by next week.
+[00:44:32] CLIENT (Marcus Bell): Okay.
+[00:44:35] CONSULTANT (Sam Patel): Timeline, public launch before March first, with a ready-for-Dana date a couple weeks before that. And on our side, we'll put a number together, broken out by item, and Marcus shares it with Jill.
+[00:44:52] CLIENT (Marcus Bell): Yep. That's right.
+[00:44:56] CONSULTANT (Rina Cho): And from me, once I have the FareHarbor partner docs and hear back about Peek, I'll write up what's realistic for the availability calendar.
+[00:45:09] CLIENT (Marcus Bell): Perfect.
+[00:45:18] CONSULTANT (Sam Patel): Anything from your side before we wrap? Anything I got wrong?
+[00:45:25] CLIENT (Dana Ortiz): No, I think that's right. I'll send the screenshot and the sticky note today.
+[00:45:32] CLIENT (Marcus Bell): And I'll dig up the FareHarbor email. Probably tonight.
+[00:45:37] CONSULTANT (Sam Patel): Great. Same time next week works for a quick check-in, or do you want to wait until we have the proposal?
+[00:45:46] CLIENT (Marcus Bell): Let's wait for the proposal. No offense.
+[00:45:50] CONSULTANT (Sam Patel): None taken. Okay, thanks both, enjoy the snow.
+[00:45:56] CLIENT (Dana Ortiz): Ha. Thanks, bye Rina.
+[00:46:00] CONSULTANT (Rina Cho): Bye, thanks everyone.

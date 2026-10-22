@@ -1,0 +1,280 @@
+# Meeting: PetalPath discovery call
+# Date: 2026-09-22
+# Participants: Sam Patel (CONSULTANT, AI Tech Consultant); Leah Okafor (CLIENT, Fernway Digital); Tom Reyes (CLIENT, Fernway Digital)
+
+[00:00:04] CONSULTANT (Sam Patel): Hey, good morning. Can you hear me okay?
+[00:00:11] CLIENT (Leah Okafor): Morning! Yes, loud and clear. Tom's just joining, he was fighting with his headphones a minute ago.
+[00:00:21] CLIENT (Tom Reyes): I'm here, I'm here. Sorry. Bluetooth decided today was the day it would stop working.
+[00:00:29] CONSULTANT (Sam Patel): Ha, classic. No rush at all. How's the weather over there? I saw something about storms on the news.
+[00:00:39] CLIENT (Leah Okafor): Oh, it's been wild. We had hail on Saturday, like actual golf ball hail. One of our florist friends had a wedding outdoors and they had to move the whole arch into a barn in about twenty minutes.
+[00:00:55] CONSULTANT (Sam Patel): Oh no. Did the flowers survive?
+[00:00:59] CLIENT (Leah Okafor): Mostly, yeah. The bride apparently said it was the best part of the day, which, you know, florists are magicians. That's kind of why we're doing this whole thing honestly.
+[00:01:14] CONSULTANT (Sam Patel): Love that. Okay, so, um, just to set the stage. I've read the short note you sent over, but I'd really like to hear it from you in your own words. I'll mostly be asking questions today and taking notes, and then I'll play back what I heard at the end. Sound good?
+[00:01:35] CLIENT (Leah Okafor): Perfect. Yeah.
+[00:01:38] CLIENT (Tom Reyes): Works for me.
+[00:01:42] CONSULTANT (Sam Patel): Great. So, Leah, tell me about PetalPath. What is it today and where do you want it to go?
+[00:01:52] CLIENT (Leah Okafor): Sure. So Fernway is a small agency, it's me, Tom part-time, and a couple of freelancers. We do mostly websites for small businesses, a lot of them in the wedding space. And about two years ago we noticed that every florist we worked with had the same problem, which is couples can't find them. They find the big generic wedding sites, the florists pay a ton to be listed there, and they get buried.
+[00:02:24] CONSULTANT (Sam Patel): Right.
+[00:02:25] CLIENT (Leah Okafor): So PetalPath is meant to be a directory just for wedding florists and event designers. Much more focused. We set it up on Brilliant Directories last year as kind of a test, and it's, um, it works, but it feels very template-y.
+[00:02:44] CONSULTANT (Sam Patel): And how many florists are on it right now?
+[00:02:48] CLIENT (Leah Okafor): On the live site, maybe forty? But that's just people we know. The real list is bigger, but we'll get to that.
+[00:02:58] CONSULTANT (Sam Patel): Okay, I'll make a note to come back to that. And who's actually using it on the couple side? Do you have any sense of traffic?
+[00:03:08] CLIENT (Tom Reyes): It's small. A couple thousand visits a month, mostly from Instagram links and a few blog posts Leah wrote.
+[00:03:17] CLIENT (Leah Okafor): The peony post. That one did really well.
+[00:03:22] CLIENT (Tom Reyes): The peony post is carrying us, yeah.
+[00:03:26] CONSULTANT (Sam Patel): Ha. Okay. So what's the main thing that's bugging you about it right now? If you could fix one thing.
+[00:03:35] CLIENT (Leah Okafor): Honestly the browsing experience needs to feel more premium. Like when a couple lands on it, it should feel like they're flipping through a beautiful magazine, not, you know, a phone book. That's the big one.
+[00:03:53] CONSULTANT (Sam Patel): Okay. I want to dig into that a bit, because "premium" can mean a lot of things. Is it the visual design, like typography and photos? Or is it more about how people find things? Or both?
+[00:04:10] CLIENT (Leah Okafor): Um. Both? I mean, it has to look good. But I think the frustration is more... you land on the page and it's just a list. A list of names and a little thumbnail.
+[00:04:24] CONSULTANT (Sam Patel): So walk me through it. A couple comes to the site. What are they trying to do in their head? What are they actually looking for?
+[00:04:35] CLIENT (Leah Okafor): Okay, so, they usually already know their vibe. They've got a Pinterest board. They know if they're boho, or very classic, or super modern and minimal. And they know roughly what they can spend. And obviously they need someone local, or at least someone who'll travel to them.
+[00:04:57] CONSULTANT (Sam Patel): So style, budget, and location.
+[00:05:01] CLIENT (Leah Okafor): Yeah, exactly. Right now you can kind of search by name and that's it, which is useless, because no one knows the florist's name, that's the whole point.
+[00:05:12] CONSULTANT (Sam Patel): Right. So if I play that back, couples should be able to filter the florists by style, like boho, classic, modern, by a budget range, and by city. Is that fair?
+[00:05:27] CLIENT (Leah Okafor): Yes. That's it. That's what I meant by premium, I guess. Like it just gets you to the right three people fast.
+[00:05:37] CONSULTANT (Sam Patel): Okay. And on style, is that a fixed list you'd define, or would florists type in their own?
+[00:05:47] CLIENT (Leah Okafor): Oh, a fixed list. If they type their own we'll get "rustic chic elegant whimsical" and it'll be chaos.
+[00:05:56] CLIENT (Tom Reyes): We already have that problem in the bios, to be fair.
+[00:06:01] CLIENT (Leah Okafor): We do. We really do.
+[00:06:05] CONSULTANT (Sam Patel): And could a florist be more than one style? Like boho and modern?
+[00:06:12] CLIENT (Leah Okafor): Hmm. Probably yes. Most of them do a couple of things. Maybe cap it, I don't know. I haven't thought about that.
+[00:06:21] CONSULTANT (Sam Patel): That's fine, we can leave that one open for now. And budget range, how would you think about that? Like dollar bands?
+[00:06:31] CLIENT (Leah Okafor): Yeah, like under two thousand, two to five, five to ten, ten plus. Something like that. Weddings flowers get expensive fast.
+[00:06:42] CLIENT (Tom Reyes): Should it be city or like a radius? Because some of these people are in tiny towns.
+[00:06:49] CLIENT (Leah Okafor): City. Keep it simple. Couples search by city.
+[00:06:54] CLIENT (Tom Reyes): Okay but then the woman in, what's it called, Millbrook, never shows up for anyone.
+[00:07:01] CLIENT (Leah Okafor): Then she can list the nearest city, Tom.
+[00:07:05] CONSULTANT (Sam Patel): I'll note city for now, and maybe a question mark around florists who serve a wider area. We don't need to solve that today.
+[00:07:15] CLIENT (Tom Reyes): Fair.
+[00:07:18] CONSULTANT (Sam Patel): Okay, and Tom, just so I understand your role, you're the one who set up the Brilliant Directories site?
+[00:07:26] CLIENT (Tom Reyes): Yeah, I set it up. I'm, um, I'm a developer, I do PHP and some JavaScript, but I'm only on Fernway stuff like two days a week. So I know the admin panel reasonably well but I wouldn't say I'm an expert.
+[00:07:44] CONSULTANT (Sam Patel): Got it. That's helpful. So you'd be my main technical contact.
+[00:07:50] CLIENT (Tom Reyes): Yeah, probably.
+[00:07:52] CLIENT (Leah Okafor): Oh, actually, that reminds me. Tom, can you write something so that new florists stay hidden until I approve them? Because right now anyone can sign up and they just show up instantly.
+[00:08:08] CLIENT (Tom Reyes): Write something like, a plugin?
+[00:08:12] CLIENT (Leah Okafor): I don't know, whatever it is. Something.
+[00:08:15] CONSULTANT (Sam Patel): Can I ask what's prompting that? Has something happened?
+[00:08:20] CLIENT (Leah Okafor): Yes. So last month someone signed up as a florist and it was actually a guy selling, like, fake flower subscription boxes. Plastic flowers. On a wedding florist directory. And his profile was live for a week before I noticed.
+[00:08:39] CONSULTANT (Sam Patel): Oh, that's not great.
+[00:08:42] CLIENT (Leah Okafor): And a couple emailed me asking if he was legit. It was embarrassing. So I want to see every new florist before they go public. I look at their portfolio, make sure they're real, then I flip the switch.
+[00:08:59] CONSULTANT (Sam Patel): Okay. So florists cannot publish their listing until you, as admin, approve it. And while they're pending, nobody on the public side sees them.
+[00:09:11] CLIENT (Leah Okafor): Exactly.
+[00:09:13] CONSULTANT (Sam Patel): Before Tom goes and writes code for that, I'd like to check whether Brilliant Directories already handles something like that in the membership settings. I have a feeling there may be an option, but I don't want to promise it until I've looked at your version.
+[00:09:32] CLIENT (Tom Reyes): I mean, there might be. I've never gone through every tab in there, honestly. There's like four hundred settings.
+[00:09:42] CONSULTANT (Sam Patel): Yeah, it's a lot. I'll check it. Either way, the behavior you want is clear, which is the main thing.
+[00:09:50] CLIENT (Leah Okafor): Great. Less work for Tom is always good.
+[00:09:54] CLIENT (Tom Reyes): Less work for Tom is very good.
+[00:09:58] CONSULTANT (Sam Patel): And when you approve someone, do you need them to be notified? Or what happens if you reject?
+[00:10:06] CLIENT (Leah Okafor): Um, I'd want them to get an email, I guess. Rejection, I'd probably just email them myself. It doesn't happen that often.
+[00:10:18] CONSULTANT (Sam Patel): Okay. Noted. Let's park that detail.
+[00:10:22] CLIENT (Leah Okafor): Can I share my screen? I want to show you what it looks like right now so you can see how sad it is.
+[00:10:29] CONSULTANT (Sam Patel): Please, yeah.
+[00:10:51] CLIENT (Leah Okafor): Okay, can you see it? The pink header?
+[00:10:55] CONSULTANT (Sam Patel): Yep, I see the homepage.
+[00:10:59] CLIENT (Leah Okafor): So this is the search page. You see, it's just a keyword box and a category dropdown that only has "Florist" and "Event Designer" in it. And then you get this list.
+[00:11:14] CONSULTANT (Sam Patel): And when you click into one?
+[00:11:18] CLIENT (Leah Okafor): Click into, let's do Maren, she's lovely. So here's her profile. Bio, a phone number, a little gallery, and a contact form that sends to her email.
+[00:11:34] CONSULTANT (Sam Patel): Okay. And that contact form, how is that working for the florists?
+[00:11:40] CLIENT (Leah Okafor): Badly. That's the other big thing actually.
+[00:11:45] CLIENT (Tom Reyes): Here we go.
+[00:11:47] CLIENT (Leah Okafor): No, it's important! So couples fill in "hi, are you available" and that's it. And then the florist has to email back and ask, what's the date, how many guests, what's your budget. Three emails later they find out the couple has four hundred dollars for a two hundred person wedding.
+[00:12:09] CONSULTANT (Sam Patel): Right, so a lot of wasted back and forth.
+[00:12:14] CLIENT (Leah Okafor): So much. Maren told me she spends like five hours a week on that.
+[00:12:21] CONSULTANT (Sam Patel): Okay, hold that thought, I want to come back to the inquiry flow properly in a minute. Let me just finish on the profile. Anything else on this page that bugs you?
+[00:12:33] CLIENT (Leah Okafor): The gallery is tiny. Look at it. These are gorgeous photos and they're like postage stamps.
+[00:12:41] CONSULTANT (Sam Patel): Yeah, I see. How many photos does a typical florist have?
+[00:12:47] CLIENT (Tom Reyes): The cap is set at twelve right now, I think. Some have like three though.
+[00:12:54] CLIENT (Leah Okafor): The good ones would upload fifty if we let them.
+[00:12:58] CLIENT (Leah Okafor): Oh and their Instagram should just show up on the profile, everyone asks. Like literally every florist who signs up asks me that.
+[00:13:08] CONSULTANT (Sam Patel): Their Instagram feed, displayed on the profile page?
+[00:13:12] CLIENT (Leah Okafor): Yeah. Like the last few posts. Because that's where they actually post their work, not on our gallery. Anyway. The gallery being bigger, that's the main thing.
+[00:13:24] CONSULTANT (Sam Patel): Okay, got it, so the Instagram feed showing up on their profile, and bigger gallery presentation. I've written both down.
+[00:13:59] CONSULTANT (Sam Patel): Okay, Leah, you can stop sharing whenever. Let's go back to the inquiry problem, because that sounds like a real pain point. Tell me what you'd want instead of the contact form.
+[00:14:14] CLIENT (Leah Okafor): Okay. Stopping share. So, what I want is a proper quote request. The couple fills in their wedding date, the guest count, and their budget. Up front, required. So the florist knows immediately if it's a fit.
+[00:14:33] CONSULTANT (Sam Patel): Date, guest count, budget. Anything else? Venue, maybe?
+[00:14:40] CLIENT (Leah Okafor): Hmm, venue would be nice but I don't want to make the form too long. Couples bail on long forms. Let's say those three for sure.
+[00:14:51] CONSULTANT (Sam Patel): Okay. And then where does the request go? To the florist's email like now?
+[00:14:58] CLIENT (Leah Okafor): No, that's the thing. I want the florist to answer inside PetalPath. Not by email. Because the moment it goes to email, we lose it. We have no idea if they responded, if they booked, nothing.
+[00:15:15] CONSULTANT (Sam Patel): So a sort of inbox on the site, where the florist sees the request and replies, and the couple sees the reply on the site too.
+[00:15:26] CLIENT (Leah Okafor): Yes. Like a little message thread. I mean they can get a notification email saying "you have a new quote request", fine, but the actual conversation is on PetalPath.
+[00:15:40] CONSULTANT (Sam Patel): That makes sense. And is part of the reason you want it on-platform so you can see whether the site is actually generating business for them?
+[00:15:51] CLIENT (Leah Okafor): Totally. If I'm going to charge them, I need to show them it's working.
+[00:15:56] CONSULTANT (Sam Patel): Okay. We'll get to charging in a second. Tom, does the couple need an account to send a quote request? Do couples have accounts today?
+[00:16:09] CLIENT (Tom Reyes): No, couples don't log in at all right now. It's only florists who have accounts.
+[00:16:15] CLIENT (Leah Okafor): I don't want to force couples to make an account. That's a barrier.
+[00:16:21] CONSULTANT (Sam Patel): Okay, but if the reply lives on PetalPath, the couple needs some way to get back to the thread. A link in an email maybe. That's something I'll need to think through, I don't want to decide it on the call.
+[00:16:38] CLIENT (Leah Okafor): Sure. Whatever is least annoying for them.
+[00:16:42] CLIENT (Tom Reyes): Least annoying is my design philosophy too.
+[00:16:47] CONSULTANT (Sam Patel): Ha. Okay, so, I want to make sure I'm not missing the florist side. When a florist gets a quote request, what do they check first?
+[00:16:58] CLIENT (Tom Reyes): The date. Always the date. That's actually something I wanted to bring up.
+[00:17:05] CONSULTANT (Sam Patel): Go for it.
+[00:17:08] CLIENT (Tom Reyes): So most of these florists, they basically live in Google Calendar. Like, their whole business is in there. Every wedding, every consult. And the number one thing that annoys them is getting a request for a date they're already booked.
+[00:17:27] CLIENT (Leah Okafor): Saturdays in June are gone a year out.
+[00:17:31] CLIENT (Tom Reyes): Right. So what I was thinking is, if they connect their Google Calendar, then the booked wedding dates show as unavailable on their profile. So a couple can see, oh, June fourteenth is taken, don't bother.
+[00:17:49] CONSULTANT (Sam Patel): So availability synced from their Google Calendar, and booked dates blocked out. Is it all-day events only, or anything in the calendar?
+[00:18:02] CLIENT (Tom Reyes): Hmm. Good question. Probably weddings are all-day. But they'd have consults at like two pm that shouldn't block the day.
+[00:18:13] CLIENT (Leah Okafor): Can they just pick which calendar? Like a "Weddings" calendar?
+[00:18:18] CLIENT (Tom Reyes): Maybe, yeah. That'd be cleaner.
+[00:18:23] CONSULTANT (Sam Patel): Okay, I'll note that as an open detail. Which calendar, and what counts as booked. And does the quote form then stop them picking a blocked date, or just warn them?
+[00:18:36] CLIENT (Leah Okafor): Warn, I think. Some florists do two weddings in a day if they're small.
+[00:18:43] CLIENT (Tom Reyes): Really?
+[00:18:45] CLIENT (Leah Okafor): Maren did three once. She almost died.
+[00:18:49] CONSULTANT (Sam Patel): Okay. And do all of them use Google? Any on Outlook or Apple?
+[00:18:56] CLIENT (Tom Reyes): Most are Google. I'm sure there's a couple on iCloud. I wouldn't worry about those right now.
+[00:19:04] CONSULTANT (Sam Patel): Okay. So Google Calendar for now. Which actually brings me to a broader question. Besides Google Calendar and Instagram, are there other tools these florists use that you'd want PetalPath to talk to? Like accounting, CRM, payment tools, anything like that?
+[00:19:25] CLIENT (Leah Okafor): Oh, um. Probably? A lot of them use those florist software things, like the proposal tools.
+[00:19:34] CLIENT (Tom Reyes): There's like three of them and everyone uses a different one.
+[00:19:40] CLIENT (Leah Okafor): And some use HoneyBook. Or Dubsado. I honestly don't know. We'd have to ask them.
+[00:19:48] CONSULTANT (Sam Patel): Okay, so that's open. I'll put a question down for that, which other integrations, if any, beyond Google Calendar and Instagram. Could you ask a few florists what they use?
+[00:20:02] CLIENT (Leah Okafor): I can try. Maybe. I'll see.
+[00:20:08] CONSULTANT (Sam Patel): Great. Sorry, I'm writing fast. Give me one second.
+[00:20:31] CONSULTANT (Sam Patel): Okay. You mentioned charging the florists. Let's talk about money. How does it work today?
+[00:20:39] CLIENT (Leah Okafor): Today it's free. Everyone's on it for free because it was a test. But we want to start charging in the new version.
+[00:20:49] CONSULTANT (Sam Patel): Okay. What were you thinking?
+[00:20:53] CLIENT (Leah Okafor): So I've been sketching this out. Three plans. Basic at nineteen a month, which is just a listing. Featured at forty-nine a month, they show up higher in search and get the badge. And then Premium at ninety-nine a month, which is, um, everything, plus they'd get, like, a homepage spot and a blog feature.
+[00:21:19] CONSULTANT (Sam Patel): Okay. Basic nineteen, Featured forty-nine, Premium ninety-nine.
+[00:21:25] CLIENT (Tom Reyes): What's the difference between Featured and Premium, though? Like really?
+[00:21:31] CLIENT (Leah Okafor): Premium gets the homepage and the...
+[00:21:35] CLIENT (Tom Reyes): But the homepage only fits like six people.
+[00:21:39] CLIENT (Leah Okafor): Yeah. Hmm.
+[00:21:43] CONSULTANT (Sam Patel): It's a fair question. When a florist looks at the pricing page, how quickly can they tell which plan is for them?
+[00:21:53] CLIENT (Leah Okafor): Ugh. No, actually, scratch that. Three is confusing. Just Basic nineteen and Featured forty-nine. Two plans. If someone wants the homepage, I'll sell it to them separately or whatever.
+[00:22:08] CONSULTANT (Sam Patel): Okay, so to be clear, we drop the ninety-nine dollar Premium plan entirely. Two paid plans, Basic at nineteen a month, Featured at forty-nine a month.
+[00:22:20] CLIENT (Leah Okafor): Yes. Two plans. Final answer.
+[00:22:24] CLIENT (Tom Reyes): For now.
+[00:22:26] CLIENT (Leah Okafor): Tom.
+[00:22:27] CLIENT (Tom Reyes): I'm just saying, you changed it three times last week.
+[00:22:33] CLIENT (Leah Okafor): That's why I'm saying it out loud in front of a witness.
+[00:22:38] CONSULTANT (Sam Patel): Ha, I'm the witness. It's in my notes. Is there a free tier at all, or does everyone pay?
+[00:22:47] CLIENT (Leah Okafor): Hmm. I want everyone to pay something. But the forty people we have now, I don't know, maybe I give them a few months free. I'll think about it.
+[00:22:59] CONSULTANT (Sam Patel): Okay. And monthly only, or annual too?
+[00:23:04] CLIENT (Leah Okafor): Monthly for now. Keep it simple.
+[00:23:09] CONSULTANT (Sam Patel): Got it. And what does Featured get, concretely, beyond ranking higher and a badge?
+[00:23:17] CLIENT (Leah Okafor): Oh, right, this is the other thing. Featured members pay more, so they should get something that shows them it's worth it. I want them to get a monthly email with their stats. How many people viewed their profile, and how many quote requests they got.
+[00:23:38] CONSULTANT (Sam Patel): So a monthly analytics email to Featured florists, with profile views and quote request counts.
+[00:23:46] CLIENT (Leah Okafor): Yes. Because then when they're thinking about cancelling, they open the email and go, oh, twelve couples asked me for a quote this month, okay, I'll stay.
+[00:23:58] CONSULTANT (Sam Patel): That's a smart retention move. Do Basic members get anything like that?
+[00:24:05] CLIENT (Leah Okafor): No. That's the carrot. If you want the stats, you upgrade.
+[00:24:11] CONSULTANT (Sam Patel): Okay. And the counts, is that just the number, or do you want comparisons, like versus last month?
+[00:24:19] CLIENT (Leah Okafor): Oh, versus last month would be cool. But honestly, just the numbers is fine to start.
+[00:24:26] CLIENT (Tom Reyes): Where would the view counts even come from? Do we track that now?
+[00:24:32] CLIENT (Leah Okafor): Don't we have Google Analytics on it?
+[00:24:36] CLIENT (Tom Reyes): We have it on the site, but not per florist. I don't think.
+[00:24:41] CONSULTANT (Sam Patel): That's a good flag. I'll look into where the view numbers would come from. The quote counts are easier if the quotes live on PetalPath, which is another reason that on-platform inbox matters.
+[00:24:56] CLIENT (Leah Okafor): See, it all connects.
+[00:25:01] CONSULTANT (Sam Patel): It does. Sorry, just a sec, my dog is barking at the mail carrier. One sec.
+[00:25:27] CONSULTANT (Sam Patel): Okay, sorry about that. He has a personal feud with the mail carrier.
+[00:25:32] CLIENT (Leah Okafor): Ha, ours does the same with the recycling truck.
+[00:25:38] CONSULTANT (Sam Patel): Okay, where was I. Right. You said earlier there's a bigger list of florists than the forty on the site. Tell me about that.
+[00:25:49] CLIENT (Leah Okafor): Yes. So we have about three hundred florists in a spreadsheet. People we've met at wedding fairs, people who've emailed us, people from our client work. And the plan is to get them all onto the new site.
+[00:26:07] CONSULTANT (Sam Patel): Okay. What's in the spreadsheet? Like which columns?
+[00:26:12] CLIENT (Leah Okafor): Um. Name, business name, email mostly. Some have phone numbers. Some have a website. Some have notes like "met at Harvest Bridal Expo, loves dahlias".
+[00:26:26] CLIENT (Tom Reyes): Some have nothing but a first name and an Instagram handle.
+[00:26:32] CLIENT (Leah Okafor): A few. It's a bit of a mess.
+[00:26:36] CONSULTANT (Sam Patel): And when you say get them onto the site, do you mean create profiles for them, or invite them to sign up themselves?
+[00:26:46] CLIENT (Leah Okafor): Hmm. I'm not sure, honestly. Maybe we create them so the site looks full on day one? But then they haven't agreed to it. Or maybe we just email them.
+[00:26:59] CLIENT (Tom Reyes): If we create them, do they pay? Because they never signed up for a plan.
+[00:27:05] CLIENT (Leah Okafor): I don't know, Tom. That's what we're here to figure out.
+[00:27:10] CONSULTANT (Sam Patel): Okay. That's clearly a decision that needs more thought, so I won't push it today. Can you share a sanitized copy of the spreadsheet at some point, even just the column headers? And then separately we'll need to figure out what happens to the forty existing profiles.
+[00:27:30] CLIENT (Leah Okafor): Yeah, I can send the headers. I'm not sure how clean it is though.
+[00:27:35] CONSULTANT (Sam Patel): That's fine. Messy is normal. Okay, I've got that down as open.
+[00:27:42] CLIENT (Leah Okafor): Can I go back to something? I forgot to say this earlier and it's actually really important to me.
+[00:27:49] CONSULTANT (Sam Patel): Of course.
+[00:27:52] CLIENT (Leah Okafor): So, one of our other clients, a bakery, they got a letter from a lawyer last year saying their website wasn't accessible. Like for blind people, screen readers, that kind of thing.
+[00:28:07] CONSULTANT (Sam Patel): Oh, the demand letters. Yeah, those have been going around.
+[00:28:13] CLIENT (Leah Okafor): It was terrifying. They didn't even sell online really. And they ended up paying to settle and then paying us to fix the whole site. I do not want that for PetalPath.
+[00:28:26] CONSULTANT (Sam Patel): Understandable.
+[00:28:29] CLIENT (Leah Okafor): So the site has to be accessible. The, um, the AA thing. Tom, what's it called?
+[00:28:38] CLIENT (Tom Reyes): WCAG. Double-A.
+[00:28:40] CLIENT (Leah Okafor): That. WCAG AA. Whatever the current one is.
+[00:28:46] CONSULTANT (Sam Patel): Okay, so WCAG 2.1 AA is the usual target people mean. I'll note the whole site needs to meet that, both the couple side and presumably the florist dashboard too?
+[00:29:00] CLIENT (Leah Okafor): Yes, all of it. Everything.
+[00:29:04] CONSULTANT (Sam Patel): Okay. I'll be honest, that does have knock-on effects on the design. Things like color contrast. That pink header, for example, might need adjusting.
+[00:29:16] CLIENT (Leah Okafor): Oh, I'm not attached to the pink. Tom picked the pink.
+[00:29:20] CLIENT (Tom Reyes): I did not pick the pink! It came with the theme!
+[00:29:24] CLIENT (Leah Okafor): He picked the pink.
+[00:29:27] CONSULTANT (Sam Patel): I'm staying out of the pink debate. Also things like alt text on all those gallery photos, which florists will need to fill in, or we'll need some way to handle it.
+[00:29:40] CLIENT (Leah Okafor): Hmm. They won't do it. Florists will not write alt text.
+[00:29:45] CONSULTANT (Sam Patel): Yeah, that's a common challenge. Let me think about options. And the Instagram feed and the calendar bits would need to be accessible too, so that's something I'll keep in mind when we look at how those work.
+[00:30:00] CLIENT (Leah Okafor): Okay. Good. That's a load off honestly.
+[00:30:06] CLIENT (Tom Reyes): Hey Sam, you cut out for a second there. Did you say the Instagram part?
+[00:30:11] CONSULTANT (Sam Patel): Sorry, can you hear me now? I said the Instagram feed and calendar need to be accessible too.
+[00:30:18] CLIENT (Tom Reyes): Yeah, got it. You froze for a sec.
+[00:30:23] CONSULTANT (Sam Patel): My wifi is not loving this call. Let me know if it happens again.
+[00:30:35] CONSULTANT (Sam Patel): Okay. So I want to step back for a second and understand the bigger picture. Who are you competing with, in your head? When a florist decides whether to pay you nineteen or forty-nine a month, what's the alternative?
+[00:30:52] CLIENT (Leah Okafor): The big wedding marketplaces. They charge florists hundreds a month, some of them. And the florists hate it, because they get leads from couples in the wrong city with the wrong budget.
+[00:31:07] CLIENT (Tom Reyes): Maren paid, what was it, three hundred something a month?
+[00:31:12] CLIENT (Leah Okafor): Three forty, I think. And she said she booked two weddings off it in a year. Two!
+[00:31:19] CONSULTANT (Sam Patel): So your pitch is basically cheaper, and better-matched leads.
+[00:31:25] CLIENT (Leah Okafor): Exactly. Fewer leads, but the right leads. That's why the filters and the quote form with the budget matter so much. It's all about the match.
+[00:31:36] CONSULTANT (Sam Patel): That's a really clear story, actually. I like that. It ties together almost everything you've told me.
+[00:31:44] CLIENT (Leah Okafor): Oh good, I feel like I've been rambling.
+[00:32:50] CONSULTANT (Sam Patel): Now, a few less fun questions, if that's okay. Timing. When would you like the new version to be live?
+[00:33:00] CLIENT (Leah Okafor): Um. Soon? I mean, wedding season planning, couples book florists like nine to twelve months out. So the busy time for us is like January, right after all the Christmas engagements.
+[00:33:17] CONSULTANT (Sam Patel): Right, engagement season.
+[00:33:19] CLIENT (Leah Okafor): So ideally before that? But I don't know if that's realistic. Tom, what do you think?
+[00:33:26] CLIENT (Tom Reyes): I mean, I'm two days a week. I don't really know how much of this is me versus Sam's team.
+[00:33:33] CLIENT (Leah Okafor): Right. So I guess it depends.
+[00:33:37] CONSULTANT (Sam Patel): That's fair. I won't hold you to a date today. Once I've looked at what's possible in Brilliant Directories versus what needs custom work, we can talk about what's realistic. Is there anything hard, like an expo or a launch event, that you're working toward?
+[00:33:55] CLIENT (Leah Okafor): There's a bridal expo in, um, early in the year. I'm not sure exactly when. It'd be nice to have something to show there. But it's not like a hard deadline.
+[00:34:08] CONSULTANT (Sam Patel): Okay. I'll leave timeline as open, with that January season and the expo as context.
+[00:34:16] CLIENT (Leah Okafor): Sounds good.
+[00:34:19] CONSULTANT (Sam Patel): And budget. Do you have a range in mind for the build?
+[00:34:24] CLIENT (Leah Okafor): Ooh. Um. Honestly, not really. We were hoping you'd tell us what it costs.
+[00:34:33] CLIENT (Tom Reyes): We don't have, like, a number signed off.
+[00:34:37] CLIENT (Leah Okafor): It's coming out of Fernway's pocket, so, you know, not enormous. But I'd rather do it properly than cheaply. I need to talk to my business partner about it anyway, he does the money side.
+[00:34:52] CONSULTANT (Sam Patel): That's completely fine. Would it help if I came back with options at different levels, so you can see what's must-have and what could wait?
+[00:35:02] CLIENT (Leah Okafor): Maybe. Let me talk to him first. I don't want to give you a number and then have him say no.
+[00:35:10] CONSULTANT (Sam Patel): Understood. I'll leave budget open for now.
+[00:35:15] CLIENT (Leah Okafor): Sorry, I know that's not very helpful.
+[00:35:20] CONSULTANT (Sam Patel): No, it's very normal at this stage. Okay. Here's one I always ask. When this is done, how will you know it's done? Like, what would you look at and say, yes, this is what I asked for?
+[00:35:35] CLIENT (Leah Okafor): Hmm. When it feels right?
+[00:35:39] CLIENT (Tom Reyes): That's not a test case, Leah.
+[00:35:42] CLIENT (Leah Okafor): I know it's not a test case! Um. I guess when couples use it and florists get bookings? But that takes months to know.
+[00:35:54] CONSULTANT (Sam Patel): Yeah, that's more of a business outcome. I was thinking more about how we sign off each piece. For example, for the quote request, what would you check to be happy with it?
+[00:36:08] CLIENT (Leah Okafor): I don't know. I'd have to think about that. I'd probably just try it myself and see.
+[00:36:16] CLIENT (Tom Reyes): I'd want something written down, honestly. Last time we built a thing for the bakery, we argued about whether it was finished for like a month.
+[00:36:27] CLIENT (Leah Okafor): That was different.
+[00:36:29] CLIENT (Tom Reyes): It was not different.
+[00:36:33] CONSULTANT (Sam Patel): Okay, I hear both of you. I'll note that we still need to agree how each piece gets signed off. We don't have to define it today, but I'd like to before any build starts.
+[00:36:45] CLIENT (Leah Okafor): That's fair.
+[00:36:48] CONSULTANT (Sam Patel): Last one in this set. After launch, who looks after the site? Fixes, updates, florists emailing with problems?
+[00:36:59] CLIENT (Leah Okafor): Um. Me, probably, for the florist emails. And Tom for anything technical?
+[00:37:06] CLIENT (Tom Reyes): I mean, two days a week. If something breaks on a Saturday, which is wedding day, I'm not around.
+[00:37:14] CLIENT (Leah Okafor): Well, we'd figure something out.
+[00:37:18] CONSULTANT (Sam Patel): Would you want some kind of ongoing support arrangement from us after launch, or would you rather keep it in-house?
+[00:37:27] CLIENT (Leah Okafor): I don't know yet. It depends what it costs, I guess. And how much breaks. Can we come back to that?
+[00:37:35] CONSULTANT (Sam Patel): Absolutely. I'll leave post-launch support open too.
+[00:39:30] CONSULTANT (Sam Patel): Okay. Let me take a minute and play back what I've got, and you stop me if I've got anything wrong. Is that alright?
+[00:39:38] CLIENT (Leah Okafor): Yes please.
+[00:40:00] CONSULTANT (Sam Patel): Okay, sorry, just scrolling through my notes. So. First, browsing. Couples should be able to filter florists by style, from a fixed list like boho, classic and modern, by budget range in dollar bands, and by city. Open detail on whether a florist can have more than one style, and florists who serve a wider area.
+[00:40:25] CLIENT (Leah Okafor): Yes.
+[00:40:26] CONSULTANT (Sam Patel): Second, new florists stay hidden until you approve them. They can't publish their listing until you, as admin, say yes. I'm going to check what Brilliant Directories already offers there before anyone writes code.
+[00:40:43] CLIENT (Tom Reyes): Please.
+[00:40:46] CONSULTANT (Sam Patel): Third, quote requests. Couples give wedding date, guest count and budget, and the florist replies inside PetalPath, not by email. A notification email is fine, but the conversation lives on the site. Open question on how couples get back to the thread without an account.
+[00:41:06] CLIENT (Leah Okafor): Yes, exactly.
+[00:41:09] CONSULTANT (Sam Patel): Fourth, availability. Florists connect their Google Calendar, and booked wedding dates show as unavailable on their profile. Open detail on which calendar and what counts as booked, and the quote form warns rather than blocks.
+[00:41:29] CLIENT (Tom Reyes): Yep.
+[00:41:30] CONSULTANT (Sam Patel): Fifth, plans. Two paid plans. Basic at nineteen dollars a month, Featured at forty-nine dollars a month. The ninety-nine dollar Premium plan is out.
+[00:41:42] CLIENT (Leah Okafor): Out. Gone. Witnessed.
+[00:41:45] CLIENT (Tom Reyes): Witnessed.
+[00:41:48] CONSULTANT (Sam Patel): Sixth, Featured florists get a monthly email with their profile views and the number of quote requests. I need to check where the view numbers come from.
+[00:42:00] CLIENT (Leah Okafor): Yes.
+[00:42:02] CONSULTANT (Sam Patel): Seventh, accessibility. The whole site, couple side and florist side, meets WCAG 2.1 AA. Which may affect colors and means we need a plan for alt text on photos.
+[00:42:17] CLIENT (Leah Okafor): Yes. Non-negotiable.
+[00:42:20] CONSULTANT (Sam Patel): And eighth, each florist's Instagram feed shows up on their profile. You mentioned it quickly but I want to make sure it's on the list.
+[00:42:31] CLIENT (Leah Okafor): Oh yes, definitely. Everyone asks for that.
+[00:42:35] CONSULTANT (Sam Patel): Okay. And then the things that are still open. Other integrations beyond Google Calendar and Instagram, you'll ask a few florists. The three hundred florists in the spreadsheet and the forty existing profiles, how and whether they come over, still undecided. Timeline, with January as context. Budget, pending your partner. How we sign off each piece. And who supports the site after launch.
+[00:43:05] CLIENT (Leah Okafor): Wow, that's a lot of open things when you say it out loud.
+[00:43:11] CONSULTANT (Sam Patel): It's normal for a first call. Honestly, you've given me a lot of clarity on what the product needs to do. The open items are mostly about how and when.
+[00:43:23] CLIENT (Tom Reyes): Did you get the photo thing? The gallery being bigger?
+[00:43:29] CONSULTANT (Sam Patel): I have it as a note about presentation, the photos looking bigger and nicer. I didn't hear a specific number of photos or a layout, so I've kept it with the general "feel more premium" design notes rather than as its own item. Is that right, Leah?
+[00:43:47] CLIENT (Leah Okafor): Yeah, I think that's right. I just want it to look nice. I'll leave the design to whoever does the design.
+[00:43:58] CONSULTANT (Sam Patel): Perfect. So next steps from my side. I'll go through your Brilliant Directories admin with Tom and check what the platform already covers, especially the approval piece and the plans. Then I'll write up what needs custom work and send you a summary.
+[00:44:19] CLIENT (Leah Okafor): Great. And from us, the spreadsheet headers, and I'll ask a few florists what other tools they use.
+[00:44:27] CLIENT (Tom Reyes): I'll send you an admin login. And I can walk you through the admin panel if that helps.
+[00:44:34] CONSULTANT (Sam Patel): Thank you. And Leah, whenever you've talked to your partner about budget, just ping me. No rush.
+[00:44:42] CLIENT (Leah Okafor): Will do. This was really helpful, Sam. I feel like it's finally out of my head.
+[00:44:49] CONSULTANT (Sam Patel): That's the goal. Good luck with the hail, and say hi to Maren for me, she sounds like a legend.
+[00:44:57] CLIENT (Leah Okafor): She is. Bye!
+[00:45:00] CLIENT (Tom Reyes): Thanks, bye.

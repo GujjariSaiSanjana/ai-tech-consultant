@@ -1,0 +1,369 @@
+{
+ "note": "Offline Brain fixture for tests and demos. Fictional articles; not verified against real Brilliant Directories documentation.",
+ "articles": [
+  {
+   "article_id": "FAKE-0001",
+   "title": "Member search filters",
+   "url": "https://example.invalid/brain-fixture/0001",
+   "kind": "setting",
+   "setting_path": "Settings > Search Settings > Member Search Filters",
+   "keywords": [
+    "filter",
+    "search by",
+    "activity",
+    "certification",
+    "style",
+    "budget range",
+    "browse",
+    "search better",
+    "category"
+   ],
+   "quote": "Built-in feature: Settings > Search Settings > Member Search Filters."
+  },
+  {
+   "article_id": "FAKE-0002",
+   "title": "Location radius search",
+   "url": "https://example.invalid/brain-fixture/0002",
+   "kind": "setting",
+   "setting_path": "Settings > Search Settings > Location Search Radius",
+   "keywords": [
+    "radius",
+    "zip",
+    "miles",
+    "nearby",
+    "distance",
+    "postal"
+   ],
+   "quote": "Built-in feature: Settings > Search Settings > Location Search Radius."
+  },
+  {
+   "article_id": "FAKE-0003",
+   "title": "Suspend past-due members",
+   "url": "https://example.invalid/brain-fixture/0003",
+   "kind": "setting",
+   "setting_path": "Settings > Advanced Settings > Members > Suspend Past Due",
+   "keywords": [
+    "suspend",
+    "past due",
+    "failed payment",
+    "payment fails",
+    "card fails",
+    "declined",
+    "grace"
+   ],
+   "quote": "Built-in feature: Settings > Advanced Settings > Members > Suspend Past Due."
+  },
+  {
+   "article_id": "FAKE-0004",
+   "title": "Import members from CSV",
+   "url": "https://example.invalid/brain-fixture/0004",
+   "kind": "setting",
+   "setting_path": "Members > Import Members",
+   "keywords": [
+    "import",
+    "csv",
+    "spreadsheet",
+    "migrat",
+    "wordpress"
+   ],
+   "quote": "Built-in feature: Members > Import Members."
+  },
+  {
+   "article_id": "FAKE-0005",
+   "title": "Review moderation",
+   "url": "https://example.invalid/brain-fixture/0005",
+   "kind": "setting",
+   "setting_path": "Settings > Reviews > Require Admin Approval",
+   "keywords": [
+    "review",
+    "rating",
+    "stars"
+   ],
+   "quote": "Built-in feature: Settings > Reviews > Require Admin Approval."
+  },
+  {
+   "article_id": "FAKE-0006",
+   "title": "Membership plans and billing cycles",
+   "url": "https://example.invalid/brain-fixture/0006",
+   "kind": "setting",
+   "setting_path": "Membership Plans > Plan Pricing & Billing Cycles",
+   "keywords": [
+    "membership",
+    "plan",
+    "pricing",
+    "tier",
+    "annual",
+    "monthly",
+    "quarterly",
+    "billing"
+   ],
+   "quote": "Built-in feature: Membership Plans > Plan Pricing & Billing Cycles."
+  },
+  {
+   "article_id": "FAKE-0007",
+   "title": "Search result priority by plan",
+   "url": "https://example.invalid/brain-fixture/0007",
+   "kind": "setting",
+   "setting_path": "Membership Plans > Search Results Priority",
+   "keywords": [
+    "first in search",
+    "top of",
+    "priority",
+    "appear first",
+    "featured placement",
+    "elite"
+   ],
+   "quote": "Built-in feature: Membership Plans > Search Results Priority."
+  },
+  {
+   "article_id": "FAKE-0008",
+   "title": "Lead matching",
+   "url": "https://example.invalid/brain-fixture/0008",
+   "kind": "setting",
+   "setting_path": "Settings > Leads > Lead Matching",
+   "keywords": [
+    "inquiry",
+    "inquiries",
+    "lead",
+    "matching guides",
+    "three guides",
+    "matching"
+   ],
+   "quote": "Built-in feature: Settings > Leads > Lead Matching."
+  },
+  {
+   "article_id": "FAKE-0009",
+   "title": "Photo albums",
+   "url": "https://example.invalid/brain-fixture/0009",
+   "kind": "setting",
+   "setting_path": "Membership Plans > Features > Photo Albums",
+   "keywords": [
+    "photo",
+    "gallery",
+    "galleries",
+    "album"
+   ],
+   "quote": "Built-in feature: Membership Plans > Features > Photo Albums."
+  },
+  {
+   "article_id": "FAKE-0010",
+   "title": "Member favorites",
+   "url": "https://example.invalid/brain-fixture/0010",
+   "kind": "setting",
+   "setting_path": "Settings > Members > Favorites",
+   "keywords": [
+    "favorite",
+    "favourite",
+    "bookmark",
+    "heart",
+    "save"
+   ],
+   "quote": "Built-in feature: Settings > Members > Favorites."
+  },
+  {
+   "article_id": "FAKE-0011",
+   "title": "Export members",
+   "url": "https://example.invalid/brain-fixture/0011",
+   "kind": "setting",
+   "setting_path": "Members > Export Members",
+   "keywords": [
+    "export"
+   ],
+   "quote": "Built-in feature: Members > Export Members."
+  },
+  {
+   "article_id": "FAKE-0012",
+   "title": "Require admin approval for new members",
+   "url": "https://example.invalid/brain-fixture/0012",
+   "kind": "setting",
+   "setting_path": "Membership Plans > Require Admin Approval",
+   "keywords": [
+    "approval",
+    "approve",
+    "hidden until",
+    "publish"
+   ],
+   "quote": "Built-in feature: Membership Plans > Require Admin Approval."
+  },
+  {
+   "article_id": "FAKE-0013",
+   "title": "Social media feed widget",
+   "url": "https://example.invalid/brain-fixture/0013",
+   "kind": "setting",
+   "setting_path": "Widgets > Social Feed",
+   "keywords": [
+    "instagram",
+    "social feed"
+   ],
+   "quote": "Built-in feature: Widgets > Social Feed."
+  },
+  {
+   "article_id": "FAKE-0014",
+   "title": "Zapier integration",
+   "url": "https://example.invalid/brain-fixture/0014",
+   "kind": "addon",
+   "setting_path": "Add-ons > Zapier Integration",
+   "keywords": [
+    "hubspot",
+    "crm",
+    "zapier",
+    "sync"
+   ],
+   "quote": "Available as an add-on: Add-ons > Zapier Integration."
+  },
+  {
+   "article_id": "FAKE-0015",
+   "title": "Cookie consent banner",
+   "url": "https://example.invalid/brain-fixture/0015",
+   "kind": "addon",
+   "setting_path": "Add-ons > Cookie Consent Banner",
+   "keywords": [
+    "cookie",
+    "consent",
+    "gdpr"
+   ],
+   "quote": "Available as an add-on: Add-ons > Cookie Consent Banner."
+  },
+  {
+   "article_id": "FAKE-0016",
+   "title": "Multi-language site",
+   "url": "https://example.invalid/brain-fixture/0016",
+   "kind": "addon",
+   "setting_path": "Add-ons > Multi-Language",
+   "keywords": [
+    "spanish",
+    "translat",
+    "language",
+    "multilingual"
+   ],
+   "quote": "Available as an add-on: Add-ons > Multi-Language."
+  },
+  {
+   "article_id": "FAKE-0017",
+   "title": "Accessibility toolkit",
+   "url": "https://example.invalid/brain-fixture/0017",
+   "kind": "addon",
+   "setting_path": "Add-ons > Accessibility Toolkit",
+   "keywords": [
+    "accessib",
+    "wcag",
+    "ada "
+   ],
+   "quote": "Available as an add-on: Add-ons > Accessibility Toolkit."
+  },
+  {
+   "article_id": "FAKE-0018",
+   "title": "Customize the homepage search widget",
+   "url": "https://example.invalid/brain-fixture/0018",
+   "kind": "widget_customization",
+   "setting_path": "Widgets > Homepage Search > Customize",
+   "keywords": [
+    "hero",
+    "homepage",
+    "home page",
+    "brand",
+    "mockup"
+   ],
+   "quote": "Possible by customizing a widget (Widgets > Homepage Search > Customize); a customized widget stops receiving platform updates."
+  },
+  {
+   "article_id": "FAKE-0019",
+   "title": "Custom profile badges",
+   "url": "https://example.invalid/brain-fixture/0019",
+   "kind": "widget_customization",
+   "setting_path": "Widgets > Member Profile > Customize",
+   "keywords": [
+    "badge",
+    "verified"
+   ],
+   "quote": "Possible by customizing a widget (Widgets > Member Profile > Customize); a customized widget stops receiving platform updates."
+  },
+  {
+   "article_id": "FAKE-0020",
+   "title": "External booking and calendar systems",
+   "url": "https://example.invalid/brain-fixture/0020",
+   "kind": "custom_dev",
+   "setting_path": null,
+   "keywords": [
+    "fareharbor",
+    "peek",
+    "booking",
+    "availability",
+    "google calendar",
+    "calendar",
+    "book now"
+   ],
+   "quote": "No built-in setting or add-on covers this; it needs custom development."
+  },
+  {
+   "article_id": "FAKE-0021",
+   "title": "Page speed and performance",
+   "url": "https://example.invalid/brain-fixture/0021",
+   "kind": "custom_dev",
+   "setting_path": null,
+   "keywords": [
+    "load",
+    "speed",
+    "performance",
+    "seconds",
+    "fast"
+   ],
+   "quote": "No built-in setting or add-on covers this; it needs custom development."
+  },
+  {
+   "article_id": "FAKE-0022",
+   "title": "SMS notifications",
+   "url": "https://example.invalid/brain-fixture/0022",
+   "kind": "custom_dev",
+   "setting_path": null,
+   "keywords": [
+    "sms",
+    "text message",
+    "twilio"
+   ],
+   "quote": "No built-in setting or add-on covers this; it needs custom development."
+  },
+  {
+   "article_id": "FAKE-0023",
+   "title": "Scheduled email reports",
+   "url": "https://example.invalid/brain-fixture/0023",
+   "kind": "custom_dev",
+   "setting_path": null,
+   "keywords": [
+    "weekly email",
+    "weekly report",
+    "report",
+    "analytics",
+    "monthly email",
+    "stats"
+   ],
+   "quote": "No built-in setting or add-on covers this; it needs custom development."
+  },
+  {
+   "article_id": "FAKE-0024",
+   "title": "Gift cards and vouchers",
+   "url": "https://example.invalid/brain-fixture/0024",
+   "kind": "custom_dev",
+   "setting_path": null,
+   "keywords": [
+    "gift card",
+    "voucher",
+    "gift certificate"
+   ],
+   "quote": "No built-in setting or add-on covers this; it needs custom development."
+  },
+  {
+   "article_id": "FAKE-0025",
+   "title": "In-site quote messaging",
+   "url": "https://example.invalid/brain-fixture/0025",
+   "kind": "custom_dev",
+   "setting_path": null,
+   "keywords": [
+    "quote",
+    "reply inside",
+    "messaging"
+   ],
+   "quote": "No built-in setting or add-on covers this; it needs custom development."
+  }
+ ]
+}

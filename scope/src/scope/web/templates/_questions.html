@@ -1,0 +1,17 @@
+{% if not snap %}<div class="card muted">No analysis yet.</div>{% else %}
+<div class="card">
+  <h2>Questions for the client ({{ snap.questions|length }})</h2>
+  <p class="small muted">What a senior consultant would still ask. Blocking questions must be answered before the estimate can be final.</p>
+  <table><tr><th>Topic</th><th>Question</th><th>Why it matters</th></tr>
+  {% for q in snap.questions|sort(attribute='blocking', reverse=True) %}
+  <tr><td><span class="pill">{{ q.category.replace('_', ' ') }}</span>{% if q.blocking %} <span class="pill custom_dev">blocking</span>{% endif %}</td>
+  <td>{{ q.question }}</td><td class="small muted">{{ q.why_it_matters }}</td></tr>{% endfor %}
+  </table>
+</div>
+<div class="card">
+  <h2>Assumptions ({{ snap.assumptions|length }})</h2>
+  <table><tr><th>Topic</th><th>We will assume</th><th>Risk if wrong</th></tr>
+  {% for a in snap.assumptions %}<tr><td><span class="pill">{{ a.category.replace('_', ' ') }}</span></td><td>{{ a.statement }}</td><td class="small muted">{{ a.risk_if_wrong }}</td></tr>{% endfor %}
+  </table>
+</div>
+{% endif %}

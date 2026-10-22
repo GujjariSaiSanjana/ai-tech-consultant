@@ -1,0 +1,31 @@
+{% if not snap %}<div class="card muted">No analysis yet. Add a transcript and run the agent team.</div>{% else %}
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <h2 style="margin:0">Requirements ({{ snap.requirements|length }})</h2>
+    {% if current.status == 'draft' %}
+    <form method="post" action="/scope/{{ current.id }}/approve" class="inline">
+      <input type="text" name="actor" value="{{ actor }}" placeholder="Your name" required style="width:180px">
+      <button type="submit">Approve scope v{{ current.version }}</button>
+    </form>
+    {% else %}<span class="pill setting">Approved by {{ current.approved_by }}</span>{% endif %}
+  </div>
+  <p class="small muted">How each need is delivered: an existing product setting is far cheaper than custom code. Checked against the Knowledge Brain.</p>
+  <table><tr><th>Requirement</th><th>How it is delivered</th><th>Said in the meeting</th></tr>
+  {% for r in snap.requirements %}{% set f = feas.get(r.id) %}
+  <tr><td><strong>{{ r.title }}</strong><div class="small">{{ r.statement }}</div>
+    <div class="small muted">{{ r.id }} &middot; {{ r.priority }}{% for fl in r.flags %} <span class="pill flag">{{ fl.replace('_', ' ') }}</span>{% endfor %}</div></td>
+  <td>{% if f %}<span class="pill {{ f.kind }}">{{ kind_labels[f.kind] }}</span>
+    {% if f.setting_path %}<div class="small">{{ f.setting_path }}</div>{% endif %}
+    <div class="small muted">{{ f.rationale }}</div>
+    {% for c in f.citations %}<div class="small"><a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.title }}</a></div>{% endfor %}
+    {% for fl in f.flags %}<span class="pill flag">{{ fl.replace('_', ' ') }}</span> {% endfor %}
+  {% else %}<span class="muted">-</span>{% endif %}</td>
+  <td class="small">{% for e in r.evidence %}<div class="quote">[{{ e.meeting_id }} {{ e.timestamp }}] {{ e.speaker }}: "{{ e.quote }}"</div>{% endfor %}</td></tr>
+  {% endfor %}</table>
+</div>
+{% if snap.discarded %}<div class="card"><h3>Mentioned but not included ({{ snap.discarded|length }})</h3>
+<table>{% for d in snap.discarded %}<tr><td class="small">{{ d.quote }}</td><td class="small muted">{{ d.reason }}</td></tr>{% endfor %}</table></div>{% endif %}
+{% if snap.review %}<div class="card"><h3>Reviewer ({{ snap.review.loops }} loop{{ 's' if snap.review.loops != 1 }})</h3>
+{% if snap.review.notes %}<table>{% for n in snap.review.notes %}<tr><td><span class="pill {{ 'custom_dev' if n.severity == 'must_fix' else '' }}">{{ n.severity.replace('_', ' ') }}</span></td><td class="small">{{ n.message }}</td><td class="small muted">{{ n.source }}</td></tr>{% endfor %}</table>
+{% else %}<p class="small muted">No open notes.</p>{% endif %}</div>{% endif %}
+{% endif %}

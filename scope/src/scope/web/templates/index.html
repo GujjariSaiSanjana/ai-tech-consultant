@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="card">
+  <h2>New project</h2>
+  <form method="post" action="/projects" class="grid2">
+    <label>Project name<input type="text" name="name" required placeholder="GuideFinder relaunch"></label>
+    <label>Client<input type="text" name="client" required placeholder="Trailhead Media"></label>
+    <div><button type="submit">Create project</button></div>
+  </form>
+</div>
+<div class="card">
+  <h2>Projects</h2>
+  {% if projects %}
+  <table><tr><th>#</th><th>Project</th><th>Client</th><th>Created</th></tr>
+  {% for p in projects %}
+  <tr><td>{{ p.id }}</td><td><a href="/projects/{{ p.id }}">{{ p.name }}</a></td><td>{{ p.client }}</td><td class="muted small">{{ p.created_at.strftime('%Y-%m-%d %H:%M') }}</td></tr>
+  {% endfor %}</table>
+  {% else %}<p class="muted">No projects yet.</p>{% endif %}
+</div>
+{% endblock %}

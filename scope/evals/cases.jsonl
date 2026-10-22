@@ -1,0 +1,24 @@
+{"case_id": "extract-trailhead-m1", "split": "dev", "tags": ["extraction"], "metric": "requirement_f1", "threshold": 0.6, "input": {"dataset": "trailhead", "meetings": ["m1"]}}
+{"case_id": "extract-trailhead-m1m2", "split": "dev", "tags": ["extraction"], "metric": "requirement_f1", "threshold": 0.6, "input": {"dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "extract-petalpath-m1", "split": "heldout", "tags": ["extraction"], "metric": "requirement_f1", "threshold": 0.6, "input": {"dataset": "petalpath", "meetings": ["m1"]}}
+{"case_id": "trap-vague-search", "split": "dev", "tags": ["trap", "vague"], "metric": "recall_subset", "threshold": 1.0, "input": {"ids": ["G01"], "dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "trap-offhand-weekly-report", "split": "dev", "tags": ["trap", "offhand"], "metric": "recall_subset", "threshold": 1.0, "input": {"ids": ["G13"], "dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "trap-reversed-forum-and-billing", "split": "dev", "tags": ["trap", "reversed_decision"], "metric": "absent", "threshold": 1.0, "input": {"dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "trap-non-functional", "split": "dev", "tags": ["trap", "non_functional"], "metric": "recall_subset", "threshold": 1.0, "input": {"ids": ["G09", "G15"], "dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "trap-existing-setting-suspend", "split": "dev", "tags": ["trap", "existing_setting", "feasibility"], "metric": "feasibility_kind", "threshold": 1.0, "input": {"ids": ["G05"], "dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "trap-existing-setting-approval", "split": "heldout", "tags": ["trap", "existing_setting", "feasibility"], "metric": "feasibility_kind", "threshold": 1.0, "input": {"ids": ["P02"], "dataset": "petalpath", "meetings": ["m1"]}}
+{"case_id": "feasibility-trailhead", "split": "dev", "tags": ["feasibility"], "metric": "feasibility_kind", "threshold": 0.7, "input": {"dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "feasibility-petalpath", "split": "heldout", "tags": ["feasibility"], "metric": "feasibility_kind", "threshold": 0.7, "input": {"dataset": "petalpath", "meetings": ["m1"]}}
+{"case_id": "questions-trailhead", "split": "dev", "tags": ["questions"], "metric": "question_coverage", "threshold": 0.8, "input": {"dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "questions-petalpath", "split": "heldout", "tags": ["questions"], "metric": "question_coverage", "threshold": 0.8, "input": {"dataset": "petalpath", "meetings": ["m1"]}}
+{"case_id": "estimate-sanity-trailhead", "split": "dev", "tags": ["estimate"], "metric": "estimate_sanity", "threshold": 1.0, "input": {"dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "estimate-sanity-petalpath", "split": "heldout", "tags": ["estimate"], "metric": "estimate_sanity", "threshold": 1.0, "input": {"dataset": "petalpath", "meetings": ["m1"]}}
+{"case_id": "schema-trailhead", "split": "dev", "tags": ["schema"], "metric": "schema_validity", "threshold": 1.0, "input": {"dataset": "trailhead", "meetings": ["m1", "m2"]}}
+{"case_id": "followup-diff-f1", "split": "dev", "tags": ["follow_up", "diff"], "metric": "diff_f1", "threshold": 0.7, "input": {"dataset": "trailhead", "meetings": ["m1", "m2"], "follow_up": "m3"}}
+{"case_id": "followup-change-requests", "split": "dev", "tags": ["follow_up", "change_request"], "metric": "change_requests_quoted", "threshold": 1.0, "input": {"dataset": "trailhead", "meetings": ["m1", "m2"], "follow_up": "m3"}}
+{"case_id": "followup-unchanged-preserved", "split": "heldout", "tags": ["follow_up", "reversed_decision"], "metric": "unchanged_preserved", "threshold": 1.0, "input": {"ids": ["G05", "G07", "G12", "G15"], "dataset": "trailhead", "meetings": ["m1", "m2"], "follow_up": "m3"}}
+{"case_id": "robust-injection", "split": "dev", "tags": ["injection", "robustness"], "metric": "injection", "threshold": 1.0, "input": {"dataset": "trailhead", "meetings": ["m1"]}}
+{"case_id": "robust-empty", "split": "dev", "tags": ["empty", "robustness"], "metric": "empty", "threshold": 1.0, "input": {}}
+{"case_id": "robust-garbled", "split": "dev", "tags": ["garbled", "robustness"], "metric": "garbled_recall", "threshold": 0.5, "input": {"dataset": "trailhead", "meetings": ["m1"]}}
+{"case_id": "robust-long-segmented", "split": "dev", "tags": ["huge", "robustness"], "metric": "segmented_recall", "threshold": 0.6, "input": {"segment_tokens": 4000, "dataset": "trailhead", "meetings": ["m1"]}}
+{"case_id": "robust-brain-down", "split": "dev", "tags": ["brain_down", "robustness"], "metric": "brain_down", "threshold": 1.0, "input": {"dataset": "trailhead", "meetings": ["m1"]}}
