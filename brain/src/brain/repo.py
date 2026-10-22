@@ -24,6 +24,7 @@ VECTOR_WEIGHT = 1.0
 FTS_WEIGHT = 0.5
 FTS_NORMALIZATION = 1  # ts_rank_cd: divide by 1 + log(document length)
 RUN_LOCK_KEY = 727002
+MAX_ITEM_ATTEMPTS = 3
 
 
 def new_id(prefix: str) -> str:
@@ -111,6 +112,33 @@ class Repository:
             await conn.execute(
                 "UPDATE articles SET last_seen_run_id = %s WHERE id = ANY(%s)",
                 (run_id, [e.article_id for e in entries]),
+            )
+
+    async def has_foreign_embeddings(self, article_id: str, embedding_model: str) -> bool:
+        """True after an embedder switch: the article must be re-embedded even though it did not change."""
+        async with self.pool.connection() as conn:
+            cur = await conn.execute(
+                "SELECT EXISTS (SELECT 1 FROM chunks WHERE article_id = %s AND embedding_model IS DISTINCT FROM %s) "
+                "AS stale",
+                (article_id, embedding_model),
+            )
+            row = await cur.fetchone()
+            return bool(row and row["stale"])
+
+    async def foreign_expert_chunks(self, embedding_model: str) -> list[dict[str, Any]]:
+        async with self.pool.connection() as conn:
+            cur = await conn.execute(
+                "SELECT id, text, context_prefix FROM chunks WHERE kind = 'expert' "
+                "AND embedding_model IS DISTINCT FROM %s",
+                (embedding_model,),
+            )
+            return list(await cur.fetchall())
+
+    async def set_embedding(self, chunk_id: str, embedding: list[float], embedding_model: str) -> None:
+        async with self.pool.connection() as conn:
+            await conn.execute(
+                "UPDATE chunks SET embedding = %s::vector, embedding_dim = %s, embedding_model = %s WHERE id = %s",
+                (to_vector_literal(embedding), len(embedding), embedding_model, chunk_id),
             )
 
     async def stored_images(self, article_id: str) -> dict[str, StoredImage]:
@@ -301,28 +329,26 @@ class Repository:
             WITH q AS (
                 SELECT %(qvec)s::{vt} AS v, websearch_to_tsquery('english', %(qtext)s) AS tq
             ),
-            eligible AS (
-                SELECT c.id, c.embedding, c.embedding_dim, c.tsv
-                FROM chunks c LEFT JOIN articles a ON a.id = c.article_id
-                WHERE c.kind = 'expert'
-                   OR (a.status = 'active' AND (%(category)s::text IS NULL OR a.category = %(category)s))
-            ),
             vec AS (
                 SELECT id, 1 - dist AS sim, row_number() OVER (ORDER BY dist) AS rnk
                 FROM (
-                    SELECT e.id, e.embedding::{vt} <=> q.v AS dist
-                    FROM eligible e CROSS JOIN q
-                    WHERE e.embedding_dim = %(dim)s
-                    ORDER BY dist
+                    SELECT c.id, c.embedding::{vt} <=> q.v AS dist
+                    FROM q, chunks c LEFT JOIN articles a ON a.id = c.article_id
+                    WHERE c.embedding_dim = %(dim)s
+                      AND (c.kind = 'expert' OR (a.status = 'active'
+                           AND (%(category)s::text IS NULL OR a.category = %(category)s)))
+                    ORDER BY c.embedding::{vt} <=> q.v
                     LIMIT %(candidates)s
                 ) s
             ),
             fts AS (
                 SELECT id, row_number() OVER (ORDER BY rank DESC) AS rnk
                 FROM (
-                    SELECT e.id, ts_rank_cd(e.tsv, q.tq, %(fts_norm)s) AS rank
-                    FROM eligible e CROSS JOIN q
-                    WHERE e.tsv @@ q.tq
+                    SELECT c.id, ts_rank_cd(c.tsv, q.tq, %(fts_norm)s) AS rank
+                    FROM q, chunks c LEFT JOIN articles a ON a.id = c.article_id
+                    WHERE c.tsv @@ q.tq
+                      AND (c.kind = 'expert' OR (a.status = 'active'
+                           AND (%(category)s::text IS NULL OR a.category = %(category)s)))
                     ORDER BY rank DESC
                     LIMIT %(candidates)s
                 ) s
@@ -369,6 +395,8 @@ class Repository:
         async with self.pool.connection() as conn, conn.transaction():
             # pgvector 0.8: keep scanning the HNSW graph when filters reject candidates.
             await conn.execute("SET LOCAL hnsw.iterative_scan = relaxed_order")
+            # The candidate list is 50 deep; the default ef_search (40) would cap and blur it.
+            await conn.execute("SET LOCAL hnsw.ef_search = 200")
             cur = await conn.execute(query, params)
             rows = await cur.fetchall()
         return [
@@ -391,24 +419,27 @@ class Repository:
 
     # ---- gaps -----------------------------------------------------------------------------------
 
-    async def find_open_gap(self, question: str) -> str | None:
+    async def open_gap(self, question: str, context: str | None, source: str, bot_attempt: str | None) -> str:
+        """Id of the open ticket for this question, creating it if needed (atomic via a unique index)."""
         async with self.pool.connection() as conn:
             cur = await conn.execute(
-                "SELECT id FROM gap_tickets WHERE status = 'open' AND lower(trim(question)) = lower(trim(%s)) "
-                "ORDER BY created_at LIMIT 1",
-                (question,),
+                """
+                INSERT INTO gap_tickets (id, question, context, source, bot_attempt) VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (lower(trim(question))) WHERE status = 'open' DO NOTHING
+                RETURNING id
+                """,
+                (new_id("gap"), question, context, source, bot_attempt),
             )
             row = await cur.fetchone()
-            return row["id"] if row else None
-
-    async def create_gap(self, question: str, context: str | None, source: str, bot_attempt: str | None) -> str:
-        gap_id = new_id("gap")
-        async with self.pool.connection() as conn:
-            await conn.execute(
-                "INSERT INTO gap_tickets (id, question, context, source, bot_attempt) VALUES (%s, %s, %s, %s, %s)",
-                (gap_id, question, context, source, bot_attempt),
+            if row is not None:
+                return str(row["id"])
+            cur = await conn.execute(
+                "SELECT id FROM gap_tickets WHERE status = 'open' AND lower(trim(question)) = lower(trim(%s))",
+                (question,),
             )
-        return gap_id
+            existing = await cur.fetchone()
+            assert existing is not None
+            return str(existing["id"])
 
     async def list_gaps(self, status: str | None) -> list[dict[str, Any]]:
         async with self.pool.connection() as conn:
@@ -464,10 +495,17 @@ class Repository:
             cur = await conn.execute("SELECT * FROM crawl_runs WHERE id = %s", (run_id,))
             return await cur.fetchone()
 
-    async def latest_running(self, kind: str) -> str | None:
+    async def latest_resumable(self, kind: str) -> str | None:
+        """Newest run of `kind` that stopped with work left: killed (still `running`) or `failed` midway."""
         async with self.pool.connection() as conn:
             cur = await conn.execute(
-                "SELECT id FROM crawl_runs WHERE kind = %s AND status = 'running' ORDER BY started_at DESC LIMIT 1",
+                """
+                SELECT r.id FROM crawl_runs r
+                WHERE r.kind = %s AND (r.status = 'running' OR (r.status = 'failed' AND r.planned))
+                  AND (NOT r.planned OR EXISTS (
+                      SELECT 1 FROM crawl_items i WHERE i.run_id = r.id AND i.status IN ('pending', 'in_progress')))
+                ORDER BY r.started_at DESC LIMIT 1
+                """,
                 (kind,),
             )
             row = await cur.fetchone()
@@ -496,6 +534,12 @@ class Repository:
                 (skipped_unchanged, run_id),
             )
 
+    async def mark_running(self, run_id: str) -> None:
+        async with self.pool.connection() as conn:
+            await conn.execute(
+                "UPDATE crawl_runs SET status = 'running', error = NULL, finished_at = NULL WHERE id = %s", (run_id,)
+            )
+
     async def requeue_in_progress(self, run_id: str) -> int:
         """Items a crashed worker had claimed go back to pending."""
         async with self.pool.connection() as conn:
@@ -507,6 +551,13 @@ class Repository:
 
     async def claim_next(self, run_id: str) -> WorkItem | None:
         async with self.pool.connection() as conn:
+            # An item that keeps killing the worker would otherwise be retried on every resume.
+            await conn.execute(
+                "UPDATE crawl_items SET status = 'failed', outcome = 'error', "
+                "error = 'gave up after ' || attempts || ' attempts', updated_at = now() "
+                "WHERE run_id = %s AND status = 'pending' AND attempts >= %s",
+                (run_id, MAX_ITEM_ATTEMPTS),
+            )
             cur = await conn.execute(
                 """
                 UPDATE crawl_items SET status = 'in_progress', attempts = attempts + 1, updated_at = now()

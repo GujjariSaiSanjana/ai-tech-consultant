@@ -11,6 +11,8 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Any, Literal
 
+import psycopg
+
 from brain.crawl.fetcher import FetchResult, RobotsDisallowedError
 from brain.crawl.parser import ArticleParseError, parse_article
 from brain.crawl.sitemap import diff_sitemap, parse_sitemap, sample_evenly
@@ -54,15 +56,21 @@ class CrawlEngine:
     async def start(self, kind: RunKind, *, limit: int | None = None) -> str:
         return await self._repo.create_run(kind, limit)
 
-    async def execute(self, run_id: str, *, sitemap_xml: str | None = None) -> RunCounts:
-        """Plan (once) and work a run to completion. Safe to call again on a run that crashed."""
+    async def execute(self, run_id: str, *, sitemap_xml: str | None = None, owner: bool = True) -> RunCounts:
+        """Plan (once) and work a run to completion. Safe to call again on a run that crashed.
+
+        `owner` is false when resuming someone else's run: if the run lock is busy then, that run
+        may be alive in another process, so it is left untouched.
+        """
         run = await self._repo.get_run(run_id)
         if run is None:
             raise KeyError(run_id)
         async with self._repo.exclusive_runs() as acquired:
             if not acquired:
-                await self._repo.finalize_run(run_id, "failed", "another crawl or sync is running")
+                if owner:  # our fresh run never started: say why
+                    await self._repo.finalize_run(run_id, "failed", "another crawl or sync is running")
                 raise RunBusyError("another crawl or sync is running")
+            await self._repo.mark_running(run_id)
             return await self._execute_locked(run_id, run, sitemap_xml)
 
     async def _execute_locked(self, run_id: str, run: dict[str, Any], sitemap_xml: str | None) -> RunCounts:
@@ -72,8 +80,10 @@ class CrawlEngine:
             requeued = await self._repo.requeue_in_progress(run_id)
             if requeued:
                 log.info("run %s: requeued %d interrupted item(s)", run_id, requeued)
+            active, _, _ = await self._repo.counts()
+            gone = _GoneBudget(int(max(self._removal_floor, self._max_removed_fraction * active)))
             while (item := await self._repo.claim_next(run_id)) is not None:
-                outcome, error = await self._work(item)
+                outcome, error = await self._work(item, gone)
                 await self._repo.finish_item(item, outcome, error)
                 log.info("run %s: %s %s%s", run_id, outcome, item.url, f" ({error})" if error else "")
         except Exception as exc:
@@ -107,7 +117,7 @@ class CrawlEngine:
         await self._repo.touch_many(diff.unchanged, run_id)
         await self._repo.plan_run(run_id, to_fetch, diff.removed, len(diff.unchanged))
 
-    async def _work(self, item: WorkItem) -> tuple[str, str | None]:
+    async def _work(self, item: WorkItem, gone: _GoneBudget) -> tuple[str, str | None]:
         if item.action == "remove":
             removed = await self._repo.mark_removed(item.article_id, item.run_id)
             return ("removed" if removed else "unchanged"), None
@@ -118,6 +128,8 @@ class CrawlEngine:
         except Exception as exc:  # network trouble must not kill the run; the item records it
             return "error", f"{type(exc).__name__}: {exc}"[:500]
         if response.status in {404, 410}:
+            if not gone.take():  # an outage answering 404 everywhere must not empty the index
+                return "error", f"HTTP {response.status}; not removed: too many 404/410s in this run"
             removed = await self._repo.mark_removed(item.article_id, item.run_id)
             return ("removed" if removed else "unchanged"), None
         if response.status != 200:
@@ -129,5 +141,22 @@ class CrawlEngine:
             article = parse_article(response.text, item.url)
         except ArticleParseError as exc:
             return "error", str(exc)
-        outcome = await self._indexer.index(article, lastmod=item.sitemap_lastmod, run_id=item.run_id)
+        try:
+            outcome = await self._indexer.index(article, lastmod=item.sitemap_lastmod, run_id=item.run_id)
+        except (psycopg.OperationalError, psycopg.InterfaceError):
+            raise  # the database itself is in trouble: stop; the run resumes from this item later
+        except Exception as exc:  # one bad article (embedding API error, odd content) must not stop the run
+            log.exception("indexing %s failed", item.url)
+            return "error", f"index failed: {type(exc).__name__}: {exc}"[:500]
         return outcome, None
+
+
+class _GoneBudget:
+    def __init__(self, limit: int) -> None:
+        self._left = limit
+
+    def take(self) -> bool:
+        if self._left <= 0:
+            return False
+        self._left -= 1
+        return True

@@ -79,3 +79,13 @@ async def test_screenshot_shared_by_two_articles_survives_removal_of_one(
     hits = await make_service().search("Screenshot website phone number header", top_k=20)
     image_hits = [h for h in hits if h.kind == "image" and h.article_id == "12000048777"]
     assert image_hits and all(h.image_url for h in image_hits)
+
+
+async def test_switching_embedder_re_embeds_unchanged_articles(
+    indexer: Indexer, repo: Repository, make_service: ServiceFactory
+) -> None:
+    await indexer.index(fixture_article("5000558389"), lastmod=None, run_id=None)
+    async with repo.pool.connection() as conn:
+        await conn.execute("UPDATE chunks SET embedding_model = 'old-model'")
+    assert await indexer.index(fixture_article("5000558389"), lastmod=None, run_id=None) == "updated"
+    assert not await repo.has_foreign_embeddings("5000558389", "hash")

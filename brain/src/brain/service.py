@@ -216,6 +216,16 @@ class BrainService:
         await self._repo.answer_gap(gap_id, answer, expert, NewChunk(cid, draft, vector), self._embedder.name)
         return GapAnswered(id=gap_id, status="answered", chunk_id=cid)
 
+    async def reembed_expert_answers(self) -> int:
+        """After an embedder switch; article chunks are re-embedded by the next crawl."""
+        stale = await self._repo.foreign_expert_chunks(self._embedder.name)
+        if not stale:
+            return 0
+        vectors = await self._embedder.embed([f"{c['context_prefix']}\n{c['text']}" for c in stale], "document")
+        for chunk, vector in zip(stale, vectors, strict=True):
+            await self._repo.set_embedding(chunk["id"], vector, self._embedder.name)
+        return len(stale)
+
     async def health(self) -> tuple[int, int, datetime | None]:
         return await self._repo.counts()
 
@@ -247,8 +257,7 @@ class BrainService:
         return max(0.05, min(1.0, (best - threshold) / max(1e-6, 1.0 - threshold)))
 
     async def _open_gap(self, question: str, context: str | None, source: str, bot_attempt: str | None) -> str:
-        existing = await self._repo.find_open_gap(question)
-        return existing or await self._repo.create_gap(question, context, source, bot_attempt)
+        return await self._repo.open_gap(question, context, source, bot_attempt)
 
 
 def _abstain_note(hits: Sequence[SearchHit], strength: float) -> str:

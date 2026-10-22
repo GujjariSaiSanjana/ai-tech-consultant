@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Sequence
 
 import pytest
@@ -83,6 +84,12 @@ async def test_abstain_creates_one_gap_ticket(indexer: Indexer, make_service: Se
     gaps = await service.list_gaps("open")
     assert [g.id for g in gaps] == [first.gap_ticket_id]
     assert gaps[0].bot_attempt and gaps[0].bot_attempt.startswith("Bot abstained")
+
+
+async def test_concurrent_identical_questions_open_one_ticket(make_service: ServiceFactory) -> None:
+    service = make_service()
+    ids = await asyncio.gather(*(service.create_gap("Klarna support?", None, "inbox") for _ in range(5)))
+    assert len(set(ids)) == 1
 
 
 async def test_similarity_gate_abstains_without_calling_the_model(

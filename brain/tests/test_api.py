@@ -185,13 +185,24 @@ async def test_openapi_documents_every_contract_path(client: httpx.AsyncClient) 
     assert not any(p.startswith("/ui") for p in paths)
 
 
+async def test_ui_requires_login(client: httpx.AsyncClient) -> None:
+    response = await client.get("/experts")
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"].startswith("Basic")
+    assert (await client.get("/experts", auth=("ana", "wrong"))).status_code == 401
+
+
 async def test_ui_pages_render(client: httpx.AsyncClient) -> None:
-    assert "Ask about Brilliant Directories" in (await client.get("/")).text
+    auth = ("ana", "test-key")
+    assert "Ask about Brilliant Directories" in (await client.get("/", auth=auth)).text
     partial = await client.post(
-        "/ui/ask", data={"question": "What URL format does the TikTok link need?"}, headers={"HX-Request": "true"}
+        "/ui/ask",
+        data={"question": "What URL format does the TikTok link need?"},
+        headers={"HX-Request": "true"},
+        auth=auth,
     )
     assert partial.status_code == 200 and "Sources" in partial.text and "<html" not in partial.text
-    unknown = await client.post("/ui/ask", data={"question": "How do I bake sourdough bread?"})
+    unknown = await client.post("/ui/ask", data={"question": "How do I bake sourdough bread?"}, auth=auth)
     assert "<html" in unknown.text and "I don't know yet" in unknown.text
-    experts = await client.get("/experts")
+    experts = await client.get("/experts", auth=auth)
     assert "How do I bake sourdough bread?" in experts.text

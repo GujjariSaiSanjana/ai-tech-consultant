@@ -52,5 +52,11 @@ def test_sample_evenly_spreads_across_list() -> None:
     assert sample_evenly([1, 2], None) == [1, 2]
 
 
+def test_lastmod_without_offset_is_read_as_utc() -> None:
+    xml = sitemap_xml({"7": "2026-01-01T00:00:00"})
+    [entry] = parse_sitemap(xml)
+    assert entry.lastmod == datetime.fromisoformat("2026-01-01T00:00:00+00:00")
+
+
 def test_sitemap_helper_ignores_folder_pages() -> None:
     assert [e.article_id for e in parse_sitemap(sitemap_xml({"7": "2026-01-01T00:00:00+00:00"}))] == ["7"]

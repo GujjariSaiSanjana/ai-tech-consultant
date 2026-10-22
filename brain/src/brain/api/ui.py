@@ -1,16 +1,37 @@
 from __future__ import annotations
 
+import secrets
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 
-from brain.api.routes import Svc
+from brain.api.routes import Svc, container
+from brain.container import Container
 
 TEMPLATES = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "web" / "templates")
-ui = APIRouter(include_in_schema=False)
+_basic = HTTPBasic(realm="Knowledge Brain")
+
+
+def require_ui_login(
+    c: Annotated[Container, Depends(container)], credentials: Annotated[HTTPBasicCredentials, Depends(_basic)]
+) -> None:
+    """Browser login for the UI: any user name, password = BRAIN_API_KEY.
+
+    The expert page writes straight into memory, so it must not be open to anyone on the network.
+    """
+    if not secrets.compare_digest(credentials.password.encode(), c.settings.api_key.encode()):
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED,
+            "wrong password",
+            headers={"WWW-Authenticate": 'Basic realm="Knowledge Brain"'},
+        )
+
+
+ui = APIRouter(include_in_schema=False, dependencies=[Depends(require_ui_login)])
 
 
 def _htmx(request: Request) -> bool:

@@ -21,6 +21,17 @@ def test_robots_policy_including_wildcards() -> None:
     assert policy.allowed("https://h/support/solutions/articles/1/hits")
 
 
+async def test_robots_server_error_means_crawl_nothing_and_crawl_delay_is_honoured() -> None:
+    down = httpx.AsyncClient(transport=httpx.MockTransport(lambda r: httpx.Response(503)), base_url="https://h")
+    fetcher = await PoliteFetcher.create(down, site_url="https://h", user_agent="TestBot")
+    with pytest.raises(RobotsDisallowedError):
+        await fetcher.get("https://h/support/solutions/articles/1")
+    slow = httpx.AsyncClient(
+        transport=httpx.MockTransport(lambda r: httpx.Response(200, text="User-agent: *\nCrawl-delay: 4\n"))
+    )
+    assert (await PoliteFetcher.create(slow, site_url="https://h", user_agent="TestBot"))._interval_s == 4.0
+
+
 class Clock:
     def __init__(self) -> None:
         self.now = 0.0

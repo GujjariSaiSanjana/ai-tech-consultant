@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterable, Mapping
-from datetime import datetime
+from datetime import UTC, datetime
 from xml.etree import ElementTree as ET
 
 from brain.domain import SitemapDiff, SitemapEntry
@@ -27,6 +27,8 @@ def parse_sitemap(xml: str) -> list[SitemapEntry]:
             continue
         raw_lastmod = (node.findtext("sm:lastmod", default="", namespaces=_NS) or "").strip()
         lastmod = datetime.fromisoformat(raw_lastmod) if raw_lastmod else None
+        if lastmod is not None and lastmod.tzinfo is None:
+            lastmod = lastmod.replace(tzinfo=UTC)  # W3C datetime without offset; compare like timestamptz
         entries[article_id] = SitemapEntry(article_id=article_id, url=loc, lastmod=lastmod)
     return list(entries.values())
 

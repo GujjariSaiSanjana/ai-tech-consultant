@@ -63,8 +63,14 @@ class PoliteFetcher:
         cls, client: httpx.AsyncClient, *, site_url: str, user_agent: str, interval_s: float = 1.0
     ) -> PoliteFetcher:
         response = await client.get(f"{site_url}/robots.txt")
-        robots_txt = response.text if response.status_code == 200 else ""
-        return cls(client, robots=RobotsPolicy(robots_txt, user_agent), interval_s=interval_s)
+        if response.status_code == 200:
+            robots_txt = response.text
+        elif response.status_code >= 500:  # RFC 9309: unreachable robots.txt means crawl nothing
+            robots_txt = "User-agent: *\nDisallow: /"
+        else:  # 4xx: no robots.txt, everything is allowed
+            robots_txt = ""
+        robots = RobotsPolicy(robots_txt, user_agent)
+        return cls(client, robots=robots, interval_s=max(interval_s, robots.crawl_delay() or 0.0))
 
     async def get(self, url: str) -> FetchResult:
         if not self._robots.allowed(url):

@@ -10,6 +10,7 @@ PROJECT_DIR = Path(__file__).resolve().parents[2]
 REPO_DIR = PROJECT_DIR.parent
 
 EmbedderName = Literal["voyage", "local", "hash"]
+DEFAULT_API_KEY = "dev-brain-key"
 
 
 class Settings(BaseSettings):
@@ -20,7 +21,7 @@ class Settings(BaseSettings):
     )
 
     database_url: str = Field("postgresql://postgres:postgres@localhost:5432/brain", alias="BRAIN_DATABASE_URL")
-    api_key: str = Field("dev-brain-key", alias="BRAIN_API_KEY")
+    api_key: str = Field(DEFAULT_API_KEY, alias="BRAIN_API_KEY")
     public_url: str = Field("http://localhost:8000", alias="BRAIN_URL")
     host: str = Field("127.0.0.1", alias="BRAIN_HOST")
     port: int = Field(8000, alias="BRAIN_PORT")

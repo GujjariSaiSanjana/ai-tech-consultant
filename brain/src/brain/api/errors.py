@@ -33,7 +33,9 @@ def error_response(status: int, code: str, message: str) -> JSONResponse:
 def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(StarletteHTTPException)
     async def http_error(_: Request, exc: StarletteHTTPException) -> JSONResponse:
-        return error_response(exc.status_code, _CODES.get(exc.status_code, "error"), str(exc.detail))
+        response = error_response(exc.status_code, _CODES.get(exc.status_code, "error"), str(exc.detail))
+        response.headers.update(exc.headers or {})  # keeps WWW-Authenticate so browsers show a login prompt
+        return response
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(_: Request, exc: RequestValidationError) -> JSONResponse:

@@ -37,7 +37,9 @@ class Indexer:
     async def index(self, article: ParsedArticle, *, lastmod: datetime | None, run_id: str | None) -> IndexOutcome:
         digest = content_hash(article)
         state = await self._repo.article_state(article.article_id)
-        if state is not None and state == ("active", digest):
+        if state == ("active", digest) and not await self._repo.has_foreign_embeddings(
+            article.article_id, self._embedder.name
+        ):
             await self._repo.touch_article(article.article_id, lastmod, run_id)
             return "unchanged"
 

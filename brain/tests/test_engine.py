@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import psycopg
 import pytest
 
 from brain.crawl.engine import CrawlEngine, RunBusyError, UnsafeRemovalError
@@ -142,3 +143,75 @@ async def test_unchanged_chunks_keep_their_rows_on_update(
     after = await repo.chunk_ids("5000558389", "hash")
     assert before & after, "untouched sections must be reused, not re-embedded"
     assert before != after
+
+
+class FailingIndexer(Indexer):
+    """Raises an ordinary error for one article, as an embedding API rejecting it would."""
+
+    def __init__(self, inner: Indexer, bad_id: str) -> None:
+        self._inner, self._bad = inner, bad_id
+
+    async def index(self, article: ParsedArticle, **kw: object) -> IndexOutcome:
+        if article.article_id == self._bad:
+            raise RuntimeError("embedding API rejected the chunk")
+        return await self._inner.index(article, **kw)  # type: ignore[arg-type]
+
+
+async def test_one_bad_article_does_not_stop_the_run(repo: Repository, indexer: Indexer, site: FakeSite) -> None:
+    _publish(site, dict.fromkeys(IDS, T1))
+    engine = CrawlEngine(repo, site.fetch, FailingIndexer(indexer, IDS[1]), sitemap_url="https://h/sitemap.xml")
+    counts = await engine.execute(await engine.start("crawl"))
+    assert (counts.added, counts.errors) == (3, 1)
+    assert await _active(repo) == set(IDS) - {IDS[1]}
+
+
+async def test_mass_404_does_not_empty_the_index(repo: Repository, indexer: Indexer, site: FakeSite) -> None:
+    _publish(site, dict.fromkeys(IDS, T1))
+    engine = CrawlEngine(repo, site.fetch, indexer, sitemap_url="https://h/sitemap.xml", removal_floor=1)
+    await engine.execute(await engine.start("crawl"))
+    site.pages.clear()  # the site answers 404 for everything
+    counts = await engine.execute(await engine.start("crawl"))
+    assert counts.removed == 1 and counts.errors == 3
+    assert len(await _active(repo)) == 3
+
+
+async def test_busy_lock_leaves_a_resumed_run_alone(engine: CrawlEngine, site: FakeSite, repo: Repository) -> None:
+    _publish(site, dict.fromkeys(IDS[:1], T1))
+    run_id = await engine.start("crawl")
+    async with repo.exclusive_runs():
+        with pytest.raises(RunBusyError):
+            await engine.execute(run_id, owner=False)
+    run = await repo.get_run(run_id)
+    assert run is not None and run["status"] == "running"
+
+
+async def test_failed_run_with_work_left_is_resumable(repo: Repository, indexer: Indexer, site: FakeSite) -> None:
+    _publish(site, dict.fromkeys(IDS, T1))
+    url = "https://h/sitemap.xml"
+    run_id = await CrawlEngine(repo, site.fetch, indexer, sitemap_url=url).start("crawl")
+
+    class DatabaseDown(Indexer):
+        async def index(self, article: ParsedArticle, **kw: object) -> IndexOutcome:
+            raise psycopg.OperationalError("connection lost")
+
+    with pytest.raises(psycopg.OperationalError):
+        await CrawlEngine(
+            repo, site.fetch, DatabaseDown(repo, indexer._embedder, indexer._describer), sitemap_url=url
+        ).execute(run_id)
+    assert await repo.latest_resumable("crawl") == run_id
+    counts = await CrawlEngine(repo, site.fetch, indexer, sitemap_url=url).execute(run_id, owner=False)
+    assert counts.added == 4
+    run = await repo.get_run(run_id)
+    assert run is not None and run["status"] == "done"
+
+
+async def test_an_item_that_keeps_crashing_is_given_up(repo: Repository, indexer: Indexer, site: FakeSite) -> None:
+    _publish(site, dict.fromkeys(IDS[:1], T1))
+    url = "https://h/sitemap.xml"
+    run_id = await CrawlEngine(repo, site.fetch, indexer, sitemap_url=url).start("crawl")
+    crashing = CrawlEngine(repo, site.fetch, CrashingIndexer(indexer, survive=0), sitemap_url=url)
+    for _ in range(3):
+        with pytest.raises(KeyboardInterrupt):
+            await crashing.execute(run_id, owner=False)
+    counts = await crashing.execute(run_id, owner=False)
+    assert counts.errors == 1

@@ -18,6 +18,10 @@ class RobotsPolicy:
             if "*" in rule or rule.endswith("$")
         ]
 
+    def crawl_delay(self) -> float | None:
+        delay = self._parser.crawl_delay(self._user_agent)
+        return float(delay) if delay is not None else None
+
     def allowed(self, url: str) -> bool:
         if not self._parser.can_fetch(self._user_agent, url):
             return False

@@ -22,9 +22,9 @@ async def run_sync(
     c: Container, *, limit: int | None = None, resume: bool = False, sitemap_xml: str | None = None
 ) -> tuple[str, RunCounts]:
     engine = await c.crawl_engine()
-    run_id = await c.repo.latest_running("sync") if resume else None
-    run_id = run_id or await engine.start("sync", limit=limit)
-    return run_id, await engine.execute(run_id, sitemap_xml=sitemap_xml)
+    resumed = await c.repo.latest_resumable("sync") if resume else None
+    run_id = resumed or await engine.start("sync", limit=limit)
+    return run_id, await engine.execute(run_id, sitemap_xml=sitemap_xml, owner=resumed is None)
 
 
 async def _main(limit: int | None, resume: bool, sitemap_xml: str | None) -> None:
