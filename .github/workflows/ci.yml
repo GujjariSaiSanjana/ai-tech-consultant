@@ -1,0 +1,86 @@
+# CI runs the same Make targets you run locally. No API keys: all tests are offline.
+# A task folder that is not on the branch yet is skipped by the Makefile with a notice.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  UV_LOCKED: "1" # fail if uv.lock is out of date with pyproject.toml
+
+jobs:
+  brain:
+    runs-on: ubuntu-24.04
+    services:
+      db:
+        image: pgvector/pgvector:0.8.7-pg17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: brain
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d brain"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      BRAIN_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/brain
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: brain/uv.lock
+          ignore-nothing-to-cache: true
+      - run: make setup-brain
+      - run: make lint-brain
+      - run: make typecheck-brain
+      - run: make test-brain
+
+  scope:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: scope/uv.lock
+          ignore-nothing-to-cache: true
+      - run: make setup-scope
+      - run: make lint-scope
+      - run: make typecheck-scope
+      - run: make test-scope
+
+  inbox:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        if: hashFiles('inbox/package-lock.json') != ''
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: inbox/package-lock.json
+      - run: make setup-inbox NPM_INSTALL=ci
+      - run: make typecheck-inbox
+      - run: make lint-inbox
+      - run: make test-inbox
+      - run: make build-inbox
+
+  report:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: false
+      - run: make test-report
+      - run: make lint-report
