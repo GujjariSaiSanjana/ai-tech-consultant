@@ -18,7 +18,9 @@ INJECTION = re.compile(
     r"(ignore|disregard|forget)\s+(all\s+|any\s+|the\s+)?(previous|prior|above|earlier|your)\s+"
     r"(instructions|prompts?|rules)"
     r"|system\s+prompt|you\s+are\s+now\s+|new\s+instructions\s*:|<\s*/?\s*(system|instructions)\s*>"
-    r"|as\s+an\s+ai\s+(model|assistant)|respond\s+only\s+with",
+    r"|as\s+an\s+ai\s+(model|assistant)|respond\s+only\s+with"
+    r"|note\s+to\s+(the\s+)?(ai|assistant|model|bot|llm)\b"
+    r"|\b(ai|assistant|model|llm)\s+(writing|reading|generating)\s+(this|the)\b",
     re.IGNORECASE,
 )
 
