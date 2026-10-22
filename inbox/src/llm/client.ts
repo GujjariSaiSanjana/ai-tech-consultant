@@ -115,6 +115,7 @@ export class AnthropicLlmClient implements LlmClient {
   }
 }
 
-export function createAnthropicClient(routes: RoutingTable, sink: LlmCallSink): AnthropicLlmClient {
-  return new AnthropicLlmClient(new Anthropic({ maxRetries: 3, timeout: 120_000 }), routes, sink);
+/** `apiKey` defaults to the SDK's own lookup of ANTHROPIC_API_KEY. */
+export function createAnthropicClient(routes: RoutingTable, sink: LlmCallSink, apiKey?: string): AnthropicLlmClient {
+  return new AnthropicLlmClient(new Anthropic({ maxRetries: 3, timeout: 120_000, ...(apiKey ? { apiKey } : {}) }), routes, sink);
 }

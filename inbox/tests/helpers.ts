@@ -1,5 +1,6 @@
 import { FakeBrainClient } from "../src/brain/fake-client";
 import type { BrainClient } from "../src/brain/schemas";
+import { readEnv } from "../src/config/env";
 import { THRESHOLDS } from "../src/config/thresholds";
 import type { NewEmail } from "../src/db/emails-repo";
 import type { GoldLabels } from "../src/domain/schemas";
@@ -26,7 +27,7 @@ export function makeServices(options: { handlers?: FakeHandlers; brain?: BrainCl
     brain: options.brain ?? new FakeBrainClient(),
     embedder: new HashingEmbedder(),
     clock: testClock(),
-    env: { INBOX_DATABASE_PATH: ":memory:", VOYAGE_MODEL: "x", BRAIN_URL: "http://x", BRAIN_API_KEY: "k", BRAIN_MCP_COMMAND: "python", BRAIN_MCP_ARGS: "" },
+    env: readEnv({ INBOX_DATABASE_PATH: ":memory:", VOYAGE_MODEL: "x", BRAIN_URL: "http://x", BRAIN_API_KEY: "k", BRAIN_MCP_COMMAND: "python", BRAIN_MCP_ARGS: "" }),
   });
 }
 
