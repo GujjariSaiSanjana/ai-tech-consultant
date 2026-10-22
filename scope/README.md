@@ -17,7 +17,7 @@ quoted as a change request.
 ```bash
 cd scope
 uv sync
-uv run pytest                                   # 150 tests, about 2 s
+uv run pytest                                   # 153 tests, about 2 s
 
 # Meetings 1 and 2 build scope v1
 uv run python -m scope.cli run --client "Trailhead Media" \
