@@ -169,7 +169,9 @@ Claude is the primary model everywhere. Google Gemini (`gemini-2.5-flash`) and N
 - **Inbox safety.** A draft written by a fallback model is never auto-sent; the trust ladder
   drops it to assist.
 - **Logging.** Every call logs the provider's model name, so the audit trail shows which
-  provider answered.
+  provider answered. Default prices are gemini-2.5-flash at 0.30 / 2.50 and NVIDIA at 0 (free
+  tier). Overrides are set per app: `GEMINI_INPUT_PRICE_PER_MTOK` and the related variables in
+  brain, `SCOPE_GEMINI_PRICE` and `SCOPE_NVIDIA_PRICE` in scope.
 
 ## 6. What breaks (honest list)
 
