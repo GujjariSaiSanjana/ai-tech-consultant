@@ -39,6 +39,8 @@ async def test_proposal_is_blocked_until_scope_is_approved(svc: ScopeService) ->
     pid, vid = await initial_version(svc)
     with pytest.raises(GateError, match="approve the scope"):
         await svc.generate_proposal(vid, "Sam")
+    with pytest.raises(GateError, match="audit log"):
+        await svc.approve_scope(vid, "  ")
     await svc.approve_scope(vid, "Sam")
     with pytest.raises(GateError):
         await svc.approve_scope(vid, "Sam")

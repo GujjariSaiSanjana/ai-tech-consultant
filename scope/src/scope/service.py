@@ -196,6 +196,7 @@ class ScopeService:
 
     # scope approval ------------------------------------------------------------------------
     async def approve_scope(self, version_id: int, actor: str) -> None:
+        _require_actor(actor)
         v = await self.repo.get_scope_version(version_id)
         try:
             new = approve_scope(_scope_status(v.status))
@@ -234,6 +235,7 @@ class ScopeService:
         return change_requests_section(snap.changelog)
 
     async def generate_proposal(self, version_id: int, actor: str) -> ProposalRow:
+        _require_actor(actor)
         v = await self.repo.get_scope_version(version_id)
         if not can_generate_proposal(_scope_status(v.status)):
             raise GateError("approve the scope before generating a proposal")
@@ -288,6 +290,7 @@ class ScopeService:
         action: ProposalAction,
         by: str,
     ) -> ProposalRow:
+        _require_actor(actor)
         row = await self.repo.get_proposal(proposal_id)
         state = await self._transition(row, action)
         doc = Proposal.model_validate(row.document)
@@ -325,6 +328,7 @@ class ScopeService:
         actor: str,
         instruction: str | None = None,
     ) -> ProposalRow:
+        _require_actor(actor)
         row = await self.repo.get_proposal(proposal_id)
         await self._transition(row, "regenerate_section")
         v = await self.repo.get_scope_version(row.scope_version_id)
@@ -350,6 +354,7 @@ class ScopeService:
     async def approve_section(
         self, proposal_id: int, section: ProposalSectionName, actor: str
     ) -> ProposalRow:
+        _require_actor(actor)
         row = await self.repo.get_proposal(proposal_id)
         await self._transition(row, "approve_section")
         doc = Proposal.model_validate(row.document)
@@ -368,6 +373,7 @@ class ScopeService:
 
     async def transition(self, proposal_id: int, action: ProposalAction, actor: str) -> ProposalRow:
         """submit_for_review, approve or send. Sending exports Markdown and HTML (no email)."""
+        _require_actor(actor)
         if action not in ("submit_for_review", "approve", "send"):
             raise GateError(f"use the section actions for {action}")
         row = await self.repo.get_proposal(proposal_id)
@@ -406,6 +412,11 @@ class ScopeService:
         html_doc = markdown_to_html(md, f"Proposal {row.id}")
         await asyncio.to_thread(_write_export, stem, md, html_doc)
         return stem.with_suffix(".md")
+
+
+def _require_actor(actor: str) -> None:
+    if not actor.strip():
+        raise GateError("say who you are: every approval and edit is recorded in the audit log")
 
 
 def _write_export(stem: Path, md: str, html_doc: str) -> None:
