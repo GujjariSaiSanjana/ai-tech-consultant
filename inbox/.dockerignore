@@ -1,0 +1,7 @@
+node_modules
+.next
+data/runtime
+*.db
+.env
+.env.*
+next-env.d.ts
