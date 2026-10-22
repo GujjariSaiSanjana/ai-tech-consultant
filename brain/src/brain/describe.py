@@ -25,6 +25,11 @@ from brain.repo import NewChunk, PendingImage, Repository
 log = logging.getLogger(__name__)
 
 
+def _key(p: PendingImage) -> str:
+    """Batch custom_id: unique per (article, attachment); only [A-Za-z0-9_-] is allowed."""
+    return f"{p.article_id}_{p.id}"
+
+
 def _ref(p: PendingImage) -> ImageRef:
     return ImageRef(id=p.id, url=p.url, change_key=p.change_key, position=p.position, caption=p.caption)
 
@@ -51,17 +56,17 @@ async def describe_images(
     if not pending:
         return 0
     if batch:
-        batch_id = await llm.submit_batch("vision", [(p.id, vision_messages(_ref(p), p.title)) for p in pending])
+        batch_id = await llm.submit_batch("vision", [(_key(p), vision_messages(_ref(p), p.title)) for p in pending])
         log.info("submitted batch %s with %d screenshots", batch_id, len(pending))
         texts = {k: message_text(m) for k, m in (await llm.collect_batch("vision", batch_id, poll_s=poll_s)).items()}
     else:
         texts = {}
         for p in pending:
             message, _ = await llm.create("vision", messages=vision_messages(_ref(p), p.title))
-            texts[p.id] = message_text(message)
+            texts[_key(p)] = message_text(message)
     done = 0
     for p in pending:
-        if text := texts.get(p.id, "").strip():
+        if text := texts.get(_key(p), "").strip():
             await apply_description(repo, embedder, p, text)
             done += 1
     return done

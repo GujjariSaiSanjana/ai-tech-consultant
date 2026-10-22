@@ -172,8 +172,8 @@ class Repository:
                     """
                     INSERT INTO images (id, article_id, url, change_key, position, caption, description, described_by)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (id) DO UPDATE SET
-                        article_id = EXCLUDED.article_id, url = EXCLUDED.url, change_key = EXCLUDED.change_key,
+                    ON CONFLICT (article_id, id) DO UPDATE SET
+                        url = EXCLUDED.url, change_key = EXCLUDED.change_key,
                         position = EXCLUDED.position, caption = EXCLUDED.caption,
                         description = EXCLUDED.description, described_by = EXCLUDED.described_by
                     """,
@@ -209,7 +209,7 @@ class Repository:
                        coalesce(c.position, 0) AS chunk_position
                 FROM images i
                 JOIN articles a ON a.id = i.article_id AND a.status = 'active'
-                LEFT JOIN chunks c ON c.image_id = i.id
+                LEFT JOIN chunks c ON c.article_id = i.article_id AND c.image_id = i.id
                 WHERE i.described_by = 'alt_text'
                 ORDER BY a.id, i.position
                 LIMIT %s
@@ -223,9 +223,10 @@ class Repository:
     ) -> None:
         async with self.pool.connection() as conn, conn.transaction():
             await conn.execute(
-                "UPDATE images SET description = %s, described_by = 'claude' WHERE id = %s", (description, image_id)
+                "UPDATE images SET description = %s, described_by = 'claude' WHERE article_id = %s AND id = %s",
+                (description, article_id, image_id),
             )
-            await conn.execute("DELETE FROM chunks WHERE image_id = %s", (image_id,))
+            await conn.execute("DELETE FROM chunks WHERE article_id = %s AND image_id = %s", (article_id, image_id))
             await _insert_chunk(conn, chunk, embedding_model, article_id=article_id, gap_id=None)
 
     async def mark_removed(self, article_id: str, run_id: str | None = None) -> bool:
@@ -339,7 +340,7 @@ class Repository:
             JOIN chunks c ON c.id = f.id
             LEFT JOIN articles a ON a.id = c.article_id
             LEFT JOIN gap_tickets g ON g.id = c.gap_id
-            LEFT JOIN images i ON i.id = c.image_id
+            LEFT JOIN images i ON i.article_id = c.article_id AND i.id = c.image_id
             ORDER BY score DESC, chunk_id
             LIMIT %(top_k)s
             """

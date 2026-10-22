@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from brain.ingest.indexer import Indexer
@@ -51,3 +53,29 @@ async def test_category_filter(indexer: Indexer, make_service: ServiceFactory) -
     await _index(indexer, "5000558389", "12000095723")
     hits = await make_service().search("members API website", category="Developer Hub")
     assert hits and {h.category for h in hits} == {"Developer Hub"}
+
+
+async def test_screenshot_shared_by_two_articles_survives_removal_of_one(
+    indexer: Indexer, make_service: ServiceFactory, repo: Repository
+) -> None:
+    """The live help center reuses some attachments across articles; each article owns its copy."""
+    owner = fixture_article("5000558389")
+    shared = owner.images[1]  # "Where Do These Links Appear?" footer screenshot
+    other = fixture_article("12000048777")
+    borrowed = replace(other, images=(replace(other.images[0], id=shared.id, url=shared.url),))
+    borrowed = replace(
+        borrowed,
+        sections=tuple(
+            replace(s, image_ids=tuple(shared.id if i == other.images[0].id else i for i in s.image_ids))
+            for s in borrowed.sections
+        ),
+    )
+    await indexer.index(owner, lastmod=None, run_id=None)
+    await indexer.index(borrowed, lastmod=None, run_id=None)
+    await repo.mark_removed("5000558389")
+
+    article = await repo.get_article("12000048777")
+    assert article is not None and shared.url in [i["url"] for i in article["images"]]
+    hits = await make_service().search("Screenshot website phone number header", top_k=20)
+    image_hits = [h for h in hits if h.kind == "image" and h.article_id == "12000048777"]
+    assert image_hits and all(h.image_url for h in image_hits)
