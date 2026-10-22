@@ -29,6 +29,22 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = Field(None, alias="ANTHROPIC_API_KEY")
     voyage_api_key: str | None = Field(None, alias="VOYAGE_API_KEY")
 
+    # Fallback LLMs behind Claude (OpenAI-compatible Chat Completions). Shared contract across the three
+    # apps, so no BRAIN_ prefix. Prices are USD per million tokens.
+    gemini_api_key: str | None = Field(None, alias="GEMINI_API_KEY")
+    gemini_model: str = Field("gemini-2.5-flash", alias="GEMINI_MODEL")
+    gemini_base_url: str = Field("https://generativelanguage.googleapis.com/v1beta/openai/", alias="GEMINI_BASE_URL")
+    gemini_input_price: float = Field(0.30, alias="GEMINI_INPUT_PRICE_PER_MTOK")
+    gemini_output_price: float = Field(2.50, alias="GEMINI_OUTPUT_PRICE_PER_MTOK")
+    nvidia_api_key: str | None = Field(None, alias="NVIDIA_API_KEY")
+    nvidia_model: str = Field("meta/llama-3.3-70b-instruct", alias="NVIDIA_MODEL")
+    nvidia_base_url: str = Field("https://integrate.api.nvidia.com/v1", alias="NVIDIA_BASE_URL")
+    nvidia_input_price: float = Field(0.0, alias="NVIDIA_INPUT_PRICE_PER_MTOK")
+    nvidia_output_price: float = Field(0.0, alias="NVIDIA_OUTPUT_PRICE_PER_MTOK")
+    llm_fallback_order: str = Field(
+        "gemini,nvidia", alias="LLM_FALLBACK_ORDER", description="Comma-separated; empty disables fallback."
+    )
+
     embedder: EmbedderName | None = Field(
         None, alias="BRAIN_EMBEDDER", description="Defaults to voyage when VOYAGE_API_KEY is set, else local."
     )
@@ -61,6 +77,10 @@ class Settings(BaseSettings):
     @property
     def sitemap_url(self) -> str:
         return f"{self.site_url}/support/sitemap.xml"
+
+    @property
+    def fallback_order(self) -> list[str]:
+        return [name.strip().lower() for name in self.llm_fallback_order.split(",") if name.strip()]
 
     @property
     def resolved_embedder(self) -> EmbedderName:
