@@ -61,6 +61,7 @@ class LLMSession:
         self.run_id = run_id
         self.mocked = mocked
         self.budget = Budget(settings.run_budget_usd)
+        self._prices = settings.price_table()
         self.calls: list[CallRecord] = []
 
     async def parse[T: BaseModel](self, req: LLMRequest, schema: type[T]) -> LLMResult[T]:
@@ -83,7 +84,7 @@ class LLMSession:
                 )
             )
             raise
-        cost = 0.0 if self.mocked else cost_usd(result.model, result.usage, self.settings.prices)
+        cost = 0.0 if self.mocked else cost_usd(result.model, result.usage, self._prices)
         result = dataclasses.replace(result, cost_usd=cost, mocked=self.mocked)
         await self.budget.add(cost)
         record = CallRecord(
