@@ -1,0 +1,14 @@
+{% if gap.status == "answered" %}
+  <p><strong>{{ gap.question }}</strong></p><p class="muted">Answered. Saved to memory.</p>
+{% else %}
+  <p><strong>{{ gap.question }}</strong></p>
+  <p class="muted">{{ gap.source }} &middot; {{ gap.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
+  {% if gap.context %}<p class="muted">Context: {{ gap.context }}</p>{% endif %}
+  {% if gap.bot_attempt %}<blockquote>{{ gap.bot_attempt }}</blockquote>{% endif %}
+  <form method="post" action="/ui/gaps/{{ gap.id }}/answer" hx-post="/ui/gaps/{{ gap.id }}/answer"
+        hx-target="#gap-{{ gap.id }}" hx-swap="innerHTML">
+    <textarea name="answer" required placeholder="The answer, with where to click if relevant"></textarea>
+    <div class="row"><input type="text" name="expert" required placeholder="Your name" style="max-width:14rem">
+      <button type="submit">Save answer</button></div>
+  </form>
+{% endif %}
