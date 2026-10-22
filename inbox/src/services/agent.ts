@@ -10,7 +10,7 @@ import type { Embedder } from "../embeddings/embedder";
 import { cosineSimilarity, decideOutcome, isMaterial, normalizedEditDistance, normalizeForComparison } from "../learning/compare";
 import { judgeMaterialChange } from "../learning/judge";
 import { isRegression, scorePlaybook, type RegressionCase } from "../learning/regression";
-import { applyTrustEvent, decideSend, initialTrust, type TrustState } from "../learning/trust";
+import { applyTrustEvent, decideSend, effectiveMode, initialTrust, type TrustState } from "../learning/trust";
 import type { LlmClient } from "../llm/client";
 import { runPipeline, type PipelineDeps } from "../pipeline/run";
 import { redactPii } from "../privacy/redact";
@@ -93,13 +93,18 @@ export class InboxAgent {
     const active = repos.playbook.requireActiveVersion();
     const result = await runPipeline(email, this.deps.pipeline, playbookContext(repos.playbook, active.id));
     const trust = repos.trust.get(result.kindKey);
-    const decision = decideSend({ state: trust, killSwitch: repos.settings.killSwitch(), draftNeedsReview: result.needsReview });
+    const decision = decideSend({
+      state: trust,
+      killSwitch: repos.settings.killSwitch(),
+      draftNeedsReview: result.needsReview,
+      draftModel: result.draftModel,
+    });
     const now = clock();
     const { draftId } = repos.drafts.save({
       emailId,
       result,
       playbookVersionId: active.id,
-      trustMode: trust?.mode ?? "shadow",
+      trustMode: effectiveMode(trust, result.draftModel),
       sendDecision: decision.reason,
       autoSend: decision.auto,
       now,

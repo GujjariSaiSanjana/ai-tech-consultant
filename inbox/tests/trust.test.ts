@@ -5,6 +5,7 @@ import {
   applyTrustEvent,
   autoEligibility,
   decideSend,
+  effectiveMode,
   initialTrust,
   materialEditsInBreakerWindow,
   unchangedRateLowerBound,
@@ -135,11 +136,27 @@ describe("circuit breaker", () => {
 describe("decideSend", () => {
   it("auto only when kind is auto, kill switch off, risk allowed and draft clean", () => {
     const state = autoState();
-    expect(decideSend({ state, killSwitch: false, draftNeedsReview: false }).auto).toBe(true);
-    expect(decideSend({ state, killSwitch: true, draftNeedsReview: false }).auto).toBe(false);
-    expect(decideSend({ state, killSwitch: false, draftNeedsReview: true }).auto).toBe(false);
-    expect(decideSend({ state: null, killSwitch: false, draftNeedsReview: false }).auto).toBe(false);
-    expect(decideSend({ state: { ...state, mode: "assist" }, killSwitch: false, draftNeedsReview: false }).auto).toBe(false);
-    expect(decideSend({ state: { ...state, riskClass: "refund" }, killSwitch: false, draftNeedsReview: false }).auto).toBe(false);
+    const draftModel = "claude-sonnet-5-5";
+    expect(decideSend({ state, killSwitch: false, draftNeedsReview: false, draftModel }).auto).toBe(true);
+    expect(decideSend({ state, killSwitch: true, draftNeedsReview: false, draftModel }).auto).toBe(false);
+    expect(decideSend({ state, killSwitch: false, draftNeedsReview: true, draftModel }).auto).toBe(false);
+    expect(decideSend({ state: null, killSwitch: false, draftNeedsReview: false, draftModel }).auto).toBe(false);
+    expect(decideSend({ state: { ...state, mode: "assist" }, killSwitch: false, draftNeedsReview: false, draftModel }).auto).toBe(false);
+    expect(decideSend({ state: { ...state, riskClass: "refund" }, killSwitch: false, draftNeedsReview: false, draftModel }).auto).toBe(false);
+    expect(decideSend({ state, killSwitch: false, draftNeedsReview: false, draftModel: null }).auto).toBe(false);
+  });
+
+  it("never auto-sends a draft written by a fallback (non-Claude) model, and handles it in assist", () => {
+    const state = autoState();
+    expect(decideSend({ state, killSwitch: false, draftNeedsReview: false, draftModel: "claude-sonnet-5-5-20261001" }).auto).toBe(true);
+    for (const draftModel of ["gemini-2.5-flash", "meta/llama-3.3-70b-instruct"]) {
+      const decision = decideSend({ state, killSwitch: false, draftNeedsReview: false, draftModel });
+      expect(decision.auto).toBe(false);
+      expect(decision.reason).toContain(draftModel);
+      expect(effectiveMode(state, draftModel)).toBe("assist");
+    }
+    expect(effectiveMode(state, "claude-sonnet-5-5")).toBe("auto");
+    expect(effectiveMode({ ...state, mode: "shadow" }, "gemini-2.5-flash")).toBe("shadow");
+    expect(effectiveMode(null, "gemini-2.5-flash")).toBe("shadow");
   });
 });
