@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }} - Scope of Work{% endblock %}
+{% block body %}
+<h1>{{ project.name }}</h1>
+<div class="muted">Client: {{ project.client }}
+{% if current %} &middot; Scope v{{ current.version }} <span class="pill {{ 'setting' if current.status == 'approved' else '' }}">{{ current.status }}</span>
+{% if current.approved_by %}<span class="small">by {{ current.approved_by }}</span>{% endif %}{% endif %}
+{% if versions|length > 1 %} &middot; View version:
+{% for x in versions %}<a href="?tab={{ tab }}&v={{ x.version }}">v{{ x.version }}</a> {% endfor %}{% endif %}
+</div>
+<nav class="tabs">
+{% for t in tabs %}<a href="?tab={{ t }}{% if current %}&v={{ current.version }}{% endif %}" class="{{ 'on' if t == tab else '' }}">{{ t|capitalize }}</a>{% endfor %}
+</nav>
+{% include "_" ~ tab ~ ".html" %}
+{% endblock %}

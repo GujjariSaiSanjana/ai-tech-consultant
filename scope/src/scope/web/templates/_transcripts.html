@@ -1,0 +1,35 @@
+<div class="card">
+  <h2>Meetings</h2>
+  {% if meetings %}
+  <table><tr><th>Key</th><th>Title</th><th>Processed in run</th><th class="num">Words</th></tr>
+  {% for m in meetings %}<tr><td>{{ m.meeting_key }}</td><td>
+    <details><summary>{{ m.title }}</summary><pre style="white-space:pre-wrap;max-height:360px;overflow:auto" class="small">{{ m.raw_text }}</pre></details></td>
+    <td>{{ m.run_id or 'not yet' }}</td><td class="num">{{ m.raw_text.split()|length }}</td></tr>{% endfor %}
+  </table>
+  {% else %}<p class="muted">Add the first meeting transcript below.</p>{% endif %}
+</div>
+<div class="grid2">
+<div class="card">
+  <h2>Add a transcript</h2>
+  <p class="small muted">Format: <code>[00:12:34] CLIENT (Name): ...</code>. Unformatted text also works.
+  After a scope is approved, a new transcript is treated as a follow-up meeting and the scope is updated, not rebuilt.</p>
+  <form method="post" action="/projects/{{ project.id }}/meetings" enctype="multipart/form-data">
+    <p><input type="file" name="file" accept=".txt,.md"></p>
+    <p><textarea name="text" placeholder="...or paste the transcript here"></textarea></p>
+    <button type="submit" class="ghost">Add meeting</button>
+  </form>
+</div>
+<div class="card">
+  <h2>Run the agent team</h2>
+  <p class="small muted">Processes every meeting not yet processed. Takes a few minutes with Claude.</p>
+  <form method="post" action="/projects/{{ project.id }}/runs"><button type="submit" {{ 'disabled' if running }}>Analyse new meetings</button></form>
+  <h3 style="margin-top:16px">Runs</h3>
+  {% with project_id = project.id %}{% include "_run_status.html" %}{% endwith %}
+  {% if runs and not running %}
+  <form method="post" action="/runs/{{ runs[0].id }}/rerun" class="inline" style="margin-top:10px">
+    <span class="small">Re-run latest from</span>
+    <select name="stage">{% for s in stages %}<option value="{{ s }}">{{ s }}</option>{% endfor %}</select>
+    <button class="ghost" type="submit">Re-run</button>
+  </form>{% endif %}
+</div>
+</div>

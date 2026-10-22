@@ -1,0 +1,59 @@
+{% if not current %}<div class="card muted">No scope yet.</div>{% else %}
+<div class="card">
+  <h2>Proposal</h2>
+  {% if current.status != 'approved' %}
+    <p class="muted">The proposal can only be written after a person approves scope v{{ current.version }} on the Scope tab.</p>
+    <button disabled title="Approve the scope first">Generate proposal</button>
+  {% elif not proposal_for_current %}
+    <form method="post" action="/scope/{{ current.id }}/proposal" class="inline">
+      <input type="text" name="actor" value="{{ actor }}" placeholder="Your name" required style="width:180px">
+      <button type="submit">Generate proposal for scope v{{ current.version }}</button>
+    </form>
+  {% endif %}
+</div>
+{% if proposal_for_current %}{% set row = proposal_row %}
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+    <div>State: <span class="state">{{ row.state.replace('_', ' ') }}</span> &middot; revision {{ row.revision }}
+      &middot; <a href="/proposals/{{ row.id }}/preview.md" target="_blank">Preview Markdown</a></div>
+    <form method="post" action="/proposals/{{ row.id }}/transition" class="inline">
+      <input type="text" name="actor" value="{{ actor }}" placeholder="Your name" required style="width:160px">
+      {% if row.state == 'draft' %}<button name="action" value="submit_for_review">Submit for review</button>{% endif %}
+      {% if row.state == 'in_review' %}<button name="action" value="approve" {{ '' if proposal.all_approved else 'disabled' }} title="Approve every section first">Approve proposal</button>{% endif %}
+      {% if row.state == 'approved' %}<button name="action" value="send">Send (export file)</button>{% endif %}
+    </form>
+  </div>
+  {% if row.export_path %}<p class="small">Exported to <code>{{ row.export_path }}</code> (and .html).</p>{% endif %}
+  {% for s in proposal.sections %}
+  <div class="section {{ 'approved' if s.approved }}" id="sec-{{ s.name }}">
+    <h3>{{ section_titles[s.name] }}
+      {% if s.approved %}<span class="pill setting">approved</span>{% else %}<span class="pill">needs approval</span>{% endif %}
+      <span class="pill">{{ 'written by code from the estimate' if s.generated_by == 'code' else ('edited by a person' if s.generated_by == 'human' else 'drafted by AI') }}</span></h3>
+    <pre>{{ s.content }}</pre>
+    {% if row.state != 'sent' %}
+    {% if not s.approved and row.state != 'approved' %}
+    <form method="post" action="/proposals/{{ row.id }}/sections/{{ s.name }}/approve" class="inline">
+      <input type="text" name="actor" value="{{ actor }}" placeholder="Your name" required style="width:160px">
+      <button class="ghost">Approve section</button>
+    </form>{% endif %}
+    <details><summary>Edit</summary>
+      <form method="post" action="/proposals/{{ row.id }}/sections/{{ s.name }}/edit">
+        <textarea name="content">{{ s.content }}</textarea>
+        <input type="text" name="actor" value="{{ actor }}" placeholder="Your name" required style="width:200px">
+        <button>Save edit</button></form></details>
+    <details><summary>Regenerate</summary>
+      <form method="post" action="/proposals/{{ row.id }}/sections/{{ s.name }}/regenerate">
+        <input type="text" name="instruction" placeholder="What should change? (optional)">
+        <input type="text" name="actor" value="{{ actor }}" placeholder="Your name" required style="width:200px">
+        <button class="ghost">Regenerate</button></form></details>
+    {% endif %}
+  </div>{% endfor %}
+</div>
+{% endif %}
+<div class="card"><h3>Audit log</h3>
+{% if audit %}<table><tr><th>When</th><th>Who</th><th>Action</th><th>What</th><th>Version</th><th>Change</th></tr>
+{% for a in audit %}<tr><td class="small muted">{{ a.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td><td>{{ a.actor }}</td><td>{{ a.action.replace('_', ' ') }}</td>
+<td>{{ a.entity }}{% if a.section %}: {{ a.section }}{% endif %}</td><td>{{ a.version }}</td>
+<td>{% if a.diff %}<details><summary>diff</summary><pre class="small" style="white-space:pre-wrap">{{ a.diff }}</pre></details>{% endif %}</td></tr>{% endfor %}</table>
+{% else %}<p class="small muted">Nothing yet.</p>{% endif %}</div>
+{% endif %}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Scope of Work{% endblock %}</title>
+<script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+<style>
+:root { --bg:#f7f7f5; --card:#fff; --ink:#1d1d1f; --muted:#6b6b70; --line:#e3e3e0; --accent:#2457d6;
+  --green:#e6f4ea; --green-ink:#1e6b34; --amber:#fff4dc; --amber-ink:#8a5a00; --red:#fde8e8; --red-ink:#a12020;
+  --grey:#efefef; --grey-ink:#555; }
+* { box-sizing: border-box; }
+body { margin:0; font: 15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; background:var(--bg); color:var(--ink); }
+header { background:var(--card); border-bottom:1px solid var(--line); padding:12px 20px; display:flex; gap:16px; align-items:center; }
+header a { color:var(--ink); text-decoration:none; font-weight:600; }
+main { max-width:1150px; margin:0 auto; padding:20px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin-bottom:16px; }
+h1 { font-size:22px; margin:0 0 4px; } h2 { font-size:18px; margin:0 0 10px; } h3 { font-size:15px; margin:0 0 6px; }
+.muted { color:var(--muted); } .small { font-size:13px; }
+.tabs { display:flex; gap:4px; border-bottom:1px solid var(--line); margin:16px 0; flex-wrap:wrap; }
+.tabs a { padding:8px 14px; text-decoration:none; color:var(--muted); border-radius:8px 8px 0 0; }
+.tabs a.on { color:var(--ink); background:var(--card); border:1px solid var(--line); border-bottom-color:var(--card); margin-bottom:-1px; font-weight:600; }
+table { width:100%; border-collapse:collapse; } th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { font-size:13px; color:var(--muted); font-weight:600; } td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.pill { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; background:var(--grey); color:var(--grey-ink); white-space:nowrap; }
+.pill.setting { background:var(--green); color:var(--green-ink); } .pill.custom_dev { background:var(--red); color:var(--red-ink); }
+.pill.addon, .pill.widget_customization { background:var(--amber); color:var(--amber-ink); }
+.pill.flag { background:#eef2ff; color:#3743a6; }
+button, .btn { font:inherit; padding:6px 14px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer; text-decoration:none; display:inline-block; }
+button.ghost, .btn.ghost { background:#fff; color:var(--accent); } button:disabled { opacity:.45; cursor:not-allowed; }
+input[type=text], textarea, select { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:8px; width:100%; background:#fff; }
+textarea { min-height:120px; } form.inline { display:inline-flex; gap:6px; align-items:center; }
+.msg { background:#eef4ff; border:1px solid #c9d8ff; padding:10px 14px; border-radius:8px; margin-bottom:14px; }
+.banner { background:var(--amber); color:var(--amber-ink); padding:6px 20px; font-size:13px; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.diff-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:8px; }
+.diff-cell { border-radius:8px; padding:10px 12px; border:1px solid var(--line); min-height:44px; background:#fff; }
+.diff-cell.added { background:var(--green); border-color:#bfe3c9; } .diff-cell.modified { background:var(--amber); border-color:#f1d999; }
+.diff-cell.removed { background:var(--red); border-color:#f4c2c2; text-decoration:line-through; text-decoration-color:#d99; }
+.diff-cell.out_of_scope { background:var(--grey); border-color:#ddd; } .diff-cell.empty { background:transparent; border-style:dashed; }
+.legend span { margin-right:10px; } .quote { font-size:13px; color:var(--muted); margin-top:4px; }
+.section { border-left:4px solid var(--line); padding-left:12px; margin:18px 0; } .section.approved { border-left-color:#3aa55c; }
+.section pre { white-space:pre-wrap; font:inherit; background:#fafafa; border:1px solid var(--line); border-radius:8px; padding:10px; }
+details summary { cursor:pointer; color:var(--accent); }
+.state { font-weight:600; text-transform:uppercase; font-size:12px; letter-spacing:.04em; }
+@media (max-width:800px){ .grid2, .diff-row { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header><a href="/">Scope of Work</a><span class="muted small">Meeting transcripts to scope, estimate and proposal</span></header>
+{% if mocked %}<div class="banner">Offline mode: a rule-based fake stands in for Claude and the Knowledge Brain. Results show the workflow, not model quality.</div>{% endif %}
+<main>
+{% if msg %}<div class="msg">{{ msg }}</div>{% endif %}
+{% block body %}{% endblock %}
+</main>
+</body>
+</html>
