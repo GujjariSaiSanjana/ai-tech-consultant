@@ -1,0 +1,227 @@
+# Meeting: GuideFinder follow-up after scope v1 approval
+# Date: 2026-10-06
+# Participants: Sam Patel (CONSULTANT, lead consultant); Rina Cho (CONSULTANT, solutions engineer); Marcus Bell (CLIENT, owner, Trailhead Media); Dana Ortiz (CLIENT, operations lead, Trailhead Media)
+
+[00:00:06] CONSULTANT (Sam Patel): Hey, morning everyone. Can you hear me okay? I'm on the new headset, so tell me if I sound like I'm in a tin can.
+[00:00:18] CLIENT (Marcus Bell): You sound fine. Little echo maybe, but fine.
+[00:00:24] CONSULTANT (Rina Cho): Morning! I'm here too. Sorry, my camera is being weird, give me one second.
+[00:00:36] CLIENT (Dana Ortiz): Hi all. I'm actually in the car park at the office, so if I cut out that's why. I'll go inside in a minute.
+[00:00:48] CONSULTANT (Sam Patel): No rush. How was the weekend? Marcus, did you end up doing that river trip you were talking about?
+[00:01:00] CLIENT (Marcus Bell): I did, yeah. Took my son down the Deschutes, two days. It rained the whole first day, like sideways rain, and then Sunday was perfect. Classic October.
+[00:01:19] CONSULTANT (Rina Cho): That sounds amazing and also miserable.
+[00:01:24] CLIENT (Marcus Bell): Both, exactly. But the guide we went with, funny enough, he's one of ours. He's been on the directory for, like, six years. And he spent half the trip asking me when the new site is coming, so, no pressure.
+[00:01:47] CONSULTANT (Sam Patel): Ha. Well, that's a good segue. So, um, quick framing for today. You signed off on scope v1 on the twenty-fifth, thank you for that. Since then you've had a week or so to live with it, and you mentioned on email there are a few things you want to adjust. So the goal today is just to walk through what's changing, what's staying, and anything new, and then Rina and I go away and figure out what that means for the plan.
+[00:02:27] CLIENT (Dana Ortiz): Okay, I'm inside now. Can you hear me better?
+[00:02:32] CONSULTANT (Sam Patel): Much better, yeah.
+[00:02:35] CLIENT (Dana Ortiz): Great. Yeah, so Marcus and I sat down Thursday and went through the whole document line by line. There's, honestly, not a ton, but some of it is kind of important.
+[00:02:53] CLIENT (Marcus Bell): Some of it is me changing my mind, let's be honest.
+[00:02:59] CONSULTANT (Sam Patel): That's what this meeting is for. Better now than in week six. Let me share the scope we signed off so we're all looking at the same thing. One sec.
+[00:03:46] CONSULTANT (Sam Patel): Okay, can you see a document with the Trailhead logo at the top?
+[00:03:52] CLIENT (Marcus Bell): Yep.
+[00:03:54] CONSULTANT (Sam Patel): Cool. So I'm not going to read the whole thing. Where do you want to start? Biggest thing first?
+[00:04:05] CLIENT (Marcus Bell): Biggest thing is the booking stuff. The FareHarbor and Peek calendar.
+[00:04:13] CONSULTANT (Sam Patel): Okay. So that's the one where each guide profile shows live availability, pulled from their booking system, so a customer can see open dates. What's changed?
+[00:04:30] CLIENT (Marcus Bell): So, um, two things. First, Peek. Dana actually went and counted.
+[00:04:39] CLIENT (Dana Ortiz): Yeah. So I went through the list of guides who've told us what booking system they use. It's not everybody, it's like four hundred of them who've answered. And Peek is... I think it was twenty-two guides. FareHarbor is way over two hundred. The rest are on, like, paper and phone calls, or some random thing.
+[00:05:10] CONSULTANT (Rina Cho): Twenty-two out of four hundred. Okay, that's small.
+[00:05:16] CLIENT (Marcus Bell): Yeah. It's not worth building two integrations for twenty-two people. So we're dropping Peek. FareHarbor only.
+[00:05:28] CONSULTANT (Sam Patel): Got it. Peek is out, FareHarbor only. And the second thing?
+[00:05:36] CLIENT (Marcus Bell): The second thing is the calendar itself. I talked to a couple of the bigger outfitters, the ones who'd actually care, and they kind of... they don't love the idea of us showing their availability. One of them said, and I'm quoting, "I don't want my calendar on somebody else's website, then customers see I'm empty in March and think I'm bad."
+[00:06:06] CONSULTANT (Sam Patel): Huh. That's a fair point, actually. Empty calendars look like nobody wants you.
+[00:06:14] CLIENT (Marcus Bell): Right! I hadn't thought about that at all. So what they'd prefer, and honestly what's simpler, is just a button. "Book now." You click it, it takes you straight to that guide's FareHarbor page. They handle everything over there.
+[00:06:37] CONSULTANT (Rina Cho): So a deep link, basically. Not a live calendar on the profile at all.
+[00:06:43] CLIENT (Marcus Bell): Exactly. No calendar. Just the button.
+[00:06:48] CONSULTANT (Rina Cho): Okay. Can I ask a couple of things about that? So, the link -- does every FareHarbor guide have one stable URL for their page, or is it per trip? Because some outfitters have, like, eight different trips and each one has its own booking flow.
+[00:07:13] CLIENT (Dana Ortiz): Um. I think most of them have a main page, like a company page, that lists all their trips. That's what I'd link to. Is that right, Marcus?
+[00:07:27] CLIENT (Marcus Bell): I think so? I'd say link to the main one. If they want per-trip links that's, like, version two.
+[00:07:37] CONSULTANT (Rina Cho): Okay. And who enters the link? Does the guide paste it into their profile, or does Dana collect them?
+[00:07:48] CLIENT (Dana Ortiz): Oh, the guide. I'm not collecting two hundred URLs.
+[00:07:54] CONSULTANT (Sam Patel): Fair. So let me play that back. On each guide profile there's a "Book now" button, it goes to the guide's own FareHarbor page, the guide supplies that link themselves, and there is no live availability calendar. Peek is gone completely. Yeah?
+[00:08:19] CLIENT (Marcus Bell): Yep, that's it.
+[00:08:22] CONSULTANT (Sam Patel): What happens for a guide who isn't on FareHarbor? The paper-and-phone people. Do they just not get a button?
+[00:08:33] CLIENT (Marcus Bell): Um... I guess they just have the contact form, like today. Dana?
+[00:08:41] CLIENT (Dana Ortiz): I mean, I'd want to think about that. Some of them would probably want a button that just goes to their own website. But I don't know. Let's not decide that today.
+[00:08:54] CONSULTANT (Sam Patel): Okay, I'll leave that as an open question. I'll note it. And do you care about tracking clicks on that button? Like, would you want to know how many people went to FareHarbor from your site? Because that's the kind of thing you'd show a guide to justify the Elite price.
+[00:09:17] CLIENT (Marcus Bell): Oh. Yeah, that would be nice. That's a good idea.
+[00:09:22] CLIENT (Dana Ortiz): Nice to have, though. I don't want to add stuff.
+[00:09:26] CONSULTANT (Sam Patel): Sure, I'm not adding it, I'm just asking so we don't build it in a way that makes it impossible later. Rina, anything else on booking?
+[00:09:39] CONSULTANT (Rina Cho): No, I think that's enough for now. Honestly this is a lot simpler than what was in v1. The live calendar was the riskiest bit of the whole thing.
+[00:09:52] CLIENT (Marcus Bell): See, I'm making your life easier.
+[00:09:57] CONSULTANT (Rina Cho): For once! Kidding.
+[00:10:02] CLIENT (Marcus Bell): Okay, ouch. Fine.
+[00:10:07] CONSULTANT (Sam Patel): Alright. What's next on your list?
+[00:10:12] CLIENT (Dana Ortiz): Can I do mine? Because it's quick. The Monday email.
+[00:10:18] CONSULTANT (Sam Patel): The one with signups and revenue?
+[00:10:23] CLIENT (Dana Ortiz): Yeah. So, I asked for that at the end of the kickoff, kind of on a whim. But since then our sales guy set up HubSpot dashboards, and they already show new members and revenue by week. It's literally the same thing. So we'll just use the HubSpot dashboards. Drop it.
+[00:10:49] CONSULTANT (Sam Patel): Drop the weekly email completely?
+[00:10:54] CLIENT (Dana Ortiz): Completely. I don't need two places telling me the same number. I'll bookmark the dashboard.
+[00:11:03] CONSULTANT (Sam Patel): Okay. That one goes. Just to check though, the HubSpot dashboards are fed by the sync we're building, right? New paying members landing in HubSpot with plan and region. So if that's how you're getting your numbers, the sync matters even more now.
+[00:11:26] CLIENT (Dana Ortiz): Right, yes. That stays exactly as is. Actually, it's kind of the reason the email isn't needed.
+[00:11:36] CONSULTANT (Rina Cho): Does the revenue on the dashboard come from HubSpot deals, or from the payment side? Because we'd only be pushing plan and region, not dollar amounts, the way it's written today.
+[00:11:52] CLIENT (Dana Ortiz): Hmm. I actually don't know. Our sales guy, Jordan, built it. I'd have to ask him.
+[00:12:01] CONSULTANT (Rina Cho): Okay. Could you ask? Because if the dashboard is expecting an amount and we don't send one, the revenue number is going to be zero and you'll think we broke it.
+[00:12:14] CLIENT (Dana Ortiz): Yeah, fair. I'll ask Jordan this week.
+[00:12:19] CONSULTANT (Sam Patel): I'll put that in the follow-ups. Okay. Marcus, you had a pricing thing, I think? You mentioned it on the email.
+[00:12:30] CLIENT (Marcus Bell): Yeah. So, Elite. We had it at seventy-nine a month.
+[00:12:37] CONSULTANT (Sam Patel): Free, Pro at twenty-nine, Elite at seventy-nine, monthly or annual.
+[00:12:45] CLIENT (Marcus Bell): Right. So, we're going to ninety-nine for Elite. Ninety-nine a month.
+[00:12:51] CONSULTANT (Sam Patel): Okay. What drove that?
+[00:12:56] CLIENT (Marcus Bell): Partly I looked at what the competitors charge. There's a fishing guide directory, I won't name it, they charge a hundred and twenty for their top tier and they have, like, half our traffic. And partly, Elite now gets top of the results and the big photo gallery and the badge... it just felt cheap at seventy-nine. I talked to three Elite-type guides and none of them flinched at ninety-nine.
+[00:13:32] CLIENT (Dana Ortiz): I did flinch a little, for the record.
+[00:13:37] CLIENT (Marcus Bell): Dana flinched.
+[00:13:40] CLIENT (Dana Ortiz): I just think we'll get emails. But fine, it's his call.
+[00:13:46] CONSULTANT (Sam Patel): And Pro stays at twenty-nine? Free stays free?
+[00:13:51] CLIENT (Marcus Bell): Yes, nothing else moves. Just Elite.
+[00:13:56] CONSULTANT (Sam Patel): Okay. And on the annual price, is that just twelve times ninety-nine, or is there a discount for annual?
+[00:14:07] CLIENT (Marcus Bell): Oh. Um. I hadn't thought about that. What did we have before?
+[00:14:14] CONSULTANT (Sam Patel): I don't think we ever put a number on annual, honestly. It just said monthly or annual.
+[00:14:22] CLIENT (Marcus Bell): Let me come back to you on that. Probably some discount, two months free or something. Don't hold me to it.
+[00:14:31] CONSULTANT (Sam Patel): I won't. Open item. And then -- sorry, was there more on billing?
+[00:14:40] CLIENT (Marcus Bell): Yes, the other half. Quarterly. A bunch of the seasonal guys, the ones who only work May to September, they hate annual because they pay in the winter when they've got no money coming in, and they hate monthly because it's annoying. So they want quarterly. So, monthly, quarterly, and annual.
+[00:15:07] CONSULTANT (Rina Cho): So three billing cycles now. Monthly, quarterly, annual. On both paid plans, or just Elite?
+[00:15:18] CLIENT (Marcus Bell): Both. Pro and Elite.
+[00:15:22] CONSULTANT (Rina Cho): Okay. I'd want to check how that plays with the payment gateway and with how the plans are set up, I don't want to promise anything about it until I've looked. But conceptually, fine.
+[00:15:38] CONSULTANT (Sam Patel): And what happens to existing guides who signed up at seventy-nine? Are they grandfathered, or do they move to ninety-nine?
+[00:15:47] CLIENT (Marcus Bell): Well, nobody's on the new site yet, right? Nobody's paying for Elite yet because Elite doesn't exist on the old site.
+[00:15:57] CLIENT (Dana Ortiz): Well, actually, we have, like, fifteen people on the "featured" thing on the old WordPress site. They pay us by invoice. They were kind of promised they'd become Elite.
+[00:16:13] CLIENT (Marcus Bell): Oh. Right. Those guys.
+[00:16:18] CONSULTANT (Sam Patel): So that's a migration question as well as a pricing question. Do those fifteen come over at seventy-nine, ninety-nine, or whatever they're paying now?
+[00:16:31] CLIENT (Marcus Bell): Ugh. I don't know. Let me think about it. I don't want to annoy them.
+[00:16:37] CONSULTANT (Sam Patel): Okay, no answer needed today. I'll flag it. So, to play it back: Elite goes from seventy-nine to ninety-nine a month, Pro and Free unchanged, and there's a quarterly option added, so monthly, quarterly, or annual on the paid plans. Annual discount and the fifteen featured guides are open.
+[00:17:05] CLIENT (Marcus Bell): Yep.
+[00:17:08] CLIENT (Dana Ortiz): Sorry, can I jump in on something related? It's the failed payment thing.
+[00:17:16] CONSULTANT (Sam Patel): Sure, go ahead.
+[00:17:19] CLIENT (Dana Ortiz): So with quarterly, if someone's card fails on a quarterly renewal, the suspension thing still works the same way? The grace period and then they get kicked off?
+[00:17:34] CONSULTANT (Sam Patel): That's the plan, yeah. That part hasn't changed. Card fails, there's a grace period, roughly a week, and then the account gets suspended automatically. Marcus, you're still happy with that?
+[00:17:52] CLIENT (Marcus Bell): Yeah, no change. Still want that. I don't want to be chasing people.
+[00:17:58] CONSULTANT (Rina Cho): I'd want to confirm how the grace period works with a quarterly cycle versus monthly, whether it's the same number of days. I'll look at it. I don't want to assume.
+[00:18:11] CLIENT (Dana Ortiz): Okay. Same week of grace is fine with me regardless.
+[00:18:17] CONSULTANT (Sam Patel): Noted. Same grace period whatever the cycle. Alright.
+[00:18:27] CLIENT (Marcus Bell): Okay, next. The homepage.
+[00:18:32] CONSULTANT (Sam Patel): The hero redesign. The big search box with the new brand colours, matching the mockup.
+[00:18:40] CLIENT (Marcus Bell): Yeah. So that's... that's off. The brand refresh got pushed. We were working with a little agency in Bend on the new logo and colours, and they, um, basically they're not going to be done until spring. And I'm not paying you to build a homepage in colours we might change again. So the brand stuff is next year.
+[00:19:12] CONSULTANT (Sam Patel): So we keep the default hero that comes with the theme?
+[00:19:17] CLIENT (Marcus Bell): Keep the default. Whatever it looks like out of the box, with our logo, the current logo, on top. Fine.
+[00:19:27] CONSULTANT (Rina Cho): Just so I'm clear, the search box on the homepage still works, right? It still does the activity, region, certification filters and the zip code radius thing? It's only the visual redesign that's gone?
+[00:19:45] CLIENT (Marcus Bell): Oh, yes, yes. Search has to work. I just don't want the fancy custom version. Default look.
+[00:19:54] CONSULTANT (Sam Patel): Got it. So the homepage hero redesign is removed, search itself is untouched. Dana, any feelings on that?
+[00:20:06] CLIENT (Dana Ortiz): Honestly relieved. That mockup had, like, a video background, and I was worried about the speed thing. Which, actually, that's my next one.
+[00:20:20] CONSULTANT (Sam Patel): Performance?
+[00:20:23] CLIENT (Dana Ortiz): Yeah. So, in v1 we said guide profile pages load in under three seconds on a phone.
+[00:20:33] CONSULTANT (Sam Patel): Right, that was Marcus's bar.
+[00:20:38] CLIENT (Dana Ortiz): Right. So, I did a little test. I took my phone out to the trailhead at Smith Rock on Saturday, where there's like one bar of signal, and I loaded a few competitor sites and our current site. Our current site, the profile page, took eleven seconds. Eleven! I counted.
+[00:21:05] CONSULTANT (Rina Cho): Ooh. Yeah.
+[00:21:08] CLIENT (Dana Ortiz): And the best competitor was around two seconds. So three seconds just feels like we'd still be behind. We want under two and a half seconds on mobile.
+[00:21:23] CONSULTANT (Sam Patel): Two and a half. Okay.
+[00:21:26] CLIENT (Dana Ortiz): And the other thing is, it's not just profiles. Most people never even get to a profile if the search results page is slow, they just bounce. So it has to cover the search results page too.
+[00:21:44] CONSULTANT (Sam Patel): So both the guide profile page and the search results page, under two and a half seconds on mobile.
+[00:21:54] CLIENT (Marcus Bell): Yeah, I agree with Dana on that. Search results is where people actually decide.
+[00:22:02] CONSULTANT (Rina Cho): Can I push on that a little? Because "under two and a half seconds" can mean a lot of different things. Is that until something shows up on the screen, or until the whole page is done, all the photos and everything? And on what kind of connection? Because at Smith Rock with one bar, honestly, I can't promise anything for any website. That's partly the phone network.
+[00:22:34] CLIENT (Dana Ortiz): Hmm. I mean... until I can see the guides and tap on one? I don't care if the last photo at the bottom is still loading.
+[00:22:47] CONSULTANT (Rina Cho): Okay, that's helpful. So, roughly, until the main content is visible and usable. And we'd probably want to agree on a standard test, like a specific tool and a simulated mobile connection, so we're not arguing about whether your phone had signal that day.
+[00:23:08] CLIENT (Dana Ortiz): Ha. Yeah, fair. I'm okay with that.
+[00:23:13] CONSULTANT (Sam Patel): Let me suggest we write it up as a proposed measurement method and you two approve it, rather than us deciding on the call. The search results page is also a bit harder, because it depends on how many results we show per page and how many photos are on each card. So we may come back with some trade-offs, like fewer photos per card.
+[00:23:42] CLIENT (Marcus Bell): That's fine. As long as the Elite guys still get their photo at the top.
+[00:23:48] CONSULTANT (Sam Patel): Elite still first, yes. That hasn't changed. Okay, so: under two and a half seconds on mobile, profile page and search results page, and how we measure it is to be agreed.
+[00:24:06] CLIENT (Dana Ortiz): Yep.
+[00:24:09] CONSULTANT (Sam Patel): Sorry -- Marcus, you froze for a second there. Are you back?
+[00:24:19] CLIENT (Marcus Bell): Can you hear me? My wifi just... hello?
+[00:24:25] CONSULTANT (Sam Patel): You're back. You cut out for a few seconds.
+[00:24:30] CLIENT (Marcus Bell): Sorry. The irony, talking about load times. I was saying, while we're cutting things -- the cookie banner. Can we drop the cookie banner too? Nobody reads those, they're annoying, and it slows the page down, right?
+[00:24:51] CLIENT (Dana Ortiz): No, Marcus. We can't.
+[00:24:54] CLIENT (Marcus Bell): Why not?
+[00:24:58] CLIENT (Dana Ortiz): Because Karen told us we need it. The lawyer. Remember the email? We have European customers booking Patagonia trips and the Alps trips, and she was really clear that if we're tracking them with cookies we need consent. She literally said "don't skip this one."
+[00:25:20] CLIENT (Marcus Bell): Ugh. Yeah. I remember. Okay, scratch that, the banner stays.
+[00:25:27] CONSULTANT (Sam Patel): Okay. Cookie banner stays as it was in v1, for EU visitors. I'll leave it exactly as written.
+[00:25:36] CONSULTANT (Rina Cho): For what it's worth, a consent banner done right shouldn't really hurt load time much. We'll keep an eye on it as part of the speed testing.
+[00:25:49] CLIENT (Marcus Bell): Okay, good. Fine. I lose that one.
+[00:25:56] CLIENT (Dana Ortiz): You lose that one.
+[00:25:59] CONSULTANT (Sam Patel): Alright. So we've done the changes, I think? Booking, the Monday email, Elite price and quarterly, homepage, and speed. Is there anything else you want to change or take out, before we go to new stuff?
+[00:26:20] CLIENT (Dana Ortiz): Um, let me look at my notes. Reviews. Not a change, I just want to say it out loud. We still want every review approved by me before it goes live. Somebody suggested to Marcus we could just let them post and delete the bad ones afterwards.
+[00:26:43] CLIENT (Marcus Bell): That was my brother-in-law. Ignore him.
+[00:26:47] CLIENT (Dana Ortiz): No, we're not doing that. Approve first, then publish. Same as v1.
+[00:26:55] CONSULTANT (Sam Patel): Okay, that's unchanged then. Star reviews from customers, held until an admin approves. Who besides you would approve them, by the way? If you're on vacation?
+[00:27:10] CLIENT (Dana Ortiz): Hmm. Good question. Probably Marcus, but he won't do it.
+[00:27:16] CLIENT (Marcus Bell): I will do it!
+[00:27:20] CLIENT (Dana Ortiz): He won't do it. We might hire a part-timer in the spring. I'll let you know.
+[00:27:28] CONSULTANT (Sam Patel): Okay. I'll note that as an open question on admin roles. And the inquiry form, that's still the same? One trip inquiry, goes to up to three matching guides?
+[00:27:44] CLIENT (Marcus Bell): Yeah, that's the core of the whole thing. "I want to fish the Madison in June," three guides get it. Don't touch it.
+[00:27:55] CONSULTANT (Sam Patel): Not touching it. Okay, and the rest, the gallery, favorites, the import, HubSpot sync, the badge, all of that is as written?
+[00:28:08] CLIENT (Dana Ortiz): As far as I'm concerned, yes. Oh, the import -- I've actually got the spreadsheet mostly ready. Twelve hundred and something rows. I'll send it once I fix the photo links.
+[00:28:23] CONSULTANT (Rina Cho): Great. Even a sample of fifty rows early would help, so I can check the columns.
+[00:28:31] CLIENT (Dana Ortiz): I can do that this week.
+[00:28:52] CONSULTANT (Sam Patel): Speaking of the guides, Marcus, did your Deschutes guy say what he actually wants from the new site? I'm always curious what the members say when the owner isn't asking them formally.
+[00:29:21] CLIENT (Marcus Bell): Ha, yeah. He said, and this is funny, he said "I just want people to find me without me paying Google." That was basically it. He spends, like, four hundred bucks a month on ads in summer and he thinks half of it is wasted.
+[00:29:27] CONSULTANT (Rina Cho): That's a pretty good pitch for Elite, honestly.
+[00:29:42] CLIENT (Marcus Bell): That's what I told him! And then he asked if he could put his dog on his profile picture, because apparently the dog is more famous than he is. Customers ask for the dog by name.
+[00:29:47] CLIENT (Dana Ortiz): That's true, actually. Biscuit. Everybody loves Biscuit. We've had reviews that are only about the dog.
+[00:30:12] CLIENT (Marcus Bell): Which, by the way, is exactly why Dana reads every review before it goes up. Somebody gave him one star because Biscuit wasn't on the trip. Anyway. The other thing he said was the old site is embarrassing on his phone, he doesn't even send customers to it. Which, Dana, that's your eleven seconds.
+[00:30:25] CLIENT (Dana Ortiz): Exactly. That's what I keep saying. If our own guides won't link to us, why would a customer stay?
+[00:30:45] CONSULTANT (Sam Patel): That's a useful story, actually. If you hear more like that, write them down. When we get to launch, quotes from real guides are great for the "why join" page.
+[00:30:54] CLIENT (Dana Ortiz): Oh, I have a whole folder of complaints. Like, a literal folder in my email called "angry guides." There's one guy who's emailed me every spring for four years asking why his listing shows the wrong river. I can give you the nice ones.
+[00:31:12] CONSULTANT (Sam Patel): The nice ones would be good. Maybe keep the others for us, too, honestly. They tell us what to fix. Anyway, sorry, I took us off track.
+[00:31:17] CLIENT (Marcus Bell): No, it's fine. Where were we?
+[00:31:23] CONSULTANT (Sam Patel): We were about to get to new stuff.
+[00:31:30] CONSULTANT (Sam Patel): Perfect. Okay. So then, new things. What's on your list?
+[00:31:38] CLIENT (Dana Ortiz): Okay, so mine is small, I think. We have a board meeting every quarter. It's me, Marcus, and two investors. And every time, I have to put together a list of all our members, what plan they're on, and when they renew. Right now I do that by hand from three different places and it takes me most of a day.
+[00:32:07] CONSULTANT (Sam Patel): Okay.
+[00:32:10] CLIENT (Dana Ortiz): So what I want is, in the admin, I click a button and I get a CSV of the member list. Name, plan, renewal date. That's it. I'll do the rest in a spreadsheet.
+[00:32:26] CONSULTANT (Sam Patel): So an export of the member list to CSV, with plan and renewal date, for admins only.
+[00:32:36] CLIENT (Dana Ortiz): Admins only, yes. Definitely not the guides.
+[00:32:41] CONSULTANT (Rina Cho): Any other columns? Email, region, sign-up date? It's easier to decide now than to add them later.
+[00:32:52] CLIENT (Dana Ortiz): Email and region would be nice. But the must-haves are plan and renewal date.
+[00:33:00] CONSULTANT (Sam Patel): Okay. And honestly, that one feels like it fits inside what we already agreed. It's the admin side of the membership plans, we're just getting the data out. I'd treat it as part of the current scope, not a change. Rina, would you agree?
+[00:33:21] CONSULTANT (Rina Cho): Yeah, I think so. I'd want to look at exactly what fields the export gives us before I promise the renewal date shows up the way Dana wants. But it's small.
+[00:33:36] CLIENT (Dana Ortiz): Great. That would honestly save me a whole day four times a year.
+[00:33:44] CONSULTANT (Sam Patel): Okay. Marcus, you had new things too?
+[00:33:49] CLIENT (Marcus Bell): I have a few. Don't hate me.
+[00:33:53] CONSULTANT (Sam Patel): Go for it.
+[00:33:57] CLIENT (Marcus Bell): So the first one. When a lead comes in, a customer fills out the inquiry and it goes to three guides, right? The guides get an email. But half of these guys are on a river all day. They don't check email until nine at night, and by then the customer has booked with somebody else. So I want them to get a text message. An SMS, the second the lead comes in. I think the thing everybody uses is Twilio?
+[00:34:34] CONSULTANT (Rina Cho): Twilio is the common one, yeah.
+[00:34:37] CLIENT (Marcus Bell): So, a text to the guide's phone: "New lead from GuideFinder, fly fishing, Madison, June, click here." Something like that.
+[00:34:48] CONSULTANT (Sam Patel): I get why, that makes a lot of sense. Speed of response is probably the thing that decides whether a guide books the trip. But I want to be upfront: that's not in what we signed off. The lead routing is in, the email notification is in, but a Twilio SMS integration is new work. There's an account to set up, a cost per message, phone number collection and opt-in, what happens when a number is wrong. So that would be a change request, and it would need a separate quote.
+[00:35:32] CLIENT (Marcus Bell): Okay. How much are we talking?
+[00:35:37] CONSULTANT (Sam Patel): I don't want to throw out a number on the call. Rina and I would scope it properly and send it over with the others. Then you can decide whether it's worth it now or later.
+[00:35:51] CLIENT (Marcus Bell): Fair enough.
+[00:35:55] CLIENT (Dana Ortiz): Also, the guides would have to opt in. Some of them would hate getting texts. Just saying.
+[00:36:03] CONSULTANT (Sam Patel): Yeah, that's exactly one of the questions. Okay, what's next?
+[00:36:09] CLIENT (Marcus Bell): Second one. Spanish. We get a lot of visitors from Mexico and from South America, because of the Patagonia trips, and we've got a handful of guides down there too. I'd love a Spanish version of the whole site.
+[00:36:30] CONSULTANT (Sam Patel): The whole site, including guide profiles? Or just the main pages, the homepage, how-it-works, that kind of thing?
+[00:36:41] CLIENT (Marcus Bell): Ideally everything. But I guess the profiles are written by the guides, so... I don't know. Maybe the main pages.
+[00:36:53] CONSULTANT (Rina Cho): That's one of the big questions with any second language. Who writes the Spanish? Do you have someone, or are you thinking automatic translation? And then search, plan names, emails, the cookie banner itself... it touches a lot of places.
+[00:37:14] CLIENT (Marcus Bell): Hmm. I hadn't thought about the emails.
+[00:37:18] CONSULTANT (Sam Patel): So same answer as the texts, honestly. A Spanish-language version is clearly beyond what we agreed. It's a change request, it needs its own quote, and we'd want to answer those questions first: how much of the site, who translates, and who keeps it up to date. I'd rather not guess at a price before we know that.
+[00:37:46] CLIENT (Marcus Bell): Okay. Yeah. Put it on the list.
+[00:37:51] CLIENT (Dana Ortiz): I'd vote later on that one, for the record. We have enough going on.
+[00:37:57] CLIENT (Marcus Bell): Noted, Dana. And the last one, and I really like this one. Gift cards. Christmas is coming. People want to buy their dad a fishing trip, but they don't know which guide or which date. So you buy a gift card on GuideFinder, and the person picks a guide and uses it.
+[00:38:23] CONSULTANT (Sam Patel): So guides selling gift cards for trips, through the site.
+[00:38:29] CLIENT (Marcus Bell): Yeah. Or, I mean, us selling them on behalf of the guides. Either way.
+[00:38:36] CONSULTANT (Sam Patel): Okay, so that's actually the one that worries me the most, in a good way. It's a great idea, but there's a lot hiding in it. Who holds the money? Is it a GuideFinder gift card that works with any guide, or a gift card for one specific guide? What happens if the guide leaves the directory? Do they expire? There might even be some legal stuff around gift card expiry, depending on the state. That's not me saying no, it's just... clearly a new piece of work. Change request, separate quote.
+[00:39:21] CLIENT (Marcus Bell): Yeah, okay. I figured you'd say that.
+[00:39:26] CONSULTANT (Rina Cho): And it touches payments, which is the one area I really don't want to rush. Especially with the booking going out to FareHarbor now. The money for the trip is happening on their side, not ours, so a gift card on our side doesn't plug into that by itself.
+[00:39:50] CLIENT (Marcus Bell): Oh. Huh. Right, because people book on FareHarbor now. That's... yeah, that's a problem.
+[00:40:01] CLIENT (Dana Ortiz): FareHarbor might do gift cards themselves? I feel like I saw that somewhere.
+[00:40:08] CONSULTANT (Sam Patel): Could be. I wouldn't want to say for sure without checking. That's actually worth looking into before you spend money with us on it. If the guides can already sell gift cards through their own FareHarbor, maybe all you need is to point at it.
+[00:40:29] CLIENT (Marcus Bell): Okay. Good. Look into it.
+[00:40:34] CONSULTANT (Sam Patel): So let me play all three back. Texts to guides through Twilio when a lead arrives, a Spanish version of the site, and gift cards for trips. All three are outside what we signed off, so they'd be change requests. We'll write each one up with the questions and a separate quote, and you decide which, if any, you want, and when. None of them go into the current plan unless you say so.
+[00:41:09] CLIENT (Marcus Bell): Yep. That's fair.
+[00:41:12] CLIENT (Dana Ortiz): And the export is in, right? Not a change request?
+[00:41:17] CONSULTANT (Sam Patel): The member export to CSV, I'm treating that as in scope, yes. It fits what we already agreed.
+[00:41:25] CLIENT (Dana Ortiz): Okay, good. Just making sure Marcus's stuff didn't push mine out.
+[00:41:32] CLIENT (Marcus Bell): Hey.
+[00:41:35] CONSULTANT (Sam Patel): Ha. Okay, let me recap, and then we'll talk timing. Changes: booking is FareHarbor only, Peek is dropped, and instead of a live calendar there's a "Book now" button that links to the guide's FareHarbor page. Elite goes to ninety-nine a month, and we add quarterly billing alongside monthly and annual. Speed target is under two and a half seconds on mobile, for guide profiles and search results. Removed: the Monday email, you'll use the HubSpot dashboards instead, and the homepage hero redesign, we keep the default hero. Added: admin member export to CSV with plan and renewal date. Unchanged: failed-payment suspension, approved reviews, inquiry to three guides, cookie banner, and everything else. And three change requests to quote.
+[00:42:53] CLIENT (Marcus Bell): That's it. That's everything.
+[00:42:56] CLIENT (Dana Ortiz): Yep.
+[00:42:59] CONSULTANT (Sam Patel): And the open questions, so nobody's surprised later: the button for guides who aren't on FareHarbor; whether HubSpot needs dollar amounts for the revenue dashboard, Dana's asking Jordan; the annual discount; what to do with the fifteen featured guides; who else approves reviews; and how exactly we measure the speed target.
+[00:43:30] CONSULTANT (Rina Cho): And the fifty-row sample from Dana.
+[00:43:33] CLIENT (Dana Ortiz): Yes. This week.
+[00:43:36] CLIENT (Marcus Bell): Does any of this move the launch date? That's what I care about.
+[00:43:43] CONSULTANT (Sam Patel): Honest answer, I need a day or two with Rina before I commit. Losing the live calendar and the hero redesign takes work out. The tighter speed target and the search results page add some. Quarterly billing I need Rina to check. My gut says it's roughly a wash, but I don't want to promise that on a call.
+[00:44:12] CLIENT (Marcus Bell): Okay. Gut is good enough for today.
+[00:44:16] CONSULTANT (Sam Patel): I'll send a scope v2 with all of this marked up, plus the three change request write-ups, by end of next week. You sign v2, and that becomes the baseline.
+[00:44:33] CLIENT (Dana Ortiz): Sounds good.
+[00:44:36] CLIENT (Marcus Bell): Great. And hey, thanks for not yelling at me about the gift cards.
+[00:44:42] CONSULTANT (Sam Patel): It's a good idea! It's just a separate one. Enjoy the rest of the week, and Marcus, maybe dry out the tent.
+[00:44:52] CLIENT (Marcus Bell): Ha. It's still in the garage. Talk soon.
+[00:44:57] CONSULTANT (Rina Cho): Bye everyone!
+[00:45:00] CLIENT (Dana Ortiz): Bye.
