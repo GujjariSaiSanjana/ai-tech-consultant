@@ -13,6 +13,7 @@ x-brain: &brain
   image: ai-tech-consultant/brain:local
   environment:
     BRAIN_DATABASE_URL: postgresql://postgres:postgres@db:5432/brain
+    BRAIN_HOST: 0.0.0.0 # brain.config defaults to 127.0.0.1, unreachable from other containers
 
 services:
   db:
