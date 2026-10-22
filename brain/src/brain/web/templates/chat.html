@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<form class="card" method="post" action="/ui/ask" hx-post="/ui/ask" hx-target="#result" hx-swap="innerHTML">
+  <label for="q"><strong>Ask about Brilliant Directories</strong></label>
+  <textarea id="q" name="question" required placeholder="How do I suspend members whose payment is past due?">{{ question or "" }}</textarea>
+  <div class="row"><button type="submit">Ask</button><span class="spinner muted">Thinking...</span></div>
+</form>
+<div id="result">{% if result %}{% include "_answer.html" %}{% endif %}</div>
+{% endblock %}

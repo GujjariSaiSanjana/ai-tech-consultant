@@ -1,0 +1,36 @@
+<section class="card">
+  {% if result.status == "answered" %}
+    <div class="row"><span class="badge {{ result.label }}">{{ result.label | replace("_", " ") }}</span>
+      <span class="muted">confidence {{ "%.0f" | format(result.confidence * 100) }}% &middot; {{ result.model }}</span></div>
+    {% if result.setting_path %}<p>Where to click: <span class="path">{{ result.setting_path }}</span></p>{% endif %}
+    <div class="answer">{{ result.answer }}</div>
+    {% for w in result.warnings %}<div class="warning">{{ w }}</div>{% endfor %}
+    {% if result.citations %}
+      <h3>Sources</h3>
+      <ol class="cites">
+      {% for c in result.citations %}
+        <li><a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.title }}</a>
+          {% if c.image_url %} &middot; <a href="{{ c.image_url }}" target="_blank" rel="noopener">screenshot</a>{% endif %}
+          <blockquote>{{ c.quote }}</blockquote></li>
+      {% endfor %}
+      </ol>
+    {% endif %}
+    <div class="row" id="feedback">
+      <form method="post" action="/ui/feedback" hx-post="/ui/feedback" hx-target="#feedback" hx-swap="innerHTML">
+        <input type="hidden" name="question" value="{{ question }}">
+        <input type="hidden" name="answer" value="{{ result.answer }}">
+        <input type="hidden" name="helpful" value="true">
+        <button type="submit" class="secondary">Helpful</button>
+      </form>
+      <form method="post" action="/ui/escalate" hx-post="/ui/escalate" hx-target="#feedback" hx-swap="innerHTML">
+        <input type="hidden" name="question" value="{{ question }}">
+        <input type="hidden" name="bot_attempt" value="{{ result.answer }}">
+        <button type="submit" class="secondary">Ask an expert</button>
+      </form>
+    </div>
+  {% else %}
+    <p><strong>I don't know yet.</strong> The help center does not cover this, so I did not guess.</p>
+    <p class="muted">A human expert has been asked (ticket {{ result.gap_ticket_id }}). Their answer will be used
+      for this question from now on.</p>
+  {% endif %}
+</section>

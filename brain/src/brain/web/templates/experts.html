@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Expert queue{% endblock %}
+{% block content %}
+<h1>Expert queue</h1>
+<p class="muted">Questions the bot could not answer from the help center. Your answer becomes part of its memory
+  immediately.</p>
+{% for gap in open_gaps %}
+  <section class="card" id="gap-{{ gap.id }}">{% include "_gap.html" %}</section>
+{% else %}
+  <p class="card">Nothing waiting. Nice.</p>
+{% endfor %}
+{% if answered_gaps %}
+  <h2>Recently answered</h2>
+  {% for gap in answered_gaps %}
+    <section class="card" id="{{ gap.id }}"><p><strong>{{ gap.question }}</strong></p>
+      <div class="answer">{{ gap.answer }}</div></section>
+  {% endfor %}
+{% endif %}
+{% endblock %}
