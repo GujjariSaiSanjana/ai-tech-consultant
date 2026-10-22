@@ -20,6 +20,7 @@ from brain.ingest.indexer import Indexer
 from brain.llm.answerer import Answerer, ClaudeAnswerer, OfflineAnswerer
 from brain.llm.classifier import Classifier, ClaudeClassifier, RuleClassifier
 from brain.llm.client import LLMClient, build_anthropic
+from brain.llm.fallback import build_fallback
 from brain.repo import Repository
 from brain.service import BrainService, RetrievalPolicy
 
@@ -63,6 +64,7 @@ async def build_container(settings: Settings | None = None) -> AsyncIterator[Con
     repo = Repository(pool)
     site_http = httpx.AsyncClient(headers={"User-Agent": settings.user_agent}, timeout=30.0, follow_redirects=True)
     api_http = httpx.AsyncClient(timeout=60.0)
+    llm_http = httpx.AsyncClient(timeout=120.0)  # fallback LLMs; Claude has its own SDK client
     anthropic_client = build_anthropic(settings)
     try:
         embedder = build_embedder(settings, api_http)
@@ -71,13 +73,11 @@ async def build_container(settings: Settings | None = None) -> AsyncIterator[Con
         describer: ImageDescriber
         contextualizer: Contextualizer | None = None
         llm: LLMClient | None = None
-        if anthropic_client is not None:
-            llm = LLMClient(anthropic_client, settings, repo)
-            answerer, classifier, describer = (
-                ClaudeAnswerer(llm),
-                ClaudeClassifier(llm),
-                ClaudeImageDescriber(llm),
-            )
+        fallback = build_fallback(settings, llm_http, repo)
+        if anthropic_client is not None or fallback is not None:
+            llm = LLMClient(anthropic_client, settings, repo, fallback)
+            answerer, classifier = ClaudeAnswerer(llm), ClaudeClassifier(llm)
+            describer = ClaudeImageDescriber(llm) if llm.can_serve("vision") else AltTextDescriber()
             if settings.contextual_prefix:
                 contextualizer = Contextualizer(llm)
         else:
@@ -103,6 +103,7 @@ async def build_container(settings: Settings | None = None) -> AsyncIterator[Con
     finally:
         await site_http.aclose()
         await api_http.aclose()
+        await llm_http.aclose()
         if anthropic_client is not None:
             await anthropic_client.close()
         await pool.close()

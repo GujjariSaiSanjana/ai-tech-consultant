@@ -1,8 +1,9 @@
-"""`python -m brain.describe [--batch] [--limit N]`: replace alt-text screenshot descriptions with Claude vision.
+"""`python -m brain.describe [--batch] [--limit N]`: replace alt-text screenshot descriptions with a vision model.
 
 The crawl indexes screenshots immediately with their alt text and caption so nothing waits on a
 vision model. This step upgrades them afterwards: one live call per image, or one Message Batch
-(`--batch`, half price, usually done within the hour) for the initial backfill.
+(`--batch`, half price, usually done within the hour) for the initial backfill. Live calls fall
+back to Gemini when Claude is unavailable; batches are Claude-only.
 """
 
 from __future__ import annotations
@@ -74,8 +75,8 @@ async def describe_images(
 
 async def _main(limit: int | None, batch: bool) -> None:
     settings = Settings()
-    if not settings.anthropic_api_key:
-        raise SystemExit("ANTHROPIC_API_KEY is not set; screenshots keep their alt-text descriptions")
+    if batch and not settings.anthropic_api_key:
+        raise SystemExit("--batch needs ANTHROPIC_API_KEY (Message Batches have no fallback)")
     await migrate(settings.database_url)
     async with build_container(settings) as c:
         done = await describe_images(c.repo, c.embedder, _llm(c), limit=limit, batch=batch)
@@ -83,8 +84,8 @@ async def _main(limit: int | None, batch: bool) -> None:
 
 
 def _llm(c: Container) -> LLMClient:
-    if c.llm is None:
-        raise SystemExit("no Claude client configured")
+    if c.llm is None or not c.llm.can_serve("vision"):
+        raise SystemExit("no vision model (ANTHROPIC_API_KEY, or GEMINI_API_KEY as fallback); keeping alt text")
     return c.llm
 
 
