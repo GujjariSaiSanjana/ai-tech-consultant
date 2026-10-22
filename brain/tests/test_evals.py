@@ -14,24 +14,58 @@ from brain.models import AskResponse, Citation, UsageOut
 from tests.conftest import TEST_DB
 from tests.helpers import fixture_article, make_settings
 
-CONTRACT_KEYS = {"task", "run_id", "case_id", "split", "tags", "model", "rep", "passed", "score", "cost_usd",
-                 "latency_ms", "input_tokens", "output_tokens", "error", "mocked"}
+CONTRACT_KEYS = {
+    "task",
+    "run_id",
+    "case_id",
+    "split",
+    "tags",
+    "model",
+    "rep",
+    "passed",
+    "score",
+    "cost_usd",
+    "latency_ms",
+    "input_tokens",
+    "output_tokens",
+    "error",
+    "mocked",
+}
 
 
-def _response(status: str = "answered", article_id: str = "1", label: str = "setting", image: str | None = None,
-              answer: str = "Go to Settings and add the Facebook link") -> AskResponse:
+def _response(
+    status: str = "answered",
+    article_id: str = "1",
+    label: str = "setting",
+    image: str | None = None,
+    answer: str = "Go to Settings and add the Facebook link",
+) -> AskResponse:
     citations = [Citation(article_id=article_id, title="t", url="u", quote="q", image_url=image)]
-    return AskResponse.model_validate({
-        "status": status, "answer": answer if status == "answered" else "", "label": label,
-        "setting_path": None, "warnings": [], "citations": citations if status == "answered" else [],
-        "confidence": 0.5, "gap_ticket_id": None if status == "answered" else "gap_1", "model": "m",
-        "usage": UsageOut(input_tokens=1, output_tokens=1, cost_usd=0.0, latency_ms=1),
-    })
+    return AskResponse.model_validate(
+        {
+            "status": status,
+            "answer": answer if status == "answered" else "",
+            "label": label,
+            "setting_path": None,
+            "warnings": [],
+            "citations": citations if status == "answered" else [],
+            "confidence": 0.5,
+            "gap_ticket_id": None if status == "answered" else "gap_1",
+            "model": "m",
+            "usage": UsageOut(input_tokens=1, output_tokens=1, cost_usd=0.0, latency_ms=1),
+        }
+    )
 
 
 def _case(**kw: object) -> EvalCase:
-    base: dict[str, object] = {"id": "c", "split": "dev", "tags": ["answerable"], "question": "q",
-                               "expect": "answer", "gold_article_ids": ["1"]}
+    base: dict[str, object] = {
+        "id": "c",
+        "split": "dev",
+        "tags": ["answerable"],
+        "question": "q",
+        "expect": "answer",
+        "gold_article_ids": ["1"],
+    }
     return EvalCase.model_validate(base | kw)
 
 
@@ -77,10 +111,18 @@ def test_shipped_cases_are_valid_and_cover_the_required_kinds() -> None:
 async def test_mock_run_writes_contract_rows(indexer: Indexer, tmp_path: Path) -> None:
     await indexer.index(fixture_article("5000558389"), lastmod=None, run_id=None)
     cases = [
-        _case(id="tiktok", question="What URL format does the TikTok social media link need?",
-              gold_article_ids=["5000558389"]),
-        _case(id="bread", question="How do I bake sourdough bread?", expect="no_answer", gold_article_ids=[],
-              tags=["out_of_domain"]),
+        _case(
+            id="tiktok",
+            question="What URL format does the TikTok social media link need?",
+            gold_article_ids=["5000558389"],
+        ),
+        _case(
+            id="bread",
+            question="How do I bake sourdough bread?",
+            expect="no_answer",
+            gold_article_ids=[],
+            tags=["out_of_domain"],
+        ),
     ]
     settings: Settings = make_settings(BRAIN_DATABASE_URL=TEST_DB)
     rows = await run_cases(settings, cases, run_id="brain-test", reps=1, force_mock=True)

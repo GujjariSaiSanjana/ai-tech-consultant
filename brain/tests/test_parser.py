@@ -11,6 +11,7 @@ from brain.crawl.parser import (
     image_change_key,
     is_changelog,
     parse_article,
+    setting_path_from_text,
     setting_path_from_title,
 )
 from tests.helpers import FIXTURES, fixture_article
@@ -79,3 +80,19 @@ def test_hash_is_stable_and_tracks_screenshot_uploads() -> None:
 def test_change_key_falls_back_to_path_hash() -> None:
     assert image_change_key("https://cdn/x.png?1696295524") == "1696295524"
     assert len(image_change_key("https://cdn/x.png")) == 16
+
+
+@pytest.mark.parametrize(
+    ("text", "path"),
+    [
+        (
+            "Go to: Settings » General Settings » General » Website Phone Number",
+            "Settings > General Settings > General > Website Phone Number",
+        ),
+        ("First, navigate to Toolbox >> Menu Manager .", "Toolbox > Menu Manager"),
+        ("Open My Content > Media Manager and click +New Folder .", "My Content > Media Manager"),
+        ("No click path in this sentence.", None),
+    ],
+)
+def test_setting_path_from_prose(text: str, path: str | None) -> None:
+    assert setting_path_from_text(text) == path

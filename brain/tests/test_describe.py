@@ -19,7 +19,9 @@ from tests.test_llm import Recorder, _message
 
 pytestmark = pytest.mark.db
 BATCH = {
-    "id": "msgbatch_1", "type": "message_batch", "created_at": "2026-10-22T00:00:00Z",
+    "id": "msgbatch_1",
+    "type": "message_batch",
+    "created_at": "2026-10-22T00:00:00Z",
     "expires_at": "2026-10-23T00:00:00Z",
     "request_counts": {"processing": 0, "succeeded": 2, "errored": 0, "canceled": 0, "expired": 0},
 }
@@ -36,22 +38,41 @@ def _batch_api(seen: dict[str, Any]) -> LLMClient:
         if path == "/v1/messages/batches/msgbatch_1":
             polls["n"] += 1
             ended = polls["n"] > 1
-            return httpx2.Response(200, json=BATCH | {
-                "processing_status": "ended" if ended else "in_progress",
-                "results_url": "https://api.anthropic.com/v1/messages/batches/msgbatch_1/results" if ended else None,
-            })
+            return httpx2.Response(
+                200,
+                json=BATCH
+                | {
+                    "processing_status": "ended" if ended else "in_progress",
+                    "results_url": "https://api.anthropic.com/v1/messages/batches/msgbatch_1/results"
+                    if ended
+                    else None,
+                },
+            )
         if path.endswith("/results"):
             lines = [
-                {"custom_id": r["custom_id"], "result": {"type": "succeeded", "message": _message(
-                    [{"type": "text", "text": f"Footer menu with Facebook and Instagram icons ({r['custom_id']})"}],
-                    model="claude-haiku-5-5")}}
+                {
+                    "custom_id": r["custom_id"],
+                    "result": {
+                        "type": "succeeded",
+                        "message": _message(
+                            [
+                                {
+                                    "type": "text",
+                                    "text": f"Footer menu with Facebook and Instagram icons ({r['custom_id']})",
+                                }
+                            ],
+                            model="claude-haiku-5-5",
+                        ),
+                    },
+                }
                 for r in seen["requests"]
             ]
             return httpx2.Response(200, content="\n".join(json.dumps(x) for x in lines).encode())
         raise AssertionError(f"unexpected {request.method} {path}")
 
     sdk = anthropic.AsyncAnthropic(
-        api_key="sk-test", max_retries=0,
+        api_key="sk-test",
+        max_retries=0,
         http_client=anthropic.DefaultAsyncHttpxClient(transport=httpx2.MockTransport(handler)),
     )
     seen["recorder"] = Recorder()

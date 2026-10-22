@@ -122,7 +122,7 @@ class OfflineAnswerer:
         best = [s for s in scored if s[0] >= self.MIN_COVERAGE][:3]
         if not best:
             return AnswerDraft("no_answer", "", [], model=OFFLINE_MODEL)
-        text = "From the documentation:\n" + "\n".join(f"- {line}" for _, _, line in best)
+        text = "From the documentation:\n" + "\n".join(f"- {line.removeprefix('- ')}" for _, _, line in best)
         citations = [DraftCitation(index, line) for _, index, line in best]
         return AnswerDraft("answered", text, _dedupe(citations), model=OFFLINE_MODEL)
 

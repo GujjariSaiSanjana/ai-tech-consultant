@@ -201,6 +201,21 @@ def is_changelog(article: ParsedArticle) -> bool:
     return any(_CHANGELOG.search(text) for text in (article.title, article.category, article.folder))
 
 
+_SEGMENT = r"[A-Z][\w'/+-]*(?: (?:[A-Z][\w'/+-]*|&|of))*"
+_PATH = re.compile(rf"{_SEGMENT}(?:\s*(?:»|>>|>)\s*{_SEGMENT}){{1,6}}")
+_LEADING_VERBS = re.compile(r"^(?:Go to|Open|Navigate to|Click|Visit|Select)\s+")
+
+
+def setting_path_from_text(text: str) -> str | None:
+    """First "A » B » C" / "A >> B" / "A > B" click path in prose, normalised to " > "."""
+    match = _PATH.search(text)
+    if match is None:
+        return None
+    parts = [clean(part) for part in re.split(r"»|>>|>", match.group(0))]
+    parts[0] = _LEADING_VERBS.sub("", parts[0])
+    return " > ".join(p for p in parts if p)
+
+
 def setting_path_from_title(title: str) -> str | None:
     """Titles like "Settings » General Settings » Social Media Tab" already are the click path."""
     parts = [clean(p) for p in title.split("»")]

@@ -57,6 +57,14 @@ async def test_answer_has_citations_label_and_setting_path(indexer: Indexer, mak
     assert 0 < result.confidence <= 1 and result.gap_ticket_id is None
 
 
+async def test_setting_path_comes_from_the_cited_quote(indexer: Indexer, make_service: ServiceFactory) -> None:
+    await indexer.index(fixture_article("12000048777"), lastmod=None, run_id=None)
+    service = make_service(classifier=FixedClassifier("setting"))
+    result = await service.ask("How do I change the website phone number in the header?")
+    assert result.setting_path == "Settings > General Settings > General > Website Phone Number"
+    assert "- -" not in result.answer
+
+
 async def test_widget_customization_always_warns(indexer: Indexer, make_service: ServiceFactory) -> None:
     await indexer.index(fixture_article("5000558389"), lastmod=None, run_id=None)
     service = make_service(answerer=QuotingAnswerer(), classifier=FixedClassifier("widget_customization"))

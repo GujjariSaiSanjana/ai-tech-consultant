@@ -8,6 +8,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 
+from brain.crawl.parser import setting_path_from_text
 from brain.domain import ChunkDraft, SearchHit
 from brain.ingest.chunker import chunk_id
 from brain.ingest.embedder import Embedder
@@ -129,6 +130,9 @@ class BrainService:
         classification, class_usage = await self._classify(question, draft.text, cited or hits)
         usage.add(class_usage)
         citations = _citations(draft, hits)
+        if classification.label == "setting" and not classification.setting_path:
+            path = next((p for c in citations if (p := setting_path_from_text(c.quote))), None)
+            classification = classification.model_copy(update={"setting_path": path})
         grounded = min(1.0, len({c.article_id for c in citations}) / 2 + 0.5)
         return AskResponse(
             status="answered",
