@@ -159,7 +159,9 @@ Tools `kb_search`, `kb_ask`, `kb_feasibility`, `kb_create_gap` take and return e
 `/` is a chat page (answer, numbered sources with quotes and screenshot links, label badge, where to
 click, warnings, **Helpful** and **Ask an expert**). `/experts` is the expert queue (open questions with
 the bot's attempt and an answer box; recently answered below). Server-rendered with Jinja2 + HTMX,
-works without JavaScript and on a phone. The UI has no login: run it on a trusted network.
+works without JavaScript and on a phone. The browser asks for a login: any user name, password
+`BRAIN_API_KEY` (HTTP Basic), because the expert page writes straight into memory. Use HTTPS in front of
+it beyond a trusted network.
 
 ## Offline mode (no `ANTHROPIC_API_KEY`)
 
@@ -186,6 +188,11 @@ JS "related articles" list sits under the disallowed `/support/search`.
 time; each item's outcome is committed as it finishes. After a crash, `--resume` requeues the item that
 was in flight and continues; finished items are never fetched again. A Postgres advisory lock allows one
 crawl or sync at a time across the API, scheduler and CLI.
+
+**Run safety.** One article that fails to index is recorded as an item error and the run moves on; a
+database outage stops the run, which `--resume` (and the scheduler) continue later; an item that crashes the
+worker three times is given up. 404/410 removals share the removal budget below, so an outage answering 404
+everywhere cannot empty the index. robots.txt answering 5xx means crawl nothing; `Crawl-delay` is honoured.
 
 **Freshness and removals.** The daily sync diffs the sitemap: new URLs are added, moved lastmods are
 re-fetched, URLs that left the sitemap (or now return 404/410) are marked `removed` and lose every chunk
@@ -233,7 +240,8 @@ Prices per million tokens: Haiku 5.5 0.10/0.50, Sonnet 5.5 2/10, Opus 5.5 4/20.
 **Embeddings.** Behind an `Embedder` protocol. `voyage-4` when a key exists; otherwise local
 `bge-small-en-v1.5` via fastembed (CPU, no key, no data leaves the machine); `hash` for fast deterministic
 tests. Each width has its own partial HNSW index, and chunks remember which model embedded them, so
-switching embedders re-embeds instead of mixing vector spaces.
+switching embedders re-embeds instead of mixing vector spaces (run `python -m brain.crawl` after a switch:
+unchanged articles are re-embedded, and so are expert answers).
 
 **Code shape.** Typed end to end (mypy strict), small modules, one composition root
 (`brain.container`) and constructor injection everywhere, so tests swap in a fake site, the hash
@@ -266,7 +274,8 @@ All numbers are from real runs on 2026-10-22, local embedder, no `ANTHROPIC_API_
 | Incremental sync right after | 1540 unchanged, 0 article pages fetched (sitemap only), 3 s |
 | Retrieval, eval questions with a gold article | dev (17): recall@1 10, recall@8 15, MRR 0.703; heldout (5): recall@1 4, recall@8 5 |
 | `evals.run --mock` (31 cases) | dev 13/23, heldout 7/8 passed; all rows `mocked: true` |
-| Tests | 96 passed offline in ~1.5 s (`uv run pytest`), ruff and mypy strict clean |
+| Tests | 106 passed offline in ~1.7 s (`uv run pytest`), ruff and mypy strict clean; also passes on Python 3.12 |
+| Search latency | ~38 ms per query on the full index (local query embedding + one SQL query, HNSW index scan) |
 
 The mocked pass rate understates the product: the offline answerer quotes lines verbatim and the
 offline classifier is a keyword heuristic, and every screenshot-only case fails without vision.
@@ -282,4 +291,4 @@ These rows measure retrieval and abstention (all out-of-domain and near-miss que
 - The Voyage embedder is untested live; the abstain gate's default (0.60) was calibrated on the local
   embedder only (in-domain best hits 0.71-0.87, off-topic 0.50-0.59).
 - The Dockerfile has not been built here (no Docker on the build machine).
-- The UI has no authentication.
+- UI login is a single shared password (HTTP Basic), not per-user accounts.
