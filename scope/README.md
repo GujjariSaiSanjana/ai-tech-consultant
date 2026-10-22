@@ -17,7 +17,7 @@ quoted as a change request.
 ```bash
 cd scope
 uv sync
-uv run pytest                                   # 153 tests, about 2 s
+uv run pytest                                   # 188 tests, about 2 s
 
 # Meetings 1 and 2 build scope v1
 uv run python -m scope.cli run --client "Trailhead Media" \
@@ -31,7 +31,7 @@ uv run python -m scope.web                      # http://127.0.0.1:8100
 uv run python -m scope.evals.run --mock         # writes ../evals/results/scope/<run_id>.jsonl
 ```
 
-Without `ANTHROPIC_API_KEY`, the app uses a **rule-based fake** in place of Claude and a small
+Without any LLM key (`ANTHROPIC_API_KEY`, `GEMINI_API_KEY` or `NVIDIA_API_KEY`), the app uses a **rule-based fake** in place of Claude and a small
 fictional fixture in place of the Brain. A banner in the UI says so. The fake shows the workflow
 working; it says nothing about model quality.
 
@@ -40,6 +40,7 @@ working; it says nothing about model quality.
 | Variable | Default | Meaning |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | unset | Use Claude (`SCOPE_LLM=auto`). |
+| `GEMINI_API_KEY`, `NVIDIA_API_KEY` | unset | Fallbacks behind Claude; see [LLM fallback](#llm-fallback). |
 | `BRAIN_URL`, `BRAIN_API_KEY` | `http://localhost:8000`, `dev-brain-key` | Knowledge Brain API (contract: `docs/contracts/brain-api.md`). |
 | `SCOPE_DATABASE_URL` | `sqlite+aiosqlite:///./data/runtime/scope.db` | SQLite file. |
 | `SCOPE_RUN_BUDGET_USD` | `5.0` | Spending cap per pipeline run; calls stop once it is reached. |
@@ -147,6 +148,36 @@ later agents then work from the verified quotes.
 
   Cache writes cost 1.25 times the input price.
 
+## LLM fallback
+
+Claude stays primary. Google Gemini and NVIDIA (build.nvidia.com / NIM) are fallbacks behind it,
+both called through their OpenAI-compatible Chat Completions endpoint with `httpx`
+(`llm/openai_compat_backend.py`, composed by `llm/fallback_backend.py`).
+
+| Variable | Default |
+|---|---|
+| `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_BASE_URL` | unset, `gemini-2.5-flash`, `https://generativelanguage.googleapis.com/v1beta/openai/` |
+| `NVIDIA_API_KEY`, `NVIDIA_MODEL`, `NVIDIA_BASE_URL` | unset, `meta/llama-3.3-70b-instruct`, `https://integrate.api.nvidia.com/v1` |
+| `LLM_FALLBACK_ORDER` | `gemini,nvidia` (empty disables fallback) |
+| `SCOPE_GEMINI_PRICE`, `SCOPE_NVIDIA_PRICE` | 0.30/2.50 per MTok for `gemini-2.5-flash`; NVIDIA 0 (free tier) |
+| `SCOPE_FALLBACK_TIMEOUT_S` | `120` |
+
+- **When.** Only when Claude raises `LLMUnavailableError` (rate limit, 5xx, network, after
+  retries), or when there is no `ANTHROPIC_API_KEY` but a fallback key is set. Refusals, schema,
+  truncation and config errors never fall back. Providers are tried in order, keyless ones are
+  skipped, and if all are unavailable Claude's original error is re-raised.
+- **Output.** `response_format` is a strict `json_schema` from the Pydantic model, validated with
+  Pydantic (`LLMSchemaError` on failure). If a provider answers 400, the call is retried once as
+  `json_object` with the schema in the system prompt, and that provider stays on `json_object`.
+- **Tools.** The Brain tools are sent in OpenAI `tools` format and run in the same bounded loop
+  (`SCOPE_MAX_TOOL_ROUNDS`), recorded as `ToolCall`s.
+- **Audit and cost.** The `llm_calls` row carries the provider model (for example
+  `gemini-2.5-flash`), so the log shows which provider answered. Usage comes from
+  `prompt_tokens`/`completion_tokens`, and the run budget applies as usual. A fallback model
+  with no price fails at startup; set `SCOPE_GEMINI_PRICE='{"input": 1.25, "output": 10}'`.
+- No sampling parameters are sent; `max_tokens` is the route's cap. With fallbacks there is no
+  prompt caching, and output quality on Gemini and Llama has not been evaluated.
+
 ## Human approval gate and audit
 
 - A scope version starts as a draft. **Generate proposal is disabled until a person approves it**, and the service enforces the same rule.
@@ -207,7 +238,7 @@ src/scope/
   domain/        pure: models, ids, pert, diff, checks, states, transcript, render
   agents/        one module per agent (+ base helpers)
   prompts/       versioned prompt files + discovery checklist
-  llm/           request building, Anthropic backend, session (budget, cost, log), errors
+  llm/           request building, Anthropic + OpenAI-compatible fallback backends, session, errors
   brain/         HTTP client per contract, tool box shared by all agents
   fakes/         offline LLM responders and Brain fixture
   orchestrator.py, service.py, db/, web/, cli.py, evals/
