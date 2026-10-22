@@ -4,7 +4,7 @@ HTMX only polls run progress."""
 from __future__ import annotations
 
 import asyncio
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Coroutine
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Any, cast
@@ -45,10 +45,17 @@ def create_app(settings: Settings | None = None, deps: Deps | None = None) -> Fa
     def svc_of(request: Request) -> ScopeService:
         return cast(ScopeService, request.app.state.svc)
 
-    def back(url: str, msg: str | None = None) -> RedirectResponse:
+    def back(url: str, msg: str | None = None, fragment: str | None = None) -> RedirectResponse:
         if msg:
             url += ("&" if "?" in url else "?") + "msg=" + quote(msg)
+        if fragment:
+            url += "#" + quote(fragment)
         return RedirectResponse(url, status_code=303)
+
+    def in_background(coro: Coroutine[Any, Any, Any]) -> None:
+        task = asyncio.create_task(coro)
+        tasks.add(task)
+        task.add_done_callback(tasks.discard)
 
     def with_actor(resp: Response, actor: str) -> Response:
         resp.set_cookie("actor", actor, max_age=60 * 60 * 24 * 30, samesite="lax")
@@ -166,9 +173,7 @@ def create_app(settings: Settings | None = None, deps: Deps | None = None) -> Fa
             run = await svc.start_run(project_id)
         except GateError as exc:
             return back(f"/projects/{project_id}?tab=transcripts", str(exc))
-        task = asyncio.create_task(svc.execute_run(run.id))
-        tasks.add(task)
-        task.add_done_callback(tasks.discard)
+        in_background(svc.execute_run(run.id))
         return back(f"/projects/{project_id}?tab=transcripts", f"Run {run.id} started.")
 
     @app.post("/runs/{run_id}/rerun")
@@ -178,11 +183,13 @@ def create_app(settings: Settings | None = None, deps: Deps | None = None) -> Fa
         if stage not in STAGES:
             return back(f"/projects/{run.project_id}?tab=transcripts", "Unknown stage.")
         try:
-            new = await svc.rerun_from(run_id, stage)
+            new, saved = await svc.prepare_rerun(run_id, stage)
         except GateError as exc:
             return back(f"/projects/{run.project_id}?tab=transcripts", str(exc))
+        in_background(svc.execute_run(new.id, saved=saved, from_stage=stage))
         return back(
-            f"/projects/{run.project_id}?tab=scope", f"Re-ran from {stage} as run {new.id}."
+            f"/projects/{run.project_id}?tab=transcripts",
+            f"Re-running from {stage} as run {new.id}.",
         )
 
     @app.post("/scope/{version_id}/approve")
@@ -240,7 +247,7 @@ def create_app(settings: Settings | None = None, deps: Deps | None = None) -> Fa
             msg = f"{SECTION_TITLES[name]}: {action} done."
         except GateError as exc:
             msg = str(exc)
-        return with_actor(back(url + f"#sec-{section}", msg), actor)
+        return with_actor(back(url, msg, fragment=f"sec-{section}"), actor)
 
     @app.post("/proposals/{proposal_id}/transition")
     async def transition(

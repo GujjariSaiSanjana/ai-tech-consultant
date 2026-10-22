@@ -114,3 +114,12 @@ def test_split_items_and_change_requests() -> None:
     assert [cr.requirement_ids for cr in log.change_requests] == [[sms]]
     assert log.change_requests[0].price_usd == pytest.approx(1200)
     assert [i.id for i in base_items(next_items, reqs)] == ["I-A", "I-B"]
+
+
+def test_change_request_stays_out_of_scope_when_modified_later() -> None:
+    sms = req("Guides get SMS alerts via Twilio.", flags=[OUT_OF_SCOPE_FLAG])
+    f = finding(sms.id, "modified", "Guides get SMS and WhatsApp alerts.")
+    reqs, _ = apply_findings([A, sms], [f], from_version=2, to_version=3)
+    after = next(r for r in reqs if r.id == sms.id)
+    assert OUT_OF_SCOPE_FLAG in after.flags
+    assert base_items([item("I-SMS", [sms.id], 5)], reqs) == []

@@ -15,7 +15,7 @@ from scope.agents import proposal_writer
 from scope.config import Settings
 from scope.db.repo import DbCallRecorder, Repo
 from scope.db.tables import Meeting, ProposalRow, Run, ScopeVersion
-from scope.domain.diff import OUT_OF_SCOPE_FLAG
+from scope.domain.diff import base_items
 from scope.domain.models import (
     PROPOSAL_SECTIONS,
     Proposal,
@@ -86,6 +86,8 @@ class ScopeService:
     async def check_can_process(self, project_id: int) -> None:
         """The gate for new meetings: a follow-up is reconciled against an approved scope, so the
         latest scope version must be approved first."""
+        if any(r.status in ("queued", "running") for r in await self.repo.list_runs(project_id)):
+            raise GateError("a run is already in progress; wait for it to finish")
         versions = await self.repo.list_scope_versions(project_id)
         if versions and versions[-1].status != "approved":
             raise GateError(
@@ -167,12 +169,15 @@ class ScopeService:
         )
         return version
 
-    async def rerun_from(self, run_id: int, stage: Stage) -> Run:
-        """Re-run ``stage`` and every later stage of a finished run, reusing earlier outputs."""
+    async def prepare_rerun(self, run_id: int, stage: Stage) -> tuple[Run, SavedStages]:
+        """Create a run that re-runs ``stage`` and later stages of a finished run, reusing the
+        earlier stage outputs. Run it with ``execute_run(run.id, saved=..., from_stage=...)``."""
         old = await self.repo.get_run(run_id)
         runs = await self.repo.list_runs(old.project_id)
         if runs[0].id != run_id:
             raise GateError("only the latest run can be re-run")
+        if old.status not in ("done", "failed"):
+            raise GateError("wait for the run to finish before re-running it")
         run = await self.repo.create_run(
             old.project_id,
             old.kind,
@@ -185,6 +190,10 @@ class ScopeService:
         for name in STAGES[: STAGES.index(stage)]:
             if name in stages:
                 await self.repo.save_stage(run.id, name, stages[name])
+        return run, saved
+
+    async def rerun_from(self, run_id: int, stage: Stage) -> Run:
+        run, saved = await self.prepare_rerun(run_id, stage)
         await self.execute_run(run.id, saved=saved, from_stage=stage)
         return await self.repo.get_run(run.id)
 
@@ -222,16 +231,9 @@ class ScopeService:
     def _code_section(name: ProposalSectionName, snap: ScopeSnapshot) -> str:
         if name == "price":
             assert snap.estimate is not None
-            oos_items = {
-                i.id
-                for i in snap.items
-                if any(
-                    OUT_OF_SCOPE_FLAG in r.flags
-                    for r in snap.requirements
-                    if r.id in i.requirement_ids
-                )
-            }
-            return price_section(snap.items, snap.estimate, excluded_ids=oos_items)
+            base = {i.id for i in base_items(snap.items, snap.requirements)}
+            excluded = {i.id for i in snap.items} - base
+            return price_section(snap.items, snap.estimate, excluded_ids=excluded)
         return change_requests_section(snap.changelog)
 
     async def generate_proposal(self, version_id: int, actor: str) -> ProposalRow:

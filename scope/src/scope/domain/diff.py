@@ -95,7 +95,9 @@ def apply_findings(
                 log.unchanged_ids.append(req.id)
                 next_reqs.append(req)
                 continue
-            after = _from_finding(d, req.id, [EXPANDED_FLAG] if oos else [])
+            # A requirement quoted as a change request stays one until a person re-scopes it.
+            kept = [OUT_OF_SCOPE_FLAG] if OUT_OF_SCOPE_FLAG in req.flags else []
+            after = _from_finding(d, req.id, kept + ([EXPANDED_FLAG] if oos else []))
             after.evidence = [*req.evidence, *d.evidence]
             log.modified.append(
                 Modification(

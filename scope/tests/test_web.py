@@ -46,6 +46,11 @@ def test_ui_flow(settings: Settings) -> None:
         )
         assert "Edited summary." in r.text and "edited by a person" in r.text
         assert c.get("/proposals/1/preview.md").text.startswith("# Proposal for Trailhead Media")
+        r = c.post(
+            "/proposals/1/sections/price/approve", data={"actor": "Sam"}, follow_redirects=False
+        )
+        location = r.headers["location"]
+        assert location.index("msg=") < location.index("#sec-price")
         r = c.post("/proposals/1/transition", data={"action": "send", "actor": "Sam"})
         assert "only an approved proposal can be sent" in r.text
         assert c.get("/projects/999").status_code == 404

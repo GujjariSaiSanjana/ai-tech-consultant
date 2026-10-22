@@ -141,3 +141,30 @@ async def test_rerun_from_stage_creates_new_version(svc: ScopeService) -> None:
     calls = await svc.repo.list_llm_calls(new.id)
     assert {c.agent for c in calls} == {"scoper", "reviewer"}
     assert [v.version for v in await svc.repo.list_scope_versions(pid)] == [1, 2]
+
+
+def test_price_table_rows_add_up_to_the_total() -> None:
+    from scope.domain.diff import OUT_OF_SCOPE_FLAG, base_items
+    from scope.domain.models import ScopeSnapshot
+    from scope.domain.pert import summarize
+    from tests.factories import item, req
+
+    a, b = req("Radius search."), req("SMS alerts.", flags=[OUT_OF_SCOPE_FLAG])
+    items = [item("MIXED", [a.id, b.id], 10), item("OOS", [b.id], 4), item("A", [a.id], 2)]
+    snap = ScopeSnapshot(
+        requirements=[a, b], items=items, estimate=summarize(base_items(items, [a, b]))
+    )
+    table = ScopeService._code_section("price", snap)
+    assert "| MIXED |" in table and "| A |" in table and "| OOS |" not in table
+    assert "**12.0**" in table
+
+
+async def test_no_rerun_or_new_run_while_a_run_is_in_progress(svc: ScopeService) -> None:
+    pid, vid = await initial_version(svc)
+    await svc.approve_scope(vid, "Sam")
+    run = (await svc.repo.list_runs(pid))[0]
+    await svc.repo.update_run(run.id, status="running")
+    with pytest.raises(GateError, match="finish"):
+        await svc.prepare_rerun(run.id, "estimate")
+    with pytest.raises(GateError, match="in progress"):
+        await svc.check_can_process(pid)
