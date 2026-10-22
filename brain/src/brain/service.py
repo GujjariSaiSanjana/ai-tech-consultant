@@ -144,18 +144,35 @@ class BrainService:
         )
 
     async def feasibility(self, requirement: str) -> FeasibilityResponse:
+        response, _ = await self.feasibility_with_usage(requirement)
+        return response
+
+    async def feasibility_with_usage(self, requirement: str) -> tuple[FeasibilityResponse, UsageOut]:
+        """The contract's feasibility body has no usage field; evals still need the true cost."""
+        started = time.perf_counter()
+        usage = Usage()
         hits = await self.search(requirement, 8, None)
-        draft = await self._answerer.answer(requirement, hits) if self._strength(hits) > 0 else None
+        draft: AnswerDraft | None = None
+        if self._strength(hits) > 0:
+            try:
+                draft = await self._answerer.answer(requirement, hits)
+                usage.add(draft.usage)
+            except LLMRefusalError as exc:
+                log.warning("feasibility answer refused: %s", exc)
         answered = draft is not None and draft.status == "answered" and bool(draft.citations)
         basis = _cited_hits(draft, hits) if draft and answered else hits
-        classification, _ = await self._classify(requirement, draft.text if draft and answered else None, basis)
-        return FeasibilityResponse(
+        classification, class_usage = await self._classify(
+            requirement, draft.text if draft and answered else None, basis
+        )
+        usage.add(class_usage)
+        response = FeasibilityResponse(
             kind=classification.label,
             setting_path=classification.setting_path,
             rationale=classification.rationale,
             confidence=round(classification.confidence, 3),
             citations=_citations(draft, hits) if draft and answered else [],
         )
+        return response, _usage_out(usage, started)
 
     async def article(self, article_id: str) -> ArticleResponse:
         row = await self._repo.get_article(article_id)
