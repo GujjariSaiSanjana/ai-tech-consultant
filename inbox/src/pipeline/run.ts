@@ -1,6 +1,6 @@
 import { THRESHOLDS } from "../config/thresholds";
 import type { BrainClient } from "../brain/schemas";
-import { countsTowardTrust, kindKey, screenFlagged } from "../domain/kind";
+import { countsTowardTrust, kindKey, riskAllowsAuto, screenFlagged } from "../domain/kind";
 import type { Classification, DraftOutput, EmailInput, GuardrailFlag, Intent, Retrieval, ScreenResult } from "../domain/schemas";
 import type { LlmClient } from "../llm/client";
 import { classifyEmail } from "./classify";
@@ -66,6 +66,9 @@ export async function runPipeline(email: EmailInput, deps: PipelineDeps, playboo
   const counted = countsTowardTrust(classification, screen);
   const reviewReasons: string[] = [];
   if (screenFlagged(screen)) reviewReasons.push(...screen.reasons);
+  if (!riskAllowsAuto(classification.risk_class)) {
+    reviewReasons.push(`${classification.risk_class} emails always need a person to check the reply.`);
+  }
   if (classification.confidence < THRESHOLDS.countedMinConfidence) {
     reviewReasons.push(`Not sure what this email is (confidence ${Math.round(classification.confidence * 100)}%).`);
   }
