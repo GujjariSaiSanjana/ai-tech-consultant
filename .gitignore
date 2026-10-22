@@ -1,0 +1,27 @@
+# env and secrets
+.env
+.env.*
+!.env.example
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+# node
+node_modules/
+.next/
+dist/
+coverage/
+*.tsbuildinfo
+# data and runtime
+*.db
+*.sqlite
+*.sqlite-journal
+data/runtime/
+evals/results/raw/
+.promptfoo/
+# os
+.DS_Store
