@@ -14,8 +14,9 @@ R1, R2 = req("Radius search by zip."), req("Live booking availability.")
 
 
 def feas(rid: str, kind: Kind) -> Feasibility:
-    return Feasibility(requirement_id=rid, kind=kind, setting_path=None, rationale="",
-                       confidence=1, citations=[])
+    return Feasibility(
+        requirement_id=rid, kind=kind, setting_path=None, rationale="", confidence=1, citations=[]
+    )
 
 
 def test_coverage_flags_missing_and_unknown_ids() -> None:

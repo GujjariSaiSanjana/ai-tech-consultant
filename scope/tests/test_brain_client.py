@@ -7,10 +7,21 @@ import pytest
 
 from scope.brain.client import BrainUnavailableError, HttpBrainClient
 
-ANSWER = {"kind": "setting", "setting_path": "Settings > Advanced Settings > Members > Suspend Past Due",
-          "rationale": "Built in.", "confidence": 0.9,
-          "citations": [{"article_id": "12000047895", "title": "Suspend", "url": "https://x/1",
-                         "quote": "Suspend past due members", "image_url": None}]}
+ANSWER = {
+    "kind": "setting",
+    "setting_path": "Settings > Advanced Settings > Members > Suspend Past Due",
+    "rationale": "Built in.",
+    "confidence": 0.9,
+    "citations": [
+        {
+            "article_id": "12000047895",
+            "title": "Suspend",
+            "url": "https://x/1",
+            "quote": "Suspend past due members",
+            "image_url": None,
+        }
+    ],
+}
 
 
 def client(handler: httpx.MockTransport) -> HttpBrainClient:
@@ -32,8 +43,17 @@ async def test_feasibility_contract_and_api_key_header() -> None:
 
 
 async def test_search_contract() -> None:
-    hit = {"chunk_id": "c", "article_id": "a", "title": "t", "url": "u", "category": "c",
-           "folder": "f", "kind": "text", "text": "x", "score": 0.5}
+    hit = {
+        "chunk_id": "c",
+        "article_id": "a",
+        "title": "t",
+        "url": "u",
+        "category": "c",
+        "folder": "f",
+        "kind": "text",
+        "text": "x",
+        "score": 0.5,
+    }
 
     def handle(req: httpx.Request) -> httpx.Response:
         assert json.loads(req.content) == {"query": "q", "top_k": 5}

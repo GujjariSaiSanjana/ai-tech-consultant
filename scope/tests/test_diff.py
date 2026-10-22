@@ -51,15 +51,20 @@ def test_removed_and_added_and_out_of_scope() -> None:
 
 
 def test_unknown_id_becomes_new_with_warning() -> None:
-    _, log = apply_findings(PRIOR, [finding("REQ-deadbeef", "modified", "Something else.")],
-                            from_version=1, to_version=2)
+    _, log = apply_findings(
+        PRIOR,
+        [finding("REQ-deadbeef", "modified", "Something else.")],
+        from_version=1,
+        to_version=2,
+    )
     assert len(log.added) == 1
     assert any("unknown id" in w for w in log.warnings)
 
 
 def test_removal_of_unknown_is_ignored() -> None:
-    reqs, log = apply_findings(PRIOR, [finding("new", "removed", "Nope.")], from_version=1,
-                               to_version=2)
+    reqs, log = apply_findings(
+        PRIOR, [finding("new", "removed", "Nope.")], from_version=1, to_version=2
+    )
     assert reqs == PRIOR and log.warnings
 
 
@@ -72,20 +77,21 @@ def test_later_finding_overrides_earlier_with_warning() -> None:
 
 def test_same_text_modification_is_unchanged_and_new_with_same_text_is_match() -> None:
     fs = [finding(A.id, "modified", A.statement), finding("new", "added", B.statement)]
-    reqs, log = apply_findings(PRIOR, fs, from_version=1, to_version=2)
+    _reqs, log = apply_findings(PRIOR, fs, from_version=1, to_version=2)
     assert not log.modified and not log.added
     assert set(log.unchanged_ids) == {A.id, B.id, C.id}
 
 
 def test_added_with_prior_id_is_treated_as_modified() -> None:
-    _, log = apply_findings(PRIOR, [finding(A.id, "added", "Suspend after 14 days.")],
-                            from_version=1, to_version=2)
+    _, log = apply_findings(
+        PRIOR, [finding(A.id, "added", "Suspend after 14 days.")], from_version=1, to_version=2
+    )
     assert [m.id for m in log.modified] == [A.id]
 
 
 def test_expanded_modification_is_flagged_not_excluded() -> None:
     f = finding(B.id, "modified", "Live availability plus Viator.", scope_status="out_of_scope")
-    reqs, log = apply_findings(PRIOR, [f], from_version=1, to_version=2)
+    _reqs, log = apply_findings(PRIOR, [f], from_version=1, to_version=2)
     assert EXPANDED_FLAG in log.modified[0].after.flags
     assert OUT_OF_SCOPE_FLAG not in log.modified[0].after.flags
 

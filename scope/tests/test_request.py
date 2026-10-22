@@ -10,8 +10,9 @@ from scope.llm.request import build_request
 
 
 def test_transcript_is_first_and_carries_the_only_breakpoint(settings: Settings) -> None:
-    body = build_request(request("extractor", settings, "TRANSCRIPT-TEXT", "{}"),
-                         BrainToolBox(FakeBrain()))
+    body = build_request(
+        request("extractor", settings, "TRANSCRIPT-TEXT", "{}"), BrainToolBox(FakeBrain())
+    )
     first, second = body["system"]
     assert "TRANSCRIPT-TEXT" in first["text"]
     assert first["cache_control"] == {"type": "ephemeral"}
@@ -40,9 +41,14 @@ def test_no_sampling_params_thinking_budget_or_forced_tool_choice(settings: Sett
 
 def test_routing_table_matches_design(settings: Settings) -> None:
     r = settings.routes
-    assert r["extractor"].model == r["feasibility"].model == r["proposal_writer"].model == \
-        "claude-sonnet-5-5"
-    assert {r[a].model for a in ("questioner", "scoper", "reviewer", "reconciler")} == \
-        {"claude-opus-5-5"}
+    assert (
+        r["extractor"].model
+        == r["feasibility"].model
+        == r["proposal_writer"].model
+        == "claude-sonnet-5-5"
+    )
+    assert {r[a].model for a in ("questioner", "scoper", "reviewer", "reconciler")} == {
+        "claude-opus-5-5"
+    }
     haiku = settings.with_model("claude-haiku-5-5")
     assert {v.model for v in haiku.routes.values()} == {"claude-haiku-5-5"}

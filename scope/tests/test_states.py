@@ -14,8 +14,14 @@ from scope.domain.states import (
 )
 
 STATES: list[ProposalState] = ["draft", "in_review", "approved", "sent"]
-ACTIONS: list[ProposalAction] = ["submit_for_review", "approve", "send", "edit_section",
-                                 "regenerate_section", "approve_section"]
+ACTIONS: list[ProposalAction] = [
+    "submit_for_review",
+    "approve",
+    "send",
+    "edit_section",
+    "regenerate_section",
+    "approve_section",
+]
 
 # (state, action, all_sections_approved) -> expected next state; anything missing must raise.
 ALLOWED: dict[tuple[ProposalState, ProposalAction, bool], ProposalState] = {}
@@ -31,10 +37,12 @@ for ok in (True, False):
 ALLOWED[("in_review", "approve", True)] = "approved"
 
 
-@pytest.mark.parametrize(("state", "action", "ok"),
-                         list(itertools.product(STATES, ACTIONS, (True, False))))
-def test_transition_table_is_exhaustive(state: ProposalState, action: ProposalAction,
-                                        ok: bool) -> None:
+@pytest.mark.parametrize(
+    ("state", "action", "ok"), list(itertools.product(STATES, ACTIONS, (True, False)))
+)
+def test_transition_table_is_exhaustive(
+    state: ProposalState, action: ProposalAction, ok: bool
+) -> None:
     key = (state, action, ok)
     if key in ALLOWED:
         assert next_proposal_state(state, action, all_sections_approved=ok) == ALLOWED[key]

@@ -32,8 +32,9 @@ def test_expected_and_sigma() -> None:
         ((0, 0, 0), (0, 0, 0), []),
     ],
 )
-def test_order_triplet(given: tuple[float, float, float], want: tuple[float, ...],
-                       flags: list[str]) -> None:
+def test_order_triplet(
+    given: tuple[float, float, float], want: tuple[float, ...], flags: list[str]
+) -> None:
     o, m, p, f = order_triplet(*given)
     assert (o, m, p) == want
     assert f == flags
@@ -47,13 +48,24 @@ def test_build_task_prices_expected_hours() -> None:
     assert "hours_reordered" in t.flags
 
 
-def _item(iid: str, rids: list[str], tasks: list[tuple[float, float, float]],
-          kind: str = "custom_dev") -> ScopeItem:
-    return ScopeItem.model_validate({
-        "id": iid, "title": iid, "description": "", "requirement_ids": rids, "kind": kind,
-        "tasks": [build_task(task_id=f"{iid}-{i}", title="t", role="developer", o=o, m=m, p=p,
-                             rate_usd=100).model_dump() for i, (o, m, p) in enumerate(tasks)],
-    })
+def _item(
+    iid: str, rids: list[str], tasks: list[tuple[float, float, float]], kind: str = "custom_dev"
+) -> ScopeItem:
+    return ScopeItem.model_validate(
+        {
+            "id": iid,
+            "title": iid,
+            "description": "",
+            "requirement_ids": rids,
+            "kind": kind,
+            "tasks": [
+                build_task(
+                    task_id=f"{iid}-{i}", title="t", role="developer", o=o, m=m, p=p, rate_usd=100
+                ).model_dump()
+                for i, (o, m, p) in enumerate(tasks)
+            ],
+        }
+    )
 
 
 def test_summarize_combines_variance() -> None:

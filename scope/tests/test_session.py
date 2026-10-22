@@ -19,13 +19,23 @@ class Out(BaseModel):
 class PricedBackend:
     """Reports real-looking usage so the session prices it."""
 
-    async def complete[T: BaseModel](self, req: LLMRequest, schema: type[T],
-                                     tools: ToolBox | None) -> LLMResult[T]:
+    async def complete[T: BaseModel](
+        self, req: LLMRequest, schema: type[T], tools: ToolBox | None
+    ) -> LLMResult[T]:
         out = schema.model_validate({"x": 1})
-        usage = TokenUsage(input_tokens=1_000_000, output_tokens=100_000,
-                           cache_read_tokens=1_000_000, cache_write_tokens=0)
-        return LLMResult(output=out, model="claude-opus-5-5-20260901", usage=usage,
-                         latency_ms=5, stop_reason="end_turn")
+        usage = TokenUsage(
+            input_tokens=1_000_000,
+            output_tokens=100_000,
+            cache_read_tokens=1_000_000,
+            cache_write_tokens=0,
+        )
+        return LLMResult(
+            output=out,
+            model="claude-opus-5-5-20260901",
+            usage=usage,
+            latency_ms=5,
+            stop_reason="end_turn",
+        )
 
 
 class Recorder:
@@ -38,8 +48,12 @@ class Recorder:
 
 def test_pricing_per_model_including_cache() -> None:
     p = default_prices()
-    u = TokenUsage(input_tokens=1_000_000, output_tokens=1_000_000, cache_read_tokens=1_000_000,
-                   cache_write_tokens=1_000_000)
+    u = TokenUsage(
+        input_tokens=1_000_000,
+        output_tokens=1_000_000,
+        cache_read_tokens=1_000_000,
+        cache_write_tokens=1_000_000,
+    )
     assert cost_usd("claude-haiku-5-5", u, p) == pytest.approx(0.10 + 0.50 + 0.01 + 0.125)
     assert cost_usd("claude-sonnet-5-5", u, p) == pytest.approx(2 + 10 + 0.2 + 2.5)
     assert cost_usd("claude-opus-5-5", u, p) == pytest.approx(4 + 20 + 0.2 + 5)
@@ -49,8 +63,13 @@ def test_pricing_per_model_including_cache() -> None:
 
 async def test_session_prices_records_and_enforces_budget(settings: Settings) -> None:
     rec = Recorder()
-    s = LLMSession(PricedBackend(), settings.model_copy(update={"run_budget_usd": 5.0}),
-                   tools=None, recorder=rec, run_id="7")
+    s = LLMSession(
+        PricedBackend(),
+        settings.model_copy(update={"run_budget_usd": 5.0}),
+        tools=None,
+        recorder=rec,
+        run_id="7",
+    )
     req = request("scoper", settings, "t", "{}")
     res = await s.parse(req, Out)
     assert res.cost_usd == pytest.approx(4 + 2 + 0.2)  # dated snapshot id priced by prefix

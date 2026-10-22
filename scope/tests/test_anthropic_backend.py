@@ -53,9 +53,14 @@ class Resp:
     stop_reason: str
     content: list[Block]
     parsed_output: Out | None = None
-    usage: Usage = field(default_factory=lambda: Usage(input_tokens=10, output_tokens=5,
-                                                       cache_read_input_tokens=100,
-                                                       cache_creation_input_tokens=0))
+    usage: Usage = field(
+        default_factory=lambda: Usage(
+            input_tokens=10,
+            output_tokens=5,
+            cache_read_input_tokens=100,
+            cache_creation_input_tokens=0,
+        )
+    )
     model: str = "claude-sonnet-5-5"
     stop_details: StopDetails | None = None
     _request_id: str = "req_1"
@@ -79,8 +84,9 @@ class StubClient:
         self.messages = StubMessages(responses)
 
 
-def backend(responses: list[Resp | Exception], rounds: int = 2) -> tuple[AnthropicBackend,
-                                                                       StubClient]:
+def backend(
+    responses: list[Resp | Exception], rounds: int = 2
+) -> tuple[AnthropicBackend, StubClient]:
     client = StubClient(responses)
     return AnthropicBackend(cast(anthropic.AsyncAnthropic, client), max_tool_rounds=rounds), client
 
@@ -98,8 +104,9 @@ async def test_parsed_output_usage_and_parse_arguments(settings: Settings) -> No
 
 async def test_tool_loop_executes_brain_and_continues(settings: Settings) -> None:
     tool = Block("tool_use", name="brain_feasibility", input={"requirement": "radius by zip"})
-    be, client = backend([Resp("tool_use", [tool]),
-                          Resp("end_turn", [Block("text")], Out(answer="done"))])
+    be, client = backend(
+        [Resp("tool_use", [tool]), Resp("end_turn", [Block("text")], Out(answer="done"))]
+    )
     brain = FakeBrain()
     res = await be.complete(request("feasibility", settings, "T", "{}"), Out, BrainToolBox(brain))
     assert res.output.answer == "done"
@@ -110,15 +117,17 @@ async def test_tool_loop_executes_brain_and_continues(settings: Settings) -> Non
     assert second[2]["content"][0]["type"] == "tool_result"
     assert second[2]["content"][0]["tool_use_id"] == "tu_1"
     assert res.usage.input_tokens == 20  # summed over both rounds
-    assert [t["name"] for t in client.messages.calls[0]["tools"]] == \
-        [t["name"] for t in client.messages.calls[1]["tools"]]
+    assert [t["name"] for t in client.messages.calls[0]["tools"]] == [
+        t["name"] for t in client.messages.calls[1]["tools"]
+    ]
 
 
 async def test_brain_down_inside_tool_returns_error_result(settings: Settings) -> None:
     tool = Block("tool_use", name="brain_search", input={"query": "x"})
     be, _ = backend([Resp("tool_use", [tool]), Resp("end_turn", [], Out(answer="ok"))])
-    res = await be.complete(request("feasibility", settings, "T", "{}"), Out,
-                            BrainToolBox(FakeBrain(down=True)))
+    res = await be.complete(
+        request("feasibility", settings, "T", "{}"), Out, BrainToolBox(FakeBrain(down=True))
+    )
     assert res.tool_calls[0].is_error
 
 
@@ -126,8 +135,9 @@ async def test_tool_rounds_are_bounded(settings: Settings) -> None:
     tool = Block("tool_use", name="brain_search", input={"query": "x"})
     be, _ = backend([Resp("tool_use", [tool]) for _ in range(3)], rounds=2)
     with pytest.raises(LLMSchemaError):
-        await be.complete(request("feasibility", settings, "T", "{}"), Out,
-                          BrainToolBox(FakeBrain()))
+        await be.complete(
+            request("feasibility", settings, "T", "{}"), Out, BrainToolBox(FakeBrain())
+        )
 
 
 @pytest.mark.parametrize(
@@ -158,8 +168,10 @@ def _status(cls: type[anthropic.APIStatusError], code: int) -> anthropic.APIStat
         (_status(anthropic.BadRequestError, 400), LLMConfigError),
         (_status(anthropic.RateLimitError, 429), LLMUnavailableError),
         (_status(anthropic.InternalServerError, 529), LLMUnavailableError),
-        (anthropic.APIConnectionError(request=httpx2.Request("POST", "https://x")),
-         LLMUnavailableError),
+        (
+            anthropic.APIConnectionError(request=httpx2.Request("POST", "https://x")),
+            LLMUnavailableError,
+        ),
     ],
 )
 def test_error_translation(exc: Exception, want: type[Exception]) -> None:
