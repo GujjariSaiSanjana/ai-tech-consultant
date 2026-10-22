@@ -11,6 +11,7 @@ import pytest
 from brain.api.app import create_app
 from brain.container import Container
 from brain.db import Pool
+from brain.ingest.embedder import HashEmbedder
 from brain.ingest.indexer import Indexer
 from brain.models import (
     ArticleResponse,
@@ -38,7 +39,7 @@ async def client(
     indexer: Indexer,
     make_service: ServiceFactory,
     site: FakeSite,
-    embedder: object,
+    embedder: HashEmbedder,
 ) -> AsyncIterator[httpx.AsyncClient]:
     for aid in ("5000558389", "12000048777"):
         await indexer.index(fixture_article(aid), lastmod=None, run_id=None)
@@ -47,11 +48,11 @@ async def client(
         settings=make_settings(BRAIN_CRAWL_INTERVAL_S=0.0),
         pool=db_pool,
         repo=repo,
-        embedder=embedder,  # type: ignore[arg-type]
+        embedder=embedder,
         service=make_service(),
         indexer=indexer,
         site_http=site_http,
-        llm_live=False,
+        llm=None,
     )
     app = create_app(container=container)
     app.state.container = container

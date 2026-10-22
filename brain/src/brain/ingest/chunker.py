@@ -34,22 +34,25 @@ def chunk_article(article: ParsedArticle, image_descriptions: Mapping[str, tuple
     headings = {image_id: s.heading for s in article.sections for image_id in s.image_ids}
     for image in article.images:
         description, described_by = image_descriptions.get(image.id, ("", "alt_text"))
-        if not description.strip():
-            continue
-        heading = headings.get(image.id, "")
-        label = f"Screenshot in section '{heading}'" if heading else "Screenshot"
-        drafts.append(
-            ChunkDraft(
-                kind="image",
-                position=len(drafts),
-                heading=heading,
-                text=f"{label}: {description.strip()}",
-                context_prefix=prefix,
-                image_id=image.id,
-                boost=ALT_TEXT_IMAGE_BOOST if described_by == "alt_text" else 1.0,
-            )
-        )
+        if description.strip():
+            heading = headings.get(image.id, "")
+            drafts.append(image_chunk(image.id, heading, description, described_by, prefix, position=len(drafts)))
     return drafts
+
+
+def image_chunk(
+    image_id: str, heading: str, description: str, described_by: str, prefix: str, *, position: int
+) -> ChunkDraft:
+    label = f"Screenshot in section '{heading}'" if heading else "Screenshot"
+    return ChunkDraft(
+        kind="image",
+        position=position,
+        heading=heading,
+        text=f"{label}: {description.strip()}",
+        context_prefix=prefix,
+        image_id=image_id,
+        boost=ALT_TEXT_IMAGE_BOOST if described_by == "alt_text" else 1.0,
+    )
 
 
 def _render(section: Section) -> str:

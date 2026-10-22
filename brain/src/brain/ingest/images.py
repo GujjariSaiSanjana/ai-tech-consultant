@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
-from anthropic.types import ImageBlockParam, MessageParam, TextBlockParam
+from anthropic.types import ImageBlockParam, Message, MessageParam, TextBlockParam
 
 from brain.domain import ImageRef
 from brain.llm.client import LLMClient, LLMError
@@ -61,15 +61,22 @@ class ClaudeImageDescriber:
         return "claude"
 
     async def describe(self, image: ImageRef, article_title: str) -> ImageDescription:
-        content: list[ImageBlockParam | TextBlockParam] = [
-            ImageBlockParam(type="image", source={"type": "url", "url": image.url}),
-            TextBlockParam(type="text", text=VISION_PROMPT.format(title=article_title, caption=image.caption)),
-        ]
-        messages: list[MessageParam] = [{"role": "user", "content": content}]
         try:
-            message, _ = await self._llm.create("vision", messages=messages)
+            message, _ = await self._llm.create("vision", messages=vision_messages(image, article_title))
         except LLMError as exc:
             log.warning("vision failed for image %s (%s); using alt text", image.id, exc)
             return alt_text_description(image, article_title)
-        text = " ".join(b.text for b in message.content if b.type == "text").strip()
+        text = message_text(message)
         return ImageDescription(text, "claude") if text else alt_text_description(image, article_title)
+
+
+def vision_messages(image: ImageRef, article_title: str) -> list[MessageParam]:
+    content: list[ImageBlockParam | TextBlockParam] = [
+        ImageBlockParam(type="image", source={"type": "url", "url": image.url}),
+        TextBlockParam(type="text", text=VISION_PROMPT.format(title=article_title, caption=image.caption)),
+    ]
+    return [{"role": "user", "content": content}]
+
+
+def message_text(message: Message) -> str:
+    return " ".join(b.text for b in message.content if b.type == "text").strip()

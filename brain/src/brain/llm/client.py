@@ -7,14 +7,17 @@ structured outputs (`messages.parse`), depth from `output_config.effort`.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
-from collections.abc import Iterable
+from collections.abc import Awaitable, Callable, Iterable, Sequence
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
 import anthropic
 from anthropic.types import Message, MessageParam, OutputConfigParam, ParsedMessage, TextBlockParam
+from anthropic.types.message_create_params import MessageCreateParamsNonStreaming
+from anthropic.types.messages.batch_create_params import Request
 from pydantic import BaseModel
 
 from brain.config import Settings
@@ -40,6 +43,9 @@ PRICES: dict[str, Price] = {
     "claude-sonnet-5-5": Price(input=2.0, output=10.0, cache_read=0.20, cache_write=2.5),
     "claude-opus-5-5": Price(input=4.0, output=20.0, cache_read=0.20, cache_write=5.0),
 }
+
+
+BATCH_DISCOUNT = 0.5  # Message Batches bill every token at half price
 
 
 @dataclass(frozen=True, slots=True)
@@ -173,6 +179,73 @@ class LLMClient:
         if parsed.parsed_output is None:
             raise LLMError(f"no structured output (stop_reason={parsed.stop_reason})", retryable=False)
         return parsed.parsed_output, usage
+
+    async def submit_batch(self, purpose: Purpose, requests: Sequence[tuple[str, list[MessageParam]]]) -> str:
+        """Queue many same-purpose requests as one Message Batch; returns the batch id."""
+        route = self._routes[purpose]
+        try:
+            batch = await self._client.messages.batches.create(
+                requests=[
+                    Request(
+                        custom_id=custom_id,
+                        params=MessageCreateParamsNonStreaming(
+                            model=route.model,
+                            max_tokens=route.max_tokens,
+                            messages=messages,
+                            output_config=OutputConfigParam(effort=route.effort),
+                        ),
+                    )
+                    for custom_id, messages in requests
+                ]
+            )
+        except anthropic.APIError as exc:
+            raise _translate(exc) from exc
+        return batch.id
+
+    async def collect_batch(
+        self,
+        purpose: Purpose,
+        batch_id: str,
+        *,
+        poll_s: float = 30.0,
+        sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+    ) -> dict[str, Message]:
+        """Wait for a batch to end; succeeded, non-refused messages by custom_id. Each result is logged."""
+        model = self._routes[purpose].model
+        try:
+            while (await self._client.messages.batches.retrieve(batch_id)).processing_status != "ended":
+                await sleep(poll_s)
+            out: dict[str, Message] = {}
+            async for item in await self._client.messages.batches.results(batch_id):
+                if item.result.type != "succeeded":
+                    await self._recorder.record_llm_call(
+                        CallRecord(
+                            purpose, model, 0, 0, 0, 0, 0.0, 0, None, item.custom_id, f"batch {item.result.type}"
+                        )
+                    )
+                    continue
+                message = item.result.message
+                refused = message.stop_reason == "refusal"
+                await self._recorder.record_llm_call(
+                    CallRecord(
+                        purpose=purpose,
+                        model=model,
+                        input_tokens=message.usage.input_tokens,
+                        output_tokens=message.usage.output_tokens,
+                        cache_read_tokens=message.usage.cache_read_input_tokens or 0,
+                        cache_write_tokens=message.usage.cache_creation_input_tokens or 0,
+                        cost_usd=cost_usd(model, message) * BATCH_DISCOUNT,
+                        latency_ms=0,
+                        stop_reason=message.stop_reason,
+                        request_id=item.custom_id,
+                        error="refusal" if refused else None,
+                    )
+                )
+                if not refused:
+                    out[item.custom_id] = message
+        except anthropic.APIError as exc:
+            raise _translate(exc) from exc
+        return out
 
     async def _finish(self, purpose: Purpose, model: str, started: float, message: Message) -> tuple[Message, Usage]:
         latency_ms = int((time.perf_counter() - started) * 1000)

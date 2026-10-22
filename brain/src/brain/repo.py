@@ -48,6 +48,20 @@ class WorkItem:
 
 
 @dataclass(frozen=True, slots=True)
+class PendingImage:
+    id: str
+    url: str
+    change_key: str
+    position: int
+    caption: str
+    article_id: str
+    title: str
+    heading: str
+    context_prefix: str
+    chunk_position: int
+
+
+@dataclass(frozen=True, slots=True)
 class ImageWrite:
     id: str
     url: str
@@ -184,6 +198,35 @@ class Repository:
                 "DELETE FROM images WHERE article_id = %s AND NOT (id = ANY(%s))",
                 (article.article_id, [img.id for img in images]),
             )
+
+    async def pending_images(self, limit: int | None) -> list[PendingImage]:
+        """Screenshots of active articles that only have the alt-text fallback description."""
+        async with self.pool.connection() as conn:
+            cur = await conn.execute(
+                """
+                SELECT i.id, i.url, i.change_key, i.position, i.caption, a.id AS article_id, a.title,
+                       coalesce(c.heading, '') AS heading, coalesce(c.context_prefix, '') AS context_prefix,
+                       coalesce(c.position, 0) AS chunk_position
+                FROM images i
+                JOIN articles a ON a.id = i.article_id AND a.status = 'active'
+                LEFT JOIN chunks c ON c.image_id = i.id
+                WHERE i.described_by = 'alt_text'
+                ORDER BY a.id, i.position
+                LIMIT %s
+                """,
+                (limit,),
+            )
+            return [PendingImage(**row) for row in await cur.fetchall()]
+
+    async def upgrade_image(
+        self, image_id: str, description: str, chunk: NewChunk, article_id: str, embedding_model: str
+    ) -> None:
+        async with self.pool.connection() as conn, conn.transaction():
+            await conn.execute(
+                "UPDATE images SET description = %s, described_by = 'claude' WHERE id = %s", (description, image_id)
+            )
+            await conn.execute("DELETE FROM chunks WHERE image_id = %s", (image_id,))
+            await _insert_chunk(conn, chunk, embedding_model, article_id=article_id, gap_id=None)
 
     async def mark_removed(self, article_id: str, run_id: str | None = None) -> bool:
         """Removed articles keep their row (for audit and the articles endpoint) but lose every chunk."""

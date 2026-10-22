@@ -33,7 +33,11 @@ class Container:
     service: BrainService
     indexer: Indexer
     site_http: httpx.AsyncClient
-    llm_live: bool
+    llm: LLMClient | None
+
+    @property
+    def llm_live(self) -> bool:
+        return self.llm is not None
 
     async def crawl_engine(self, *, save_html_dir: Path | None = None) -> CrawlEngine:
         fetcher = await PoliteFetcher.create(
@@ -66,6 +70,7 @@ async def build_container(settings: Settings | None = None) -> AsyncIterator[Con
         classifier: Classifier
         describer: ImageDescriber
         contextualizer: Contextualizer | None = None
+        llm: LLMClient | None = None
         if anthropic_client is not None:
             llm = LLMClient(anthropic_client, settings, repo)
             answerer, classifier, describer = (
@@ -93,7 +98,7 @@ async def build_container(settings: Settings | None = None) -> AsyncIterator[Con
             service=BrainService(repo, embedder, answerer, classifier, policy),
             indexer=Indexer(repo, embedder, describer, contextualizer),
             site_http=site_http,
-            llm_live=anthropic_client is not None,
+            llm=llm,
         )
     finally:
         await site_http.aclose()
