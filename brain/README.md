@@ -52,6 +52,7 @@ Configuration comes from environment variables (or a `.env` in the repo root or 
 | `BRAIN_URL` | `http://localhost:8000` | Public base URL (expert citation links, MCP server target) |
 | `ANTHROPIC_API_KEY` | unset | Enables Claude answering, labels and vision. Unset = offline mode (below) |
 | `VOYAGE_API_KEY` | unset | Enables the `voyage` embedder |
+| `GEMINI_API_KEY` / `NVIDIA_API_KEY` | unset | Fallback LLMs behind Claude (see LLM fallback) |
 | `BRAIN_EMBEDDER` | `voyage` if a Voyage key is set, else `local` | `voyage` (voyage-4, 1024-d), `local` (fastembed bge-small, 384-d), `hash` (tests only) |
 | `BRAIN_ANSWER_MODEL` / `BRAIN_CLASSIFY_MODEL` / `BRAIN_VISION_MODEL` | `claude-sonnet-5-5` / `claude-haiku-5-5` / `claude-haiku-5-5` | Model routing |
 | `BRAIN_MIN_SIMILARITY` | per embedder (local 0.60, voyage 0.35) | Abstain gate on the best cosine hit |
@@ -163,7 +164,40 @@ works without JavaScript and on a phone. The browser asks for a login: any user 
 `BRAIN_API_KEY` (HTTP Basic), because the expert page writes straight into memory. Use HTTPS in front of
 it beyond a trusted network.
 
-## Offline mode (no `ANTHROPIC_API_KEY`)
+## LLM fallback (Gemini, NVIDIA)
+
+Claude stays primary. When a Claude call fails with a retryable error after the SDK's own retries
+(rate limit, 5xx, connection, timeout), or when `ANTHROPIC_API_KEY` is unset but a fallback key is,
+`LLMClient` tries the providers in `LLM_FALLBACK_ORDER`, skipping any without a key, and raises the
+original Claude error if all of them fail. A refusal, a bad request or a schema problem never falls back.
+Callers do not change: `brain.llm.fallback` turns the result back into a Claude-shaped `Message`.
+
+| Variable | Default |
+|---|---|
+| `LLM_FALLBACK_ORDER` | `gemini,nvidia` (empty disables fallback) |
+| `GEMINI_API_KEY` / `GEMINI_MODEL` / `GEMINI_BASE_URL` | unset / `gemini-2.5-flash` / `https://generativelanguage.googleapis.com/v1beta/openai/` |
+| `NVIDIA_API_KEY` / `NVIDIA_MODEL` / `NVIDIA_BASE_URL` | unset / `meta/llama-3.3-70b-instruct` / `https://integrate.api.nvidia.com/v1` |
+| `GEMINI_INPUT_PRICE_PER_MTOK` / `GEMINI_OUTPUT_PRICE_PER_MTOK` | `0.30` / `2.50` (Google paid tier, text) |
+| `NVIDIA_INPUT_PRICE_PER_MTOK` / `NVIDIA_OUTPUT_PRICE_PER_MTOK` | `0.0` / `0.0` (free tier) |
+
+- Both use the OpenAI-compatible `POST {base}/chat/completions` over plain `httpx`, Bearer auth, no
+  sampling parameters and no retries of their own (the next provider is the retry). System prompts and
+  text blocks are flattened to plain text; `cache_control` is dropped.
+- Structured outputs send `response_format: json_schema` (strict) with the pydantic schema and are
+  always validated with pydantic. A provider that rejects `json_schema` (400) is retried once with
+  `json_object` and the schema in the system prompt. Output that fails validation is a non-retryable
+  error for that provider, and the chain moves on to the next one.
+- Answering: there is no Citations API, so the chunks go in as numbered `[doc N]` excerpts and the
+  model returns `{answer_text, citations: [{document_index, cited_text}]}`. A citation is kept only if
+  its `cited_text` is a real substring of that document; the rest are dropped. `NO_ANSWER` still means
+  no answer, and an answer left with no citations is still treated as no answer.
+- Vision falls back to Gemini only (it accepts `image_url` parts). Message Batches
+  (`python -m brain.describe --batch`) are Claude-only.
+- `finish_reason: content_filter` from a fallback is a refusal and stops the chain.
+- Every fallback HTTP call is logged to `llm_calls` with the provider's model name, tokens from
+  `usage.prompt_tokens/completion_tokens`, cost, latency and error. Answers report that model too.
+
+## Offline mode (no LLM key)
 
 Everything still runs end to end, honestly labelled:
 
@@ -283,8 +317,9 @@ These rows measure retrieval and abstention (all out-of-domain and near-miss que
 
 ## Known limits
 
-- Without `ANTHROPIC_API_KEY` there is no generative answer, no model-made label and no screenshot vision;
-  see Offline mode.
+- Without `ANTHROPIC_API_KEY` (or a fallback key) there is no generative answer, no model-made label and
+  no screenshot vision; see Offline mode.
+- The Gemini and NVIDIA fallbacks are verified against a mocked HTTP transport only, not the live APIs.
 - No run with a real Claude key has happened yet: Claude answering, labels, vision descriptions,
   the Batches path and the contextual prefix are verified against a mocked HTTP transport only
   (request shapes, citations parsing, refusal and error handling), not against the live API.
