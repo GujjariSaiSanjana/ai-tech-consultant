@@ -151,6 +151,28 @@ Each choice must be backed by `docs/EVALS.md`: the same cases run on each candid
 and we pick the cheapest model whose pass rate interval overlaps the best one. Until those
 tables are filled, the table above is a hypothesis, not a result.
 
+### 5.1 Fallback providers
+
+Claude is the primary model everywhere. Google Gemini (`gemini-2.5-flash`) and NVIDIA
+(`meta/llama-3.3-70b-instruct` on build.nvidia.com) are configured as fallbacks, tried in
+`LLM_FALLBACK_ORDER`, through their OpenAI-compatible Chat Completions endpoints, with no extra SDKs.
+
+- **When.** A fallback runs only when Claude is unavailable after its own retries (rate limit,
+  5xx, network), or when no Anthropic key is set. It never runs after a refusal, a bad request
+  or a schema failure, so a fallback can never route around a refusal.
+- **Structured output.** The JSON schema goes in `response_format`, and the result is checked
+  again locally with pydantic or zod. Providers that reject `json_schema` get one retry in
+  `json_object` mode.
+- **Brain citations.** The Citations API is Claude-only. On fallback the model returns
+  `{document_index, cited_text}` pairs, and any quote that is not a literal substring of its
+  document is dropped.
+- **Inbox safety.** A draft written by a fallback model is never auto-sent; the trust ladder
+  drops it to assist.
+- **Logging.** Every call logs the provider's model name, so the audit trail shows which
+  provider answered. Default prices are gemini-2.5-flash at 0.30 / 2.50 and NVIDIA at 0 (free
+  tier). Overrides are set per app: `GEMINI_INPUT_PRICE_PER_MTOK` and the related variables in
+  brain, `SCOPE_GEMINI_PRICE` and `SCOPE_NVIDIA_PRICE` in scope.
+
 ## 6. What breaks (honest list)
 
 - **Help-center layout changes** break the crawler's HTML parsing. The 20% removal guard stops

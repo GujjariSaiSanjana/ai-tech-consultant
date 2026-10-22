@@ -19,7 +19,7 @@ HONCHO := uvx honcho@2.0.0
 export
 
 # Tests must never call paid APIs, even if keys sit in .env.
-OFFLINE := env -u ANTHROPIC_API_KEY -u VOYAGE_API_KEY
+OFFLINE := env -u ANTHROPIC_API_KEY -u VOYAGE_API_KEY -u GEMINI_API_KEY -u NVIDIA_API_KEY
 
 # $(call in,<folder>,<command>): run a command inside a task folder.
 # Skips with a notice when the folder is not on this branch yet.
