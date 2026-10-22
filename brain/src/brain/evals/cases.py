@@ -20,7 +20,7 @@ class EvalCase(BaseModel):
     split: Literal["dev", "heldout"]
     tags: list[str]
     question: str
-    expect: Literal["answer", "no_answer"]
+    expect: Literal["answer", "no_answer", "any"]  # any: only the removed-article rule applies
     gold_article_ids: list[str] = Field(default_factory=list)
     reference: str = ""
     expected_label: Label | None = None

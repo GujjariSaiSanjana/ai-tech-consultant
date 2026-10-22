@@ -17,8 +17,8 @@ from brain.domain import Label, SearchHit
 from brain.llm.client import LLMClient, Usage
 
 WIDGET_WARNING = (
-    "Customizing a default widget stops it receiving automatic updates from Brilliant Directories; "
-    "keep a copy of the original and re-check it after platform updates."
+    "Customizing a default widget stops it receiving updates: the custom copy overrides the centrally "
+    "maintained default, so compare it with the default (Diff tab) after platform updates."
 )
 CUSTOM_DEV_WARNING = "Custom development is outside the built-in settings; budget for build and maintenance."
 

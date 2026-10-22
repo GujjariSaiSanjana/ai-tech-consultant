@@ -37,6 +37,8 @@ def judge(case: EvalCase, response: AskResponse) -> Verdict:
     if removed & cited:
         return Verdict(False, 0.0)  # a removed article leaking into an answer always fails
 
+    if case.expect == "any":
+        return Verdict(True, 1.0)
     if case.expect == "no_answer":
         ok = response.status == "no_answer" and response.gap_ticket_id is not None
         return Verdict(ok, 1.0 if ok else 0.0)

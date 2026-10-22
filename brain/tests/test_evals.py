@@ -93,6 +93,13 @@ def test_removed_article_citation_always_fails() -> None:
     assert not judge(case, _response()).passed
 
 
+def test_any_expectation_only_forbids_removed_citations() -> None:
+    case = _case(tags=["removed"], expect="any", gold_article_ids=[], setup={"remove_article_ids": ["9"]})
+    assert judge(case, _response(article_id="1")).passed
+    assert judge(case, _response(status="no_answer")).passed
+    assert not judge(case, _response(article_id="9")).passed
+
+
 def test_reference_recall() -> None:
     assert reference_recall("Settings > Social Media tab", "open the Social Media tab in Settings") == 1.0
     assert reference_recall("", "anything") == 1.0
