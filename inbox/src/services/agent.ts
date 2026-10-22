@@ -47,7 +47,14 @@ export interface ActionResult {
   playbook: PlaybookChange;
 }
 
-export class InputError extends Error {}
+/** A caller mistake (unknown id, wrong state). Identified by name so it survives duplicated module instances in bundles. */
+export class InputError extends Error {
+  override readonly name = "InputError";
+}
+
+export function isInputError(error: unknown): error is InputError {
+  return error instanceof Error && error.name === "InputError";
+}
 
 /** Application service: the one place that wires pipeline, learning loop, trust ladder and storage together. */
 export class InboxAgent {
