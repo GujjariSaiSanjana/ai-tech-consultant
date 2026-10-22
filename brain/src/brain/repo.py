@@ -17,6 +17,12 @@ from brain.domain import ChunkDraft, ParsedArticle, RunCounts, SearchHit, Sitema
 from brain.llm.client import CallRecord
 
 RRF_K = 60
+# Chosen on the dev split of evals/cases.jsonl (local embedder): normalising full-text rank by
+# document length (bitmask 1) lifted MRR 0.652 -> 0.703; full-text weight 0.3-1.0 was within
+# noise, 0.5 keeps exact-identifier matches (variables, API names) influential.
+VECTOR_WEIGHT = 1.0
+FTS_WEIGHT = 0.5
+FTS_NORMALIZATION = 1  # ts_rank_cd: divide by 1 + log(document length)
 RUN_LOCK_KEY = 727002
 
 
@@ -314,7 +320,7 @@ class Repository:
             fts AS (
                 SELECT id, row_number() OVER (ORDER BY rank DESC) AS rnk
                 FROM (
-                    SELECT e.id, ts_rank_cd(e.tsv, q.tq) AS rank
+                    SELECT e.id, ts_rank_cd(e.tsv, q.tq, %(fts_norm)s) AS rank
                     FROM eligible e CROSS JOIN q
                     WHERE e.tsv @@ q.tq
                     ORDER BY rank DESC
@@ -323,7 +329,7 @@ class Repository:
             ),
             fused AS (
                 SELECT coalesce(vec.id, fts.id) AS id, vec.sim,
-                       coalesce(1.0 / (%(k)s + vec.rnk), 0) + coalesce(1.0 / (%(k)s + fts.rnk), 0) AS rrf
+                       coalesce(%(vec_w)s / (%(k)s + vec.rnk), 0) + coalesce(%(fts_w)s / (%(k)s + fts.rnk), 0) AS rrf
                 FROM vec FULL OUTER JOIN fts ON fts.id = vec.id
             )
             SELECT c.id AS chunk_id, c.kind, c.text, c.context_prefix, f.sim,
@@ -352,6 +358,9 @@ class Repository:
             "dim": dim,
             "candidates": candidates,
             "k": RRF_K,
+            "vec_w": VECTOR_WEIGHT,
+            "fts_w": FTS_WEIGHT,
+            "fts_norm": FTS_NORMALIZATION,
             "expert_boost": expert_boost,
             "changelog_boost": changelog_boost,
             "public_url": public_url.rstrip("/"),
