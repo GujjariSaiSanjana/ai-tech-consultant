@@ -208,8 +208,37 @@ details.faq .faq-body { padding: 0 18px 14px; color: var(--ink-2); }
   h2 { font-size: 26px; }
 }
 @media print {
-  .sidebar, .topbar, .copy { display: none; }
-  main { margin: 0; }
+  @page { size: A5; margin: 12mm 10mm; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-size: 11.5pt; background: var(--bg); }
+  .sidebar, .topbar, .copy, .tabs { display: none !important; }
+  main { margin: 0; padding: 0; }
+  .wrap { max-width: none; }
+  h1 { font-size: 24pt; }
+  h2 { font-size: 18pt; }
+  h3 { font-size: 13pt; }
+  section { padding-top: 0; }
+  section + section { break-before: page; border-top: 0; margin-top: 0; }
+  .tab-panel, .tab-panel[hidden] { display: block !important; border-radius: 12px; margin-bottom: 12px; }
+  .tab-panel::before { content: attr(data-print-title); display: block; font: 650 12pt var(--serif); margin-bottom: 6px; color: var(--accent-ink); }
+  .grid-3, .shot-pair { grid-template-columns: 1fr; }
+  .flow { flex-direction: column; }
+  .flow .node { flex: none; padding: 10px 14px; }
+  .flow .arrow { transform: rotate(90deg); padding: 2px 0; }
+  section { counter-reset: step; }
+  .step { display: block; margin: 18px 0; counter-increment: step; }
+  .step-num { display: none; }
+  .step-body > h3::before { content: counter(step) ". "; color: var(--accent); }
+  .kv { grid-template-columns: 1fr; gap: 2px; }
+  .kv dd { margin-bottom: 6px; }
+  figure.shot, .callout, pre, .step-body > h3, .kv, tr { break-inside: avoid; }
+  .step-body > h3 { break-after: avoid; }
+  figure.shot button { box-shadow: none; }
+  pre { white-space: pre-wrap; word-break: break-word; font-size: 8.5pt; }
+  details.faq .faq-body { display: block; }
+  details.faq summary::after { content: none; }
+  a { color: var(--accent-ink); }
+  .card, .callout { box-shadow: none; }
 }
 </style>
 </head>
@@ -303,7 +332,7 @@ details.faq .faq-body { padding: 0 18px 14px; color: var(--ink-2); }
       <button role="tab" aria-selected="true" aria-controls="tab-win" id="t-win">Windows (Docker)</button>
       <button role="tab" aria-selected="false" aria-controls="tab-mac" id="t-mac">Mac (no Docker)</button>
     </div>
-    <div class="tab-panel" role="tabpanel" id="tab-win" aria-labelledby="t-win">
+    <div class="tab-panel" role="tabpanel" id="tab-win" aria-labelledby="t-win" data-print-title="On Windows (Docker)">
       <p><strong>Once:</strong> install <a href="https://www.docker.com/products/docker-desktop/" target="_blank" rel="noopener">Docker Desktop</a> and open it. Then in PowerShell, inside the cloned folder:</p>
 <pre><code><span class="c"># 1. settings file (add an API key inside if you have one)</span>
 copy .env.example .env
@@ -319,7 +348,7 @@ docker compose exec brain python -m brain.crawl
 docker compose exec inbox npm run seed</code></pre>
       <p>Stop with <kbd>Ctrl</kbd>+<kbd>C</kbd>, or <code>docker compose down</code>.</p>
     </div>
-    <div class="tab-panel" role="tabpanel" id="tab-mac" aria-labelledby="t-mac" hidden>
+    <div class="tab-panel" role="tabpanel" id="tab-mac" aria-labelledby="t-mac" data-print-title="On Mac (no Docker)" hidden>
       <p>Postgres, Python and Node are already set up, and the Brain already holds all 1,540 articles.</p>
 <pre><code>cd ~/Desktop/MASTER/PERSONAL/Devi/ai-tech-consultant
 make dev            <span class="c"># starts Brain, Inbox and Scope together</span>
