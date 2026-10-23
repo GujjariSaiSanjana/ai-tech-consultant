@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo Guide · AI Tech Consultant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf5ee;
+  --surface: #fffcf7;
+  --surface-2: #f5ede2;
+  --line: #e8dccd;
+  --ink: #2d241e;
+  --ink-2: #5e5046;
+  --muted: #8a7a6d;
+  --accent: #c0582f;
+  --accent-ink: #9c4421;
+  --accent-soft: #f7e4d7;
+  --sage: #577a52;
+  --sage-soft: #e5eedd;
+  --amber: #a86b12;
+  --amber-soft: #fbeccb;
+  --rose: #b0413e;
+  --rose-soft: #f8e0dc;
+  --code-bg: #2f2621;
+  --code-ink: #f6e9dc;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(60, 40, 20, .06), 0 6px 20px rgba(60, 40, 20, .06);
+  --sidebar: 272px;
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.65 var(--sans); -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent-ink); text-underline-offset: 3px; }
+code, kbd {
+  font-family: var(--mono); font-size: .86em; background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: 6px; padding: .08em .4em;
+}
+kbd { border-bottom-width: 2px; }
+
+/* ---------- layout ---------- */
+.sidebar {
+  position: fixed; inset: 0 auto 0 0; width: var(--sidebar);
+  background: var(--surface); border-right: 1px solid var(--line);
+  padding: 28px 18px 24px; overflow-y: auto; z-index: 20;
+}
+.brand { display: flex; gap: 10px; align-items: center; padding: 0 8px 22px; }
+.brand-mark {
+  width: 34px; height: 34px; border-radius: 10px; background: var(--accent);
+  color: #fff; display: grid; place-items: center; font: 650 17px var(--serif);
+}
+.brand b { font: 650 16px/1.2 var(--serif); display: block; }
+.brand span { font-size: 12px; color: var(--muted); }
+.nav-group { margin: 18px 0 6px; padding: 0 10px; font-size: 11px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.nav a {
+  display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 9px;
+  color: var(--ink-2); text-decoration: none; font-size: 14.5px;
+}
+.nav a:hover { background: var(--surface-2); color: var(--ink); }
+.nav a.active { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+.nav a .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line); flex: none; }
+.nav a.active .dot { background: var(--accent); }
+.nav .sub a { padding-left: 27px; font-size: 13.5px; }
+.side-foot { margin-top: 26px; padding: 14px; border-radius: 12px; background: var(--surface-2);
+  font-size: 12.5px; color: var(--ink-2); }
+
+main { margin-left: var(--sidebar); padding: 48px clamp(20px, 5vw, 72px) 96px; }
+.wrap { max-width: 920px; margin: 0 auto; }
+
+.topbar { display: none; }
+
+/* ---------- typography ---------- */
+h1, h2, h3 { font-family: var(--serif); font-weight: 650; letter-spacing: -.01em; line-height: 1.2; }
+h1 { font-size: clamp(32px, 5vw, 46px); margin: 8px 0 14px; }
+h2 { font-size: 30px; margin: 0 0 8px; }
+h3 { font-size: 20px; margin: 0 0 6px; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.lede { font-size: 18.5px; color: var(--ink-2); max-width: 680px; }
+section { padding-top: 56px; }
+section + section { border-top: 1px solid var(--line); margin-top: 56px; }
+.section-intro { color: var(--ink-2); max-width: 720px; margin: 0 0 26px; }
+
+/* ---------- components ---------- */
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 22px 24px;
+}
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 26px 0; }
+.app-card h3 { display: flex; align-items: center; gap: 10px; }
+.app-card p { margin: 6px 0 12px; color: var(--ink-2); font-size: 15px; }
+.port { font: 500 13px var(--mono); color: var(--accent-ink); background: var(--accent-soft);
+  padding: 3px 9px; border-radius: 99px; text-decoration: none; display: inline-block; }
+.num-badge { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff;
+  display: inline-grid; place-items: center; font: 600 14px var(--sans); flex: none; }
+
+.flow { display: flex; align-items: stretch; gap: 0; margin: 10px 0 4px; flex-wrap: wrap; }
+.flow .node { flex: 1 1 180px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 12px; padding: 14px 16px; text-align: center; }
+.flow .node.core { background: var(--accent-soft); border-color: #e9c3ac; }
+.flow .node b { display: block; font-family: var(--serif); font-size: 17px; }
+.flow .node small { color: var(--ink-2); }
+.flow .arrow { display: grid; place-items: center; padding: 0 10px; color: var(--accent); font-size: 22px; }
+
+.callout { border-radius: 12px; padding: 14px 18px; margin: 18px 0; font-size: 15px;
+  border: 1px solid; display: flex; gap: 12px; }
+.callout .ic { font-size: 18px; line-height: 1.4; flex: none; }
+.callout p { margin: 0; }
+.callout.say { background: var(--accent-soft); border-color: #ebc7b1; }
+.callout.say strong:first-child { color: var(--accent-ink); }
+.callout.note { background: var(--amber-soft); border-color: #efd59a; }
+.callout.ok { background: var(--sage-soft); border-color: #c8d9bd; }
+.callout.bad { background: var(--rose-soft); border-color: #ecc0ba; }
+
+pre {
+  background: var(--code-bg); color: var(--code-ink); border-radius: 12px; padding: 16px 18px;
+  overflow-x: auto; font: 13.5px/1.6 var(--mono); margin: 12px 0 18px; position: relative;
+}
+pre code { background: none; border: 0; padding: 0; color: inherit; font-size: inherit; }
+pre .c { color: #b9a596; }
+.copy { position: absolute; top: 8px; right: 8px; font: 500 12px var(--sans); color: var(--code-ink);
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 7px;
+  padding: 4px 9px; cursor: pointer; }
+.copy:hover { background: rgba(255,255,255,.16); }
+
+.tabs { display: flex; gap: 6px; margin: 18px 0 0; flex-wrap: wrap; }
+.tabs button { font: 500 14px var(--sans); padding: 8px 14px; border-radius: 10px 10px 0 0;
+  border: 1px solid var(--line); border-bottom: 0; background: var(--surface-2); color: var(--ink-2); cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--accent-ink); font-weight: 600; }
+.tab-panel { border: 1px solid var(--line); border-radius: 0 12px 12px 12px; background: var(--surface); padding: 18px 22px; }
+.tab-panel[hidden] { display: none; }
+
+/* steps */
+.step { display: grid; grid-template-columns: 44px 1fr; gap: 6px 16px; margin: 34px 0; }
+.step-num { grid-row: span 2; width: 40px; height: 40px; border-radius: 12px; background: var(--surface);
+  border: 1.5px solid var(--accent); color: var(--accent-ink); display: grid; place-items: center;
+  font: 650 17px var(--serif); }
+.step-body > p { margin: 4px 0 10px; color: var(--ink-2); }
+.kv { display: grid; grid-template-columns: 82px 1fr; gap: 6px 14px; margin: 12px 0; font-size: 15px; }
+.kv dt { font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding-top: 3px; }
+.kv dd { margin: 0; }
+.ask { display: inline-block; background: var(--surface); border: 1px dashed var(--accent);
+  border-radius: 10px; padding: 7px 12px; font-weight: 500; color: var(--ink); }
+
+.tag { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 2px 9px; border-radius: 99px; border: 1px solid; }
+.tag.setting { color: var(--sage); background: var(--sage-soft); border-color: #c8d9bd; }
+.tag.addon { color: var(--amber); background: var(--amber-soft); border-color: #efd59a; }
+.tag.widget { color: #7a4f9a; background: #efe4f6; border-color: #dcc8ea; }
+.tag.custom { color: var(--rose); background: var(--rose-soft); border-color: #ecc0ba; }
+.tag.unknown { color: var(--ink-2); background: var(--surface-2); border-color: var(--line); }
+
+figure.shot { margin: 14px 0 6px; }
+figure.shot button { all: unset; cursor: zoom-in; display: block; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--line); box-shadow: var(--shadow); background: #fff; }
+figure.shot button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+figure.shot img { display: block; width: 100%; height: auto; }
+figure.shot figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+.shot-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; background: var(--surface-2); }
+.table-card { padding: 0; overflow: hidden; overflow-x: auto; }
+td.time { font: 500 13px var(--mono); color: var(--accent-ink); white-space: nowrap; }
+
+details.faq { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; }
+details.faq summary { cursor: pointer; padding: 14px 18px; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq summary::after { content: "+"; color: var(--accent); font-size: 20px; line-height: 1; }
+details.faq[open] summary::after { content: "–"; }
+details.faq .faq-body { padding: 0 18px 14px; color: var(--ink-2); }
+
+/* lightbox */
+.lightbox { position: fixed; inset: 0; background: rgba(35, 25, 18, .82); display: none;
+  align-items: center; justify-content: center; padding: 3vw; z-index: 50; cursor: zoom-out; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 92vh; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+.lightbox p { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: #f3e6d8; font-size: 14px; margin: 0; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 960px) {
+  .sidebar { transform: translateX(-100%); transition: transform .2s ease; box-shadow: 0 0 40px rgba(0,0,0,.15); }
+  body.nav-open .sidebar { transform: none; }
+  main { margin-left: 0; padding: 20px 16px 80px; }
+  .topbar { display: flex; position: sticky; top: 0; z-index: 15; align-items: center; justify-content: space-between;
+    background: rgba(250,245,238,.94); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+    margin: -20px -16px 12px; padding: 12px 16px; }
+  .topbar b { font-family: var(--serif); }
+  .topbar button { font: 500 14px var(--sans); background: var(--surface); border: 1px solid var(--line);
+    border-radius: 9px; padding: 7px 12px; color: var(--ink); }
+  .grid-3, .shot-pair { grid-template-columns: 1fr; }
+  .flow .arrow { transform: rotate(90deg); width: 100%; padding: 4px 0; }
+  .step { grid-template-columns: 1fr; }
+  .step-num { grid-row: auto; }
+  .kv { grid-template-columns: 1fr; gap: 2px; }
+  .kv dd { margin-bottom: 8px; }
+  h2 { font-size: 26px; }
+}
+@media print {
+  .sidebar, .topbar, .copy { display: none; }
+  main { margin: 0; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="brand-mark">A</div>
+    <div><b>Demo Guide</b><span>AI Tech Consultant</span></div>
+  </div>
+  <nav class="nav" id="nav">
+    <div class="nav-group">Start</div>
+    <a href="#overview"><span class="dot"></span>What this is</a>
+    <a href="#run"><span class="dot"></span>Run it</a>
+    <a href="#check"><span class="dot"></span>Check it's alive</a>
+
+    <div class="nav-group">The three apps</div>
+    <a href="#brain"><span class="dot"></span>1 · Knowledge Brain</a>
+    <div class="sub">
+      <a href="#brain-labels"><span class="dot"></span>Ask &amp; labels</a>
+      <a href="#brain-unknown"><span class="dot"></span>"I don't know"</a>
+      <a href="#brain-expert"><span class="dot"></span>Expert loop</a>
+    </div>
+    <a href="#inbox"><span class="dot"></span>2 · Inbox Agent</a>
+    <div class="sub">
+      <a href="#inbox-draft"><span class="dot"></span>Read a draft</a>
+      <a href="#inbox-safety"><span class="dot"></span>Safety checks</a>
+      <a href="#inbox-trust"><span class="dot"></span>Trust &amp; learning</a>
+    </div>
+    <a href="#scope"><span class="dot"></span>3 · Scope of Work</a>
+    <div class="sub">
+      <a href="#scope-run"><span class="dot"></span>Meetings → scope</a>
+      <a href="#scope-hours"><span class="dot"></span>Hours &amp; proposal</a>
+      <a href="#scope-changes"><span class="dot"></span>Change requests</a>
+    </div>
+
+    <div class="nav-group">Presenting</div>
+    <a href="#demo"><span class="dot"></span>10-minute demo script</a>
+    <a href="#trouble"><span class="dot"></span>If something breaks</a>
+    <a href="#limits"><span class="dot"></span>Be honest about</a>
+  </nav>
+  <div class="side-foot">Tip: click any screenshot to see it full size. Press <kbd>Esc</kbd> to close.</div>
+</aside>
+
+<main>
+<div class="wrap">
+  <div class="topbar"><b>Demo Guide</b><button id="menuBtn" aria-controls="sidebar" aria-expanded="false">Menu</button></div>
+
+  <!-- ================= OVERVIEW ================= -->
+  <section id="overview" style="padding-top:8px">
+    <div class="eyebrow">AI Tech Consultant · Capstone</div>
+    <h1>How to run, use and explain the project</h1>
+    <p class="lede">One <strong>Knowledge Brain</strong> that knows the Brilliant Directories help center, and two agents that use it: an <strong>Inbox Agent</strong> that drafts client replies, and a <strong>Scope agent team</strong> that turns meeting transcripts into a priced scope of work.</p>
+
+    <div class="grid-3">
+      <div class="card app-card">
+        <h3><span class="num-badge">1</span>Knowledge Brain</h3>
+        <p>Answers product questions from the 1,540 help-center articles, with sources. Says "I don't know" instead of guessing.</p>
+        <a class="port" href="http://localhost:8000" target="_blank" rel="noopener">localhost:8000</a>
+      </div>
+      <div class="card app-card">
+        <h3><span class="num-badge">2</span>Inbox Agent</h3>
+        <p>Drafts replies to client emails, explains each draft, and learns from every edit. Earns the right to auto-send.</p>
+        <a class="port" href="http://localhost:3000/inbox" target="_blank" rel="noopener">localhost:3000</a>
+      </div>
+      <div class="card app-card">
+        <h3><span class="num-badge">3</span>Scope of Work</h3>
+        <p>Reads meeting transcripts and writes requirements, open questions, an hour estimate, a proposal and change requests.</p>
+        <a class="port" href="http://localhost:8100" target="_blank" rel="noopener">localhost:8100</a>
+      </div>
+    </div>
+
+    <h3>How they connect</h3>
+    <div class="flow" aria-label="Inbox and Scope both ask the Brain">
+      <div class="node"><b>Inbox Agent</b><small>"What do I tell this client?"</small></div>
+      <div class="arrow">→</div>
+      <div class="node core"><b>Knowledge Brain</b><small>facts + sources + label</small></div>
+      <div class="arrow">←</div>
+      <div class="node"><b>Scope agents</b><small>"Is this built in, or custom work?"</small></div>
+    </div>
+    <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "Software got much cheaper to build. The slow part now is product knowledge: answering clients and scoping work. So I built one brain and two agents that use it. Each app only talks to the Brain over HTTP, so any of them can be replaced on its own."</p></div>
+  </section>
+
+  <!-- ================= RUN ================= -->
+  <section id="run">
+    <div class="eyebrow">Start</div>
+    <h2>Run it</h2>
+    <p class="section-intro">Pick the tab for your laptop. Both ways start all three apps.</p>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" aria-controls="tab-win" id="t-win">Windows (Docker)</button>
+      <button role="tab" aria-selected="false" aria-controls="tab-mac" id="t-mac">Mac (no Docker)</button>
+    </div>
+    <div class="tab-panel" role="tabpanel" id="tab-win" aria-labelledby="t-win">
+      <p><strong>Once:</strong> install <a href="https://www.docker.com/products/docker-desktop/" target="_blank" rel="noopener">Docker Desktop</a> and open it. Then in PowerShell, inside the cloned folder:</p>
+<pre><code><span class="c"># 1. settings file (add an API key inside if you have one)</span>
+copy .env.example .env
+notepad .env
+
+<span class="c"># 2. start everything (first build takes 5–10 minutes)</span>
+docker compose up --build</code></pre>
+      <p>Leave that window open. In a <strong>second</strong> PowerShell window, load the data:</p>
+<pre><code><span class="c"># all help-center articles (~25 minutes, it is polite on purpose)</span>
+docker compose exec brain python -m brain.crawl
+
+<span class="c"># demo emails for the Inbox</span>
+docker compose exec inbox npm run seed</code></pre>
+      <p>Stop with <kbd>Ctrl</kbd>+<kbd>C</kbd>, or <code>docker compose down</code>.</p>
+    </div>
+    <div class="tab-panel" role="tabpanel" id="tab-mac" aria-labelledby="t-mac" hidden>
+      <p>Postgres, Python and Node are already set up, and the Brain already holds all 1,540 articles.</p>
+<pre><code>cd ~/Desktop/MASTER/PERSONAL/Devi/ai-tech-consultant
+make dev            <span class="c"># starts Brain, Inbox and Scope together</span>
+make seed           <span class="c"># in a second terminal: demo emails for the Inbox</span></code></pre>
+      <p>Stop with <kbd>Ctrl</kbd>+<kbd>C</kbd>. "Port already in use"? Run <code>lsof -ti tcp:8000,3000,8100 | xargs kill</code> and try again.</p>
+    </div>
+
+    <div class="callout note"><span class="ic">🔑</span><p><strong>API keys decide the quality.</strong> With no key, every app runs on a built-in offline fake and shows an "Offline mode" banner; the flow works, but the wording is rough. For real AI answers, put one of these in <code>.env</code> and restart: <code>ANTHROPIC_API_KEY</code> (main), or the fallbacks <code>GEMINI_API_KEY</code> / <code>NVIDIA_API_KEY</code> (free at build.nvidia.com).</p></div>
+  </section>
+
+  <!-- ================= CHECK ================= -->
+  <section id="check">
+    <div class="eyebrow">Start</div>
+    <h2>Check it's alive</h2>
+    <p class="section-intro">Open <a href="http://localhost:8000/health" target="_blank" rel="noopener">localhost:8000/health</a>. You should see the number of articles and chunks.</p>
+<pre><code>{"status":"ok","articles":1540,"chunks":9979,"last_sync":"2026-10-22T20:58:11+05:30"}</code></pre>
+    <div class="callout ok"><span class="ic">✓</span><p><strong>Good:</strong> <code>articles</code> is about 1540. <strong>If it's 0 or small:</strong> the crawl hasn't finished. Run the crawl command from the step above and wait.</p></div>
+  </section>
+
+  <!-- ================= BRAIN ================= -->
+  <section id="brain">
+    <div class="eyebrow">App 1 · localhost:8000</div>
+    <h2>Knowledge Brain</h2>
+    <p class="section-intro">The Brain read every page of the Brilliant Directories help center. You ask a question; it answers <em>only</em> from those pages, shows the exact sentences it used, and labels how the need is solved. Log in with any username and password <code>dev-brain-key</code>.</p>
+
+    <div class="card" style="margin-bottom:8px">
+      <h3 style="font-size:17px">The four labels: what each one means for the client</h3>
+      <table style="margin-top:8px">
+        <tr><td><span class="tag setting">setting</span></td><td>Already built in. Just tell them where to click. <strong>No charge.</strong></td></tr>
+        <tr><td><span class="tag addon">addon</span></td><td>Possible with an extra module they enable or buy. Changes the quote a little.</td></tr>
+        <tr><td><span class="tag widget">widget_customization</span></td><td>Done with built-in widgets or some CSS. Small work.</td></tr>
+        <tr><td><span class="tag custom">custom_dev</span></td><td>The product can't do it. Real development hours.</td></tr>
+        <tr><td><span class="tag unknown">unknown</span></td><td>The docs don't say. A human expert is asked.</td></tr>
+      </table>
+    </div>
+
+    <div id="brain-labels"></div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>A built-in setting</h3>
+        <dl class="kv">
+          <dt>Ask</dt><dd><span class="ask">How do I connect my own domain name to my website?</span></dd>
+          <dt>Expect</dt><dd>Label <span class="tag setting">setting</span>, the steps, and 3 sources: "Guide 1. How to Connect a Live Domain Name" and "How to Connect a Domain to a Brilliant Directories Website".</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/brain-setting.png" alt="Brain answer labelled setting, with three cited sources" loading="lazy"></button>
+          <figcaption>Every line in the answer comes with the sentence from the article it was taken from.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "The client thinks this needs a developer. The Brain shows it's a setting, so the reply is two lines, not a quote. And every claim is backed by a real help-center sentence. Click a source to prove it."</p></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>An add-on</h3>
+        <dl class="kv">
+          <dt>Ask</dt><dd><span class="ask">Can I show an announcement bar at the top of my site?</span></dd>
+          <dt>Expect</dt><dd>Label <span class="tag addon">addon</span>, sourced from the "Website Announcement Bar" add-on page.</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/brain-addon.png" alt="Brain answer labelled addon" loading="lazy"></button>
+          <figcaption>Same question shape, different label, because the feature lives in an add-on.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "Yes, it's possible, but it's an add-on. That's a different conversation with the client than a free setting."</p></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>An answer built from several articles</h3>
+        <dl class="kv">
+          <dt>Ask</dt><dd><span class="ask">Why are my Google Maps showing a billing error?</span></dd>
+          <dt>Expect</dt><dd>Sources from three different articles: "Google Maps Issues: Billing Errors", "Guide 9. How to Enable Maps with Google Maps API" and "How to Enable Maps".</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/brain-maps.png" alt="Brain answer citing three Google Maps articles" loading="lazy"></button>
+          <figcaption>Hybrid search (meaning + keywords) finds the right passages across articles.</figcaption></figure>
+        <p style="color:var(--ink-2);font-size:15px">More to try: <span class="ask">How do I put a widget on a custom page?</span> · <span class="ask">Can members on different plans see different dashboard forms?</span> · <span class="ask">What changed in the May 2025 software updates?</span></p>
+      </div>
+    </div>
+
+    <div id="brain-unknown"></div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>The important one: "I don't know"</h3>
+        <dl class="kv">
+          <dt>Ask</dt><dd><span class="ask">Can members book appointments and pay through a calendar synced with Google Calendar?</span></dd>
+          <dt>Expect</dt><dd>No made-up answer. It says the help center doesn't cover it and opens an expert ticket automatically.</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/brain-unknown.png" alt="Brain says I don't know yet and opens an expert ticket" loading="lazy"></button>
+          <figcaption>A ticket id is created, and the question is waiting in the Expert queue.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "This is on purpose. I'd rather it say 'I don't know' than give a client a confident wrong answer. A wrong 'yes' turns into a promise we can't keep."</p></div>
+      </div>
+    </div>
+
+    <div id="brain-expert"></div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>A human expert answers, once</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>Click <strong>Expert queue</strong> (top right). Find the question, type an answer and your name, and submit.</dd>
+          <dt>Example</dt><dd><em>"Not built in. Brilliant Directories has no booking calendar with Google Calendar sync. Options: embed a scheduling tool in a custom widget via Toolbox &gt; Widget Manager, or quote it as custom development."</em></dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/brain-expert-answer.png" alt="Expert queue with an answer being typed" loading="lazy"></button>
+          <figcaption>The Expert queue lists every question the Brain couldn't answer.</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h3>Ask again: now it knows</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>Go back to <strong>Ask</strong> and ask the exact same calendar question.</dd>
+          <dt>Expect</dt><dd>It answers now, and the source is the expert answer (with the expert's name).</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/brain-after-expert.png" alt="Brain now answers using the expert's answer as its source" loading="lazy"></button>
+          <figcaption>The expert's answer became part of the Brain's knowledge.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "Each gap is answered by a person once, and then the whole team, and both agents, can use it. The knowledge base grows from real client questions."</p></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h3>For developers: the API</h3>
+        <p>Open <a href="http://localhost:8000/docs" target="_blank" rel="noopener">localhost:8000/docs</a>. Every endpoint can be tried in the browser (send header <code>X-API-Key: dev-brain-key</code>). Both other apps use these same endpoints.</p>
+        <figure class="shot"><button><img src="shots/brain-docs.png" alt="Interactive API documentation" loading="lazy"></button>
+          <figcaption>Ask, search, feasibility, expert gaps and sync, all over HTTP.</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INBOX ================= -->
+  <section id="inbox">
+    <div class="eyebrow">App 2 · localhost:3000</div>
+    <h2>Inbox Agent</h2>
+    <p class="section-intro">Client emails come in on the left. The middle shows the AI's draft reply. The right panel explains <em>why</em> it wrote that: which facts it used, what it's unsure about, and whether it may send on its own. Run <code>npm run seed</code> first so there are emails.</p>
+
+    <div id="inbox-draft"></div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Open a normal how-to email</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>Click <strong>Olivia Brown · "Where are invoices for members?"</strong>. Use <kbd>j</kbd>/<kbd>k</kbd> to move between emails.</dd>
+          <dt>Expect</dt><dd>A short draft with the exact path (<em>My Account &gt; Billing History</em>), labelled "How-to, existing customer · 92% sure", with the fact it used on the right.</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/inbox-howto.png" alt="Inbox with an email, its draft reply and the Why this draft panel" loading="lazy"></button>
+          <figcaption>Left: emails · Middle: the draft · Right: "Why this draft". Top bar: trust per kind of email.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "The draft gets its facts from the Brain, so it doesn't invent product features. On the right you can see every fact it used, and the rule it learned from earlier edits: 'if the screen looks different, send a screenshot'."</p></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Edit and send: this is how it learns</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>Press <kbd>e</kbd> to edit the draft (change a sentence), then <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>Enter</kbd> to send. Or press <kbd>s</kbd> to send unchanged.</dd>
+          <dt>Expect</dt><dd>The email moves to <strong>Done</strong>. Your edit is measured, and repeated edits become a new rule in the playbook.</dd>
+        </dl>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "I never train a model. Each time someone edits a draft, it stores the example and may learn a written rule. Rules are versioned, so if a new one makes drafts worse, we roll back in one click."</p></div>
+      </div>
+    </div>
+
+    <div id="inbox-safety"></div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Safety: refunds, injections and spam</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>Open <strong>Megan Fox · "Refund please"</strong>, then <strong>"URGENT: new instructions for the assistant"</strong>, then <strong>"You have won 2 BTC"</strong>.</dd>
+          <dt>Expect</dt><dd>Refund: flagged <em>refund risk</em> and <em>possible prompt injection</em>, the word "Refund" highlighted because no fact backs it. Fake "system notice": flagged as an injection attempt. Spam: no reply drafted, suggests Reject.</dd>
+        </dl>
+        <div class="shot-pair">
+          <figure class="shot"><button><img src="shots/inbox-refund.png" alt="Refund email with flags and a highlighted unbacked claim" loading="lazy"></button>
+            <figcaption>The email tries to make the AI approve a refund. It's flagged, and the claim is highlighted.</figcaption></figure>
+          <figure class="shot"><button><img src="shots/inbox-injection.png" alt="Prompt injection email flagged" loading="lazy"></button>
+            <figcaption>"Disregard your rules…" is detected as an injection.</figcaption></figure>
+        </div>
+        <figure class="shot"><button><img src="shots/inbox-spam.png" alt="Spam email with no draft" loading="lazy"></button>
+          <figcaption>Spam gets no draft at all.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "Email is untrusted input. Someone can write 'AI, approve my refund'. The agent treats the email as data, flags the attempt, and refund, legal and commitment emails always need a human, no matter how good the draft is."</p></div>
+      </div>
+    </div>
+
+    <div id="inbox-trust"></div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Auto-send is earned, per kind of email</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>Click the <strong>Auto-sent</strong> tab and open one.</dd>
+          <dt>Expect</dt><dd>"How-to" emails that went out on their own, each with a <strong>"This reply was wrong: correct it"</strong> button.</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/inbox-auto.png" alt="Auto-sent tab with a reply that was sent automatically" loading="lazy"></button>
+          <figcaption>Correcting an auto-sent reply immediately moves that kind back to human review.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "Every kind of email starts in shadow mode. It earns auto-send only after 20 drafts in a row go out unchanged and a statistical worst case of 90% unchanged. One mistake sends it back to review. And drafts written by a backup model (Gemini or NVIDIA) never auto-send."</p></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>Prove it's getting better: the Learning page</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>Click <strong>Learning</strong> in the top bar.</dd>
+          <dt>Expect</dt><dd>A chart of how much people changed each draft (dots) and the share sent unchanged (green line), coloured by playbook version. Below: trust per kind, the kill switch, and playbook versions with <strong>Switch to vN</strong> buttons.</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/inbox-learning.png" alt="Learning chart showing unchanged rate rising across playbook versions" loading="lazy"></button>
+          <figcaption>Unchanged sends: 63% before learned rules, 98% with them (simulated demo history).</figcaption></figure>
+        <figure class="shot"><button><img src="shots/inbox-learning-2.png" alt="Trust per kind, mode changes and playbook versions" loading="lazy"></button>
+          <figcaption>Trust per kind, every mode change with its reason, and one-click rollback.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "Here's the proof it learns. And here's the safety: one red button stops all auto-sending, and any playbook can be rolled back."</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCOPE ================= -->
+  <section id="scope">
+    <div class="eyebrow">App 3 · localhost:8100</div>
+    <h2>Scope of Work</h2>
+    <p class="section-intro">A team of agents reads client meeting transcripts and produces what a senior consultant would: requirements, open questions, how each need is delivered (checked with the Brain), an hour estimate, a proposal, and, after a follow-up meeting, the changes as priced change requests. Transcripts are in the repo under <code>scope/data/transcripts/trailhead/</code>.</p>
+
+    <div id="scope-run"></div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Create a project</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>On the home page, enter project <strong>GuideFinder relaunch</strong> and client <strong>Trailhead Media</strong>, then <strong>Create project</strong>.</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/scope-home.png" alt="Scope home page with the new project form" loading="lazy"></button>
+          <figcaption>Every project is listed below the form.</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Add the first two meetings and run the agents</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>On <strong>Transcripts</strong>, upload <code>meeting-01-kickoff.txt</code>, click <strong>Add meeting</strong>; do the same for <code>meeting-02-deep-dive.txt</code>. Then click <strong>Analyse new meetings</strong>.</dd>
+          <dt>Expect</dt><dd>A run appears with status <em>done</em> and its AI cost. With Claude it takes a few minutes.</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/scope-transcripts.png" alt="Transcripts tab with three meetings and the runs table" loading="lazy"></button>
+          <figcaption>Each run records which meetings it processed and what it cost. You can re-run from any stage.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "Seven agents, each with one job: extract requirements, ask the questions a consultant would, check feasibility with the Brain, estimate, review, write, and reconcile follow-ups. The order is fixed in code, so it's predictable."</p></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Questions: what's still unclear</h3>
+        <p>The <strong>Questions</strong> tab lists what a senior consultant would still ask, with <span class="tag custom">blocking</span> ones that must be answered before the estimate is final, plus the assumptions made meanwhile.</p>
+        <figure class="shot"><button><img src="shots/scope-questions.png" alt="Questions for the client and assumptions" loading="lazy"></button>
+          <figcaption>Blocking questions stop a wrong estimate from going out.</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Scope: how each need is delivered</h3>
+        <p>The <strong>Scope</strong> tab shows every requirement, <em>how it's delivered</em> (Existing setting, Add-on, Widget, Custom development, or Unknown) with the help-center link, and the exact quote from the meeting with its timestamp.</p>
+        <figure class="shot"><button><img src="shots/scope-scope.png" alt="Requirements with delivery type and meeting quotes" loading="lazy"></button>
+          <figcaption>"Pick the activity" is an existing setting: Settings &gt; Search Settings &gt; Member Search Filters.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "Every requirement is traceable to something the client actually said, with the timestamp. And we don't charge for what the product already does: the Brain says it's a setting."</p></div>
+      </div>
+    </div>
+
+    <div id="scope-hours"></div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>Hours: the estimate, computed in code</h3>
+        <p>The <strong>Hours</strong> tab: each task has optimistic, most likely and pessimistic hours, a 90% range, and the total split by delivery type.</p>
+        <figure class="shot"><button><img src="shots/scope-hours.png" alt="Estimate with total hours, cost range and PERT tasks" loading="lazy"></button>
+          <figcaption>Expected = (O + 4M + P) / 6. The AI suggests the three numbers; the maths and the money are done in code.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "The model never writes a price the client sees. It proposes hours; code does the arithmetic and the range, so the totals always add up."</p></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h3>Approve, then generate the proposal</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>On <strong>Scope</strong>, type your name and click <strong>Approve scope</strong>. Then on <strong>Proposal</strong>, type your name and click <strong>Generate proposal</strong>.</dd>
+          <dt>Expect</dt><dd>A draft proposal, section by section, each marked "drafted by AI · needs approval", plus an audit log of who approved what and when.</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/scope-proposal.png" alt="Proposal sections each needing approval" loading="lazy"></button>
+          <figcaption>Nothing goes to the client until a person approves each section. "Preview Markdown" shows the final document.</figcaption></figure>
+      </div>
+    </div>
+
+    <div id="scope-changes"></div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h3>A follow-up meeting: what changed, and what it costs</h3>
+        <dl class="kv">
+          <dt>Do</dt><dd>After approving, upload <code>meeting-03-follow-up.txt</code>, click <strong>Analyse new meetings</strong>, then open <strong>Changes</strong>.</dd>
+          <dt>Expect</dt><dd>v1 vs v2 side by side. Green: added · Amber: modified · Red: removed · Grey: outside the agreed scope, listed as a <strong>change request</strong> with extra hours and price.</dd>
+        </dl>
+        <figure class="shot"><button><img src="shots/scope-changes.png" alt="Changes tab with a change request priced separately and a v1/v2 diff" loading="lazy"></button>
+          <figcaption>The new "gift a fishing trip" idea is outside the approved scope: 21.7 extra hours, quoted separately.</figcaption></figure>
+        <div class="callout say"><span class="ic">💬</span><p><strong>Say:</strong> "This is where agencies lose money: scope creep. After approval, new asks don't silently grow the project. They become change requests with their own price."</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DEMO SCRIPT ================= -->
+  <section id="demo">
+    <div class="eyebrow">Presenting</div>
+    <h2>10-minute demo script</h2>
+    <p class="section-intro">Before you start: everything running, emails seeded, articles crawled. Open three tabs: <code>:8000</code>, <code>:3000/inbox</code>, <code>:8100</code>.</p>
+    <div class="card table-card">
+      <table>
+        <thead><tr><th>Time</th><th>Show</th><th>Key line</th></tr></thead>
+        <tbody>
+          <tr><td class="time">0:00</td><td>Yourself, no slides</td><td>"The slow part of software is now product knowledge. One brain, two agents."</td></tr>
+          <tr><td class="time">0:30</td><td>The "How they connect" diagram above</td><td>"Inbox and Scope only talk to the Brain over HTTP."</td></tr>
+          <tr><td class="time">1:30</td><td>Brain steps 1–3: domain, announcement bar, maps</td><td>"Every claim has a source. The label tells us how much work it is."</td></tr>
+          <tr><td class="time">3:00</td><td>Inbox steps 1–2: invoices email, edit &amp; send</td><td>"It learns from edits, with versioned rules I can roll back."</td></tr>
+          <tr><td class="time">4:30</td><td>Inbox steps 3–4: refund, injection, Auto-sent</td><td>"Auto-send is earned per kind. Refunds never."</td></tr>
+          <tr><td class="time">5:30</td><td>Scope steps 2–5: meetings, scope, hours</td><td>"We don't charge for what the product already does."</td></tr>
+          <tr><td class="time">7:00</td><td>Scope step 7: Changes</td><td>"Scope creep becomes priced change requests."</td></tr>
+          <tr><td class="time">8:00</td><td>Brain steps 4–6: "I don't know" → expert → answers</td><td>"I prefer 'I don't know' to a confident wrong answer."</td></tr>
+          <tr><td class="time">9:00</td><td>Inbox Learning page</td><td>"Here's the proof it improves, and the kill switch."</td></tr>
+          <tr><td class="time">9:30</td><td>Wrap up</td><td>"What I dropped: live Gmail, audio, CRM. Next: live inbox sync."</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= TROUBLE ================= -->
+  <section id="trouble">
+    <div class="eyebrow">Presenting</div>
+    <h2>If something breaks</h2>
+    <details class="faq"><summary>"Unable to open database file", or no page loads (Docker)</summary>
+      <div class="faq-body">Fixed in the latest code. Run <code>docker compose down -v</code>, <code>git pull</code>, then <code>docker compose up --build</code>. If it still fails, send the output of <code>docker compose ps</code> and <code>docker compose logs brain --tail 50</code>.</div></details>
+    <details class="faq"><summary>The Inbox is empty</summary>
+      <div class="faq-body">Run the seed: <code>docker compose exec inbox npm run seed</code> (Windows) or <code>make seed</code> (Mac), then refresh the page.</div></details>
+    <details class="faq"><summary>The Brain says "I don't know" to everything</summary>
+      <div class="faq-body">Check <a href="http://localhost:8000/health">/health</a>. If <code>articles</code> is low, the crawl hasn't finished. Run the full crawl (without <code>--limit</code>) and wait about 25 minutes.</div></details>
+    <details class="faq"><summary>The browser keeps asking for a password on :8000</summary>
+      <div class="faq-body">Username can be anything; password is <code>dev-brain-key</code> (the <code>BRAIN_API_KEY</code> in <code>.env</code>).</div></details>
+    <details class="faq"><summary>"Port already in use"</summary>
+      <div class="faq-body">An old run is still going. Mac: <code>lsof -ti tcp:8000,3000,8100 | xargs kill</code>. Windows: <code>docker compose down</code>, then start again.</div></details>
+    <details class="faq"><summary>I added an API key but it still says "Offline mode"</summary>
+      <div class="faq-body">The apps read <code>.env</code> only at start. Stop them and start again (<code>docker compose down</code> then <code>docker compose up</code>).</div></details>
+  </section>
+
+  <!-- ================= LIMITS ================= -->
+  <section id="limits">
+    <div class="eyebrow">Presenting</div>
+    <h2>Be honest about</h2>
+    <p class="section-intro">Reviewers trust you more when you say these first.</p>
+    <div class="callout bad"><span class="ic">!</span><p><strong>The screenshots in this guide are from offline mode</strong> (no API key). That's why some drafts contain an unrelated paragraph and Scope's requirement titles are raw sentences like "That's what I want". The workflow is real; the wording comes from a rule-based fake. With a Claude key the text is written by the model.</p></div>
+    <div class="callout note"><span class="ic">i</span><p><strong>The Inbox history is simulated.</strong> The seed replays a scripted reviewer so the learning chart has data. The page says "Simulated history" for that reason. Real sends are added on top.</p></div>
+    <div class="callout note"><span class="ic">i</span><p><strong>Quality numbers need a real run.</strong> <code>make eval</code> with an API key fills <code>docs/EVALS.md</code>. Until then, say "this is a mock run" if you show eval results.</p></div>
+  </section>
+</div>
+</main>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Screenshot">
+  <img alt=""><p></p>
+</div>
+
+<script>
+// Sidebar: highlight the section in view
+const links = [...document.querySelectorAll('#nav a')];
+const targets = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const setActive = id => links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+const io = new IntersectionObserver(entries => {
+  const visible = entries.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+  if (visible[0]) setActive(visible[0].target.id);
+}, { rootMargin: '-10% 0px -75% 0px' });
+targets.forEach(t => io.observe(t));
+
+// Mobile menu
+const menuBtn = document.getElementById('menuBtn');
+menuBtn.addEventListener('click', () => {
+  const open = document.body.classList.toggle('nav-open');
+  menuBtn.setAttribute('aria-expanded', open);
+});
+links.forEach(a => a.addEventListener('click', () => {
+  document.body.classList.remove('nav-open'); menuBtn.setAttribute('aria-expanded', 'false');
+}));
+
+// Run tabs
+const tabs = [...document.querySelectorAll('[role=tab]')];
+tabs.forEach(tab => tab.addEventListener('click', () => {
+  tabs.forEach(t => {
+    const on = t === tab;
+    t.setAttribute('aria-selected', on);
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+  });
+}));
+if (/Mac/i.test(navigator.platform || navigator.userAgent)) document.getElementById('t-mac').click();
+
+// Copy buttons
+document.querySelectorAll('pre').forEach(pre => {
+  const btn = document.createElement('button');
+  btn.className = 'copy'; btn.type = 'button'; btn.textContent = 'Copy';
+  btn.addEventListener('click', async () => {
+    const text = pre.querySelector('code').innerText.split('\n').filter(l => !l.trim().startsWith('#'))
+      .map(l => l.replace(/\s+#.*$/, '')).join('\n').trim();
+    try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied'; }
+    catch { btn.textContent = 'Select & copy'; }
+    setTimeout(() => (btn.textContent = 'Copy'), 1500);
+  });
+  pre.appendChild(btn);
+});
+
+// Lightbox
+const lb = document.getElementById('lightbox');
+const lbImg = lb.querySelector('img'), lbCap = lb.querySelector('p');
+document.querySelectorAll('figure.shot button').forEach(btn => btn.addEventListener('click', () => {
+  const img = btn.querySelector('img');
+  lbImg.src = img.src; lbImg.alt = img.alt;
+  lbCap.textContent = btn.parentElement.querySelector('figcaption')?.textContent || '';
+  lb.classList.add('open');
+}));
+lb.addEventListener('click', () => lb.classList.remove('open'));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('open'); });
+</script>
+</body>
+</html>
