@@ -21,6 +21,7 @@ COPY --from=build /app/.next ./.next
 COPY --from=build /app/data/emails.jsonl ./data/emails.jsonl
 COPY --from=build /app/src ./src
 COPY --from=build /app/scripts ./scripts
+COPY --from=build /app/deploy ./deploy
 COPY --from=build /app/next.config.ts /app/tsconfig.json ./
 RUN mkdir -p /app/data/runtime && chown -R node:node /app/data
 USER node

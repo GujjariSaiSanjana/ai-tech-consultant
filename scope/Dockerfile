@@ -9,6 +9,7 @@ RUN uv sync --frozen --no-dev --no-install-project
 COPY src ./src
 COPY data ./data
 COPY evals ./evals
+COPY deploy ./deploy
 RUN uv sync --frozen --no-dev
 ENV SCOPE_HOST=0.0.0.0 \
     SCOPE_PORT=8100 \

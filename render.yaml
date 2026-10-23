@@ -1,6 +1,9 @@
 # Render Blueprint: a temporary, free-tier demo deployment of all three tasks.
 # Deploy: Render dashboard > New > Blueprint > pick this repo. See docs/DEPLOY.md.
 #
+# Start commands live in <app>/deploy/render-start.sh: Render does not run dockerCommand through
+# a full shell, so it must stay a plain command with no quotes or variables.
+#
 # Free-tier trade-offs, on purpose:
 # - services sleep after 15 idle minutes (first request then takes 30-60 s);
 # - inbox and scope keep SQLite on an ephemeral disk, so they reseed demo data on every start;
@@ -38,7 +41,7 @@ services:
     region: singapore
     rootDir: brain
     dockerfilePath: ./Dockerfile
-    dockerCommand: sh -c "python -m brain.migrate && python -m brain.api"
+    dockerCommand: sh /app/deploy/render-start.sh  # migrate, then serve
     healthCheckPath: /health
     envVars:
       - fromGroup: ai-tc-shared
@@ -61,7 +64,7 @@ services:
     rootDir: inbox
     dockerfilePath: ./Dockerfile
     # Reseeds the demo inbox (offline, simulated history) on each start, then serves the app.
-    dockerCommand: sh -c "npm run seed && npm start"
+    dockerCommand: sh /app/deploy/render-start.sh
     healthCheckPath: /inbox
     envVars:
       - fromGroup: ai-tc-shared
@@ -79,15 +82,8 @@ services:
     region: singapore
     rootDir: scope
     dockerfilePath: ./Dockerfile
-    # Rebuilds the Trailhead demo project offline (meetings 1-2, approve, follow-up meeting 3) on
-    # each start, so the UI is never empty; new projects created in the UI use the real model.
-    dockerCommand: >-
-      sh -c "SEED='env SCOPE_LLM=fake SCOPE_BRAIN=fake /app/.venv/bin/python -m scope.cli';
-      D=data/transcripts/trailhead;
-      $SEED run --client 'Trailhead Media' --transcript $D/meeting-01-kickoff.txt --transcript $D/meeting-02-deep-dive.txt
-      && $SEED approve --project 1 --actor 'Demo seed'
-      && $SEED run --project 1 --transcript $D/meeting-03-follow-up.txt;
-      exec /app/.venv/bin/python -m scope.web"
+    # Rebuilds the Trailhead demo project offline on each start, so the UI is never empty.
+    dockerCommand: sh /app/deploy/render-start.sh
     healthCheckPath: /
     envVars:
       - fromGroup: ai-tc-shared

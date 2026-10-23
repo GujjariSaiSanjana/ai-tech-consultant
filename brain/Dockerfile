@@ -22,6 +22,7 @@ RUN uv sync --frozen --no-dev --no-install-project
 COPY src ./src
 COPY migrations ./migrations
 COPY evals ./evals
+COPY deploy ./deploy
 RUN uv sync --frozen --no-dev && mkdir -p /app/.cache && chown -R brain /app/.cache
 
 USER brain
