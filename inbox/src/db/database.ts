@@ -51,6 +51,25 @@ export class Db {
   }
 }
 
+/**
+ * Empties the database by dropping every object inside the existing file. Deleting the file
+ * instead would leave a running server reading the old, unlinked file and never seeing the reset.
+ */
+export function resetDatabase(path: string): void {
+  const db = new Db(path);
+  try {
+    db.raw.exec("PRAGMA foreign_keys = OFF");
+    const objects = db.raw
+      .prepare("SELECT type, name FROM sqlite_master WHERE type IN ('view', 'trigger', 'table') AND name NOT LIKE 'sqlite_%'")
+      .all() as { type: string; name: string }[];
+    db.transaction(() => {
+      for (const { type, name } of objects) db.raw.exec(`DROP ${type.toUpperCase()} IF EXISTS "${name}"`);
+    });
+  } finally {
+    db.close();
+  }
+}
+
 export function json(value: unknown): string {
   return JSON.stringify(value);
 }
