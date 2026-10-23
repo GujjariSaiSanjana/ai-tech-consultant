@@ -20,7 +20,7 @@ const EnvSchema = z.object({
   GEMINI_MODEL: z.string().default("gemini-2.5-flash"),
   GEMINI_BASE_URL: z.string().default("https://generativelanguage.googleapis.com/v1beta/openai/"),
   NVIDIA_API_KEY: z.string().optional(),
-  NVIDIA_MODEL: z.string().default("meta/llama-3.3-70b-instruct"),
+  NVIDIA_MODEL: z.string().default("openai/gpt-oss-20b"),
   NVIDIA_BASE_URL: z.string().default("https://integrate.api.nvidia.com/v1"),
   /** Comma-separated fallback order. An empty string disables fallback. */
   LLM_FALLBACK_ORDER: z.string().default("gemini,nvidia"),

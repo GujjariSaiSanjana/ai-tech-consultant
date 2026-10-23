@@ -154,7 +154,7 @@ tables are filled, the table above is a hypothesis, not a result.
 ### 5.1 Fallback providers
 
 Claude is the primary model everywhere. Google Gemini (`gemini-2.5-flash`) and NVIDIA
-(`meta/llama-3.3-70b-instruct` on build.nvidia.com) are configured as fallbacks, tried in
+(`openai/gpt-oss-20b` on build.nvidia.com) are configured as fallbacks, tried in
 `LLM_FALLBACK_ORDER`, through their OpenAI-compatible Chat Completions endpoints, with no extra SDKs.
 
 - **When.** A fallback runs only when Claude is unavailable after its own retries (rate limit,

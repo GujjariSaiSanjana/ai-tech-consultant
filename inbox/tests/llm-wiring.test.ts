@@ -22,7 +22,7 @@ describe("fallback env", () => {
     expect(env).toMatchObject({
       GEMINI_MODEL: "gemini-2.5-flash",
       GEMINI_BASE_URL: "https://generativelanguage.googleapis.com/v1beta/openai/",
-      NVIDIA_MODEL: "meta/llama-3.3-70b-instruct",
+      NVIDIA_MODEL: "openai/gpt-oss-20b",
       NVIDIA_BASE_URL: "https://integrate.api.nvidia.com/v1",
       LLM_FALLBACK_ORDER: "gemini,nvidia",
     });

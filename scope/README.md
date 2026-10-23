@@ -157,7 +157,7 @@ both called through their OpenAI-compatible Chat Completions endpoint with `http
 | Variable | Default |
 |---|---|
 | `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_BASE_URL` | unset, `gemini-2.5-flash`, `https://generativelanguage.googleapis.com/v1beta/openai/` |
-| `NVIDIA_API_KEY`, `NVIDIA_MODEL`, `NVIDIA_BASE_URL` | unset, `meta/llama-3.3-70b-instruct`, `https://integrate.api.nvidia.com/v1` |
+| `NVIDIA_API_KEY`, `NVIDIA_MODEL`, `NVIDIA_BASE_URL` | unset, `openai/gpt-oss-20b`, `https://integrate.api.nvidia.com/v1` |
 | `LLM_FALLBACK_ORDER` | `gemini,nvidia` (empty disables fallback) |
 | `SCOPE_GEMINI_PRICE`, `SCOPE_NVIDIA_PRICE` | 0.30/2.50 per MTok for `gemini-2.5-flash`; NVIDIA 0 (free tier) |
 | `SCOPE_FALLBACK_TIMEOUT_S` | `120` |

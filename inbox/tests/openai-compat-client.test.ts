@@ -88,11 +88,11 @@ describe("OpenAICompatLlmClient", () => {
 
   it("prices NVIDIA calls at 0 and joins the base URL without a trailing slash", async () => {
     const { fetch, calls } = stubFetch([completion('{"ok":true}')]);
-    const { llm, records } = client(fetch, { provider: "nvidia", model: "meta/llama-3.3-70b-instruct", baseUrl: "https://integrate.api.nvidia.com/v1" });
+    const { llm, records } = client(fetch, { provider: "nvidia", model: "openai/gpt-oss-20b", baseUrl: "https://integrate.api.nvidia.com/v1" });
     const result = await llm.parse(request);
     expect(calls[0]?.url).toBe("https://integrate.api.nvidia.com/v1/chat/completions");
     expect(result.costUsd).toBe(0);
-    expect(records[0]).toMatchObject({ model: "meta/llama-3.3-70b-instruct", costUsd: 0 });
+    expect(records[0]).toMatchObject({ model: "openai/gpt-oss-20b", costUsd: 0 });
   });
 
   it("retries once in json_object mode with the schema in the system prompt when json_schema gets a 400", async () => {

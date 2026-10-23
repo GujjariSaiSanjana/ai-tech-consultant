@@ -257,7 +257,7 @@ async def test_cost_and_recording_per_provider() -> None:
     assert usage.cost_usd == 0.0  # NVIDIA free tier
     gemini, nvidia = recorder.calls
     assert gemini.model == "gemini-2.5-flash" and gemini.error and "429" in gemini.error
-    assert nvidia.model == "meta/llama-3.3-70b-instruct" and nvidia.error is None
+    assert nvidia.model == "openai/gpt-oss-20b" and nvidia.error is None
     assert (nvidia.input_tokens, nvidia.output_tokens, nvidia.stop_reason) == (5000, 40, "stop")
     assert nvidia.request_id == "cmpl-1" and nvidia.latency_ms >= 0
 
@@ -312,7 +312,7 @@ async def test_unreachable_fallbacks_raise_the_original_error() -> None:
     with pytest.raises(LLMError) as info:
         await llm.create("context", messages=[{"role": "user", "content": "hi"}])
     assert info.value.retryable and "Claude" in str(info.value)
-    assert [c.model for c in recorder.calls] == ["claude-haiku-5-5", "gemini-2.5-flash", "meta/llama-3.3-70b-instruct"]
+    assert [c.model for c in recorder.calls] == ["claude-haiku-5-5", "gemini-2.5-flash", "openai/gpt-oss-20b"]
     assert all(c.error for c in recorder.calls)
 
 

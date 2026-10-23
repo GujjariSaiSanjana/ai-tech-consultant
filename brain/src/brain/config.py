@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     gemini_input_price: float = Field(0.30, alias="GEMINI_INPUT_PRICE_PER_MTOK")
     gemini_output_price: float = Field(2.50, alias="GEMINI_OUTPUT_PRICE_PER_MTOK")
     nvidia_api_key: str | None = Field(None, alias="NVIDIA_API_KEY")
-    nvidia_model: str = Field("meta/llama-3.3-70b-instruct", alias="NVIDIA_MODEL")
+    nvidia_model: str = Field("openai/gpt-oss-20b", alias="NVIDIA_MODEL")
     nvidia_base_url: str = Field("https://integrate.api.nvidia.com/v1", alias="NVIDIA_BASE_URL")
     nvidia_input_price: float = Field(0.0, alias="NVIDIA_INPUT_PRICE_PER_MTOK")
     nvidia_output_price: float = Field(0.0, alias="NVIDIA_OUTPUT_PRICE_PER_MTOK")

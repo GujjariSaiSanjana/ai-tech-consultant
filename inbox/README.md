@@ -67,7 +67,7 @@ OpenAI-compatible Chat Completions endpoint (`POST {base}/chat/completions`, Bea
 | Variable | Default |
 |---|---|
 | `GEMINI_API_KEY` / `GEMINI_MODEL` / `GEMINI_BASE_URL` | unset / `gemini-2.5-flash` / `https://generativelanguage.googleapis.com/v1beta/openai/` |
-| `NVIDIA_API_KEY` / `NVIDIA_MODEL` / `NVIDIA_BASE_URL` | unset / `meta/llama-3.3-70b-instruct` / `https://integrate.api.nvidia.com/v1` |
+| `NVIDIA_API_KEY` / `NVIDIA_MODEL` / `NVIDIA_BASE_URL` | unset / `openai/gpt-oss-20b` / `https://integrate.api.nvidia.com/v1` |
 | `LLM_FALLBACK_ORDER` | `gemini,nvidia` (an empty string turns fallback off) |
 
 - **When it falls back:** Claude fails with a retryable error (rate limit, overloaded/5xx, network or timeout) after the SDK's

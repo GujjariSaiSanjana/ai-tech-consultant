@@ -149,7 +149,7 @@ describe("decideSend", () => {
   it("never auto-sends a draft written by a fallback (non-Claude) model, and handles it in assist", () => {
     const state = autoState();
     expect(decideSend({ state, killSwitch: false, draftNeedsReview: false, draftModel: "claude-sonnet-5-5-20261001" }).auto).toBe(true);
-    for (const draftModel of ["gemini-2.5-flash", "meta/llama-3.3-70b-instruct"]) {
+    for (const draftModel of ["gemini-2.5-flash", "openai/gpt-oss-20b"]) {
       const decision = decideSend({ state, killSwitch: false, draftNeedsReview: false, draftModel });
       expect(decision.auto).toBe(false);
       expect(decision.reason).toContain(draftModel);
