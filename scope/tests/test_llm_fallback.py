@@ -32,7 +32,7 @@ from scope.llm.types import CallRecord, LLMRequest, LLMResult, ToolBox
 from scope.wiring import build_backend, build_deps
 
 GEMINI = Provider("gemini", "https://gemini.test/v1beta/openai/", "g-key", "gemini-2.5-flash")
-NVIDIA = Provider("nvidia", "https://nvidia.test/v1", "n-key", "meta/llama-3.3-70b-instruct")
+NVIDIA = Provider("nvidia", "https://nvidia.test/v1", "n-key", "openai/gpt-oss-20b")
 
 
 class Out(BaseModel):

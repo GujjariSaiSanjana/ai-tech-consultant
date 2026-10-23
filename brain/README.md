@@ -176,7 +176,7 @@ Callers do not change: `brain.llm.fallback` turns the result back into a Claude-
 |---|---|
 | `LLM_FALLBACK_ORDER` | `gemini,nvidia` (empty disables fallback) |
 | `GEMINI_API_KEY` / `GEMINI_MODEL` / `GEMINI_BASE_URL` | unset / `gemini-2.5-flash` / `https://generativelanguage.googleapis.com/v1beta/openai/` |
-| `NVIDIA_API_KEY` / `NVIDIA_MODEL` / `NVIDIA_BASE_URL` | unset / `meta/llama-3.3-70b-instruct` / `https://integrate.api.nvidia.com/v1` |
+| `NVIDIA_API_KEY` / `NVIDIA_MODEL` / `NVIDIA_BASE_URL` | unset / `openai/gpt-oss-20b` / `https://integrate.api.nvidia.com/v1` |
 | `GEMINI_INPUT_PRICE_PER_MTOK` / `GEMINI_OUTPUT_PRICE_PER_MTOK` | `0.30` / `2.50` (Google paid tier, text) |
 | `NVIDIA_INPUT_PRICE_PER_MTOK` / `NVIDIA_OUTPUT_PRICE_PER_MTOK` | `0.0` / `0.0` (free tier) |
 

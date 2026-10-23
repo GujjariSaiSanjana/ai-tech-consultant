@@ -29,7 +29,7 @@ SONNET = "claude-sonnet-5-5"
 OPUS = "claude-opus-5-5"
 HAIKU = "claude-haiku-5-5"
 GEMINI_FLASH = "gemini-2.5-flash"
-NVIDIA_LLAMA = "meta/llama-3.3-70b-instruct"
+NVIDIA_DEFAULT_MODEL = "openai/gpt-oss-20b"
 FALLBACK_PROVIDERS = ("gemini", "nvidia")
 
 
@@ -115,7 +115,7 @@ class Settings(BaseSettings):
         validation_alias="GEMINI_BASE_URL",
     )
     nvidia_api_key: str | None = Field(default=None, validation_alias="NVIDIA_API_KEY")
-    nvidia_model: str = Field(default=NVIDIA_LLAMA, validation_alias="NVIDIA_MODEL")
+    nvidia_model: str = Field(default=NVIDIA_DEFAULT_MODEL, validation_alias="NVIDIA_MODEL")
     nvidia_base_url: str = Field(
         default="https://integrate.api.nvidia.com/v1", validation_alias="NVIDIA_BASE_URL"
     )

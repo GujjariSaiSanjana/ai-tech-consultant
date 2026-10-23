@@ -30,7 +30,7 @@ describe("fallback model pricing", () => {
   });
 
   it("prices NVIDIA models at 0 by default, and a configured price wins", () => {
-    const model = "meta/llama-3.3-70b-instruct";
+    const model = "openai/gpt-oss-20b";
     expect(costUsd(model, usage, providerPricing("nvidia", model))).toBe(0);
     const custom = { inputPerMTok: 1, outputPerMTok: 2, cacheReadMultiplier: 1, cacheWriteMultiplier: 1 };
     expect(costUsd(model, usage, providerPricing("nvidia", model, custom))).toBeCloseTo(3);
@@ -41,6 +41,6 @@ describe("fallback model pricing", () => {
     expect(isClaudeModel("claude-sonnet-5-5")).toBe(true);
     expect(isClaudeModel("claude-sonnet-5-5-20261001")).toBe(true);
     expect(isClaudeModel("gemini-2.5-flash")).toBe(false);
-    expect(isClaudeModel("meta/llama-3.3-70b-instruct")).toBe(false);
+    expect(isClaudeModel("openai/gpt-oss-20b")).toBe(false);
   });
 });

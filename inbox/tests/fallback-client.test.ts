@@ -59,19 +59,19 @@ describe("FallbackLlmClient", () => {
   it("tries fallbacks in order and stops at the first that answers", async () => {
     const claude = stub("claude-sonnet-5-5", "overloaded");
     const gemini = stub("gemini-2.5-flash", "rate_limit");
-    const nvidia = stub("meta/llama-3.3-70b-instruct");
+    const nvidia = stub("openai/gpt-oss-20b");
     const llm = new FallbackLlmClient(claude.client, [
       { name: "gemini", client: gemini.client },
       { name: "nvidia", client: nvidia.client },
     ]);
-    await expect(llm.parse(request)).resolves.toMatchObject({ model: "meta/llama-3.3-70b-instruct" });
+    await expect(llm.parse(request)).resolves.toMatchObject({ model: "openai/gpt-oss-20b" });
     expect([claude.calls, gemini.calls, nvidia.calls]).toEqual([1, 1, 1]);
   });
 
   it("rethrows the original Claude error when every fallback fails", async () => {
     const claude = stub("claude-sonnet-5-5", "overloaded");
     const gemini = stub("gemini-2.5-flash", "parse");
-    const nvidia = stub("meta/llama-3.3-70b-instruct", "server");
+    const nvidia = stub("openai/gpt-oss-20b", "server");
     const llm = new FallbackLlmClient(claude.client, [
       { name: "gemini", client: gemini.client },
       { name: "nvidia", client: nvidia.client },
@@ -83,7 +83,7 @@ describe("FallbackLlmClient", () => {
   it("surfaces a fallback refusal instead of trying the next provider", async () => {
     const claude = stub("claude-sonnet-5-5", "rate_limit");
     const gemini = stub("gemini-2.5-flash", "refusal");
-    const nvidia = stub("meta/llama-3.3-70b-instruct");
+    const nvidia = stub("openai/gpt-oss-20b");
     const llm = new FallbackLlmClient(claude.client, [
       { name: "gemini", client: gemini.client },
       { name: "nvidia", client: nvidia.client },
@@ -94,13 +94,13 @@ describe("FallbackLlmClient", () => {
 
   it("runs on fallbacks alone when there is no Claude key", async () => {
     const gemini = stub("gemini-2.5-flash", "server");
-    const nvidia = stub("meta/llama-3.3-70b-instruct");
+    const nvidia = stub("openai/gpt-oss-20b");
     const llm = new FallbackLlmClient(null, [
       { name: "gemini", client: gemini.client },
       { name: "nvidia", client: nvidia.client },
     ]);
     expect(llm.providerNames).toEqual(["gemini", "nvidia"]);
-    await expect(llm.parse(request)).resolves.toMatchObject({ model: "meta/llama-3.3-70b-instruct" });
+    await expect(llm.parse(request)).resolves.toMatchObject({ model: "openai/gpt-oss-20b" });
     const only = new FallbackLlmClient(null, [{ name: "gemini", client: stub("gemini-2.5-flash", "server").client }]);
     await expect(only.parse(request)).rejects.toMatchObject({ kind: "server" });
   });
