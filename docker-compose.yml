@@ -79,9 +79,11 @@ services:
     ports: ["3000:3000"]
     environment:
       BRAIN_URL: http://brain:8000
-      INBOX_DATABASE_PATH: /data/inbox.db
+      # Must match the directory the image creates and chowns to the non-root user;
+      # a volume on a path missing from the image is created root-owned and unwritable.
+      INBOX_DATABASE_PATH: /app/data/runtime/inbox.db
     volumes:
-      - inbox-data:/data
+      - inbox-data:/app/data/runtime
     depends_on:
       brain:
         condition: service_healthy
@@ -93,9 +95,11 @@ services:
     ports: ["8100:8100"]
     environment:
       BRAIN_URL: http://brain:8000
-      SCOPE_DATABASE_URL: sqlite+aiosqlite:////data/scope.db
+      # Same rule as inbox: /var/lib/scope is created and chowned in the image.
+      SCOPE_DATABASE_URL: sqlite+aiosqlite:////var/lib/scope/scope.db
+      SCOPE_EXPORT_DIR: /var/lib/scope/exports
     volumes:
-      - scope-data:/data
+      - scope-data:/var/lib/scope
     depends_on:
       brain:
         condition: service_healthy
