@@ -7,8 +7,8 @@
  * knowledge base) unless --live is passed. Every scripted action is stored with
  * simulated = 1 and the UI labels it as simulated.
  */
-import { rmSync } from "node:fs";
 import { readEnv } from "../src/config/env";
+import { resetDatabase } from "../src/db/database";
 import { loadDataset } from "../src/evals/dataset";
 import { createServices } from "../src/services/container";
 import { simulatedHowToEmails, simulatedReviewerEdit } from "../src/services/simulation";
@@ -30,7 +30,7 @@ async function main(): Promise<void> {
   const live = process.argv.includes("--live");
   const env = readEnv();
   const dbPath = env.INBOX_DATABASE_PATH;
-  for (const suffix of ["", "-wal", "-shm"]) rmSync(`${dbPath}${suffix}`, { force: true });
+  resetDatabase(dbPath);
 
   const clock = simulatedClock("2026-08-31T08:00:00Z", 45);
   const services = createServices({

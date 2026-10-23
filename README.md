@@ -31,6 +31,9 @@ First time without Docker: `make setup`, then `make crawl LIMIT=100` to load som
 Open <http://localhost:3000> (inbox), <http://localhost:8100> (scope),
 <http://localhost:8000/health> (brain).
 
+**Walkthrough with screenshots:** open `docs/guide/index.html` in a browser. It covers running on
+Windows (Docker) or Mac, what to do on each app step by step, and a 10-minute demo script.
+
 Quality: `make test`, `make lint`, `make typecheck` (all offline, no keys).
 Evals: `make eval` runs all three runners, then writes `evals/results/summary.md`.
 
